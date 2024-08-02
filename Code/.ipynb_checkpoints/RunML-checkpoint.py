@@ -19,7 +19,7 @@ from sklearn.metrics import auc, roc_auc_score, roc_curve
 from sklearn.metrics import RocCurveDisplay
 from sklearn.model_selection import StratifiedKFold, cross_val_score
 
-
+"""This 2 functions is transfered to RunML_continue.py
 def CFValidation_AUCstatistic(X,y,classifier = svm.SVC(kernel='linear', probability=True),k=5):# test this
     cv = StratifiedKFold(n_splits=k, shuffle=True,random_state = 777)
     aucs = []
@@ -46,7 +46,7 @@ def CFValidation_score(X, y,k=5,classifier = svm.SVC(kernel='linear', probabilit
     results = cross_val_score(classifier, X_train=X, y_train=y, cv = cv,scoring=score)#scoring, only a single metric is permitted
     return results.mean(),results.std()
 
-
+"""
 
 def CrossFoldValidation_AUC(X,y,classifier = svm.SVC(kernel='linear', probability=True),title="AUC"):
     cv = StratifiedKFold(n_splits=5)
@@ -426,9 +426,9 @@ def normalizingMatrixToRanks(data,cutOff=0.01):
     for i in range(np.shape(data)[0]):
         data[i]=listToRanks(data[i])
     return data
-
+    
+from sklearn.preprocessing import LabelEncoder
 def LassoFeatureSelection(X,y):
-    from sklearn.preprocessing import LabelEncoder
     le = LabelEncoder()
     y= le.fit_transform(y)
     clf = linear_model.Lasso(alpha=0.1, tol=0.01)
