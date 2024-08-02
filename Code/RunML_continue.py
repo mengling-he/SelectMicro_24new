@@ -13,13 +13,14 @@ from imblearn.combine import SMOTEENN
 from sklearn import preprocessing, __all__, svm
 from imblearn.over_sampling import SMOTE
 from sklearn import svm, datasets
-from sklearn.metrics import auc, roc_auc_score, roc_curve, accuracy_score, precision_score, recall_score
-from sklearn.metrics import RocCurveDisplay, confusion_matrix
+from sklearn.metrics import auc, roc_auc_score, roc_curve, accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import RocCurveDisplay, confusion_matrix, ConfusionMatrixDisplay
 from sklearn.model_selection import StratifiedKFold, cross_val_score, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 import time
 
 import RunML
+import metric
 
 """
 def CFValidation_AUCstatistic(X,y,classifier = svm.SVC(kernel='linear', probability=True),k=5):# test this
@@ -435,28 +436,55 @@ def runClassifierCV_FScompare(data_subsets,y,N,classifiers): # fine tune the cla
             print("The feature selection type is not included")
 
 
-def plot_confusion_matrices(results_dict):
-    for dataset_name, classifiers in results_dict.items():
-        for classifier_name, labels in classifiers.items():
-            actual_labels = labels[0]
-            predicted_labels = labels[1]
-            
-            disp = ConfusionMatrixDisplay.from_predictions(
-                y_true=actual_labels,
-                y_pred=predicted_labels,
-                display_labels=sorted(set(actual_labels)),  # Use sorted set of labels to ensure consistency
-                cmap='viridis'
-            )
-            
-            disp.ax_.set_title(f"{dataset_name} - {classifier_name}")
-            plt.show()
+def plotmacro_confusion_matrices(y, y_pred,title):
+    accuracy = metric.accuracy(y, y_pred)
+    precision = metric.macro_precision(y, y_pred)
+    recall =metric.macro_recall(y, y_pred)
+    f1 = metric.macro_f1(y, y_pred)
+    #mcc = metric.mcc_score(actual_labels, predicted_labels)
 
-def classificationHeatMap(y_actual,y_pred,title=None):
-    cf_matrix_sum= confusion_matrix(y_actual, y_pred)
-    labels = ["True Neg","False Pos","False Neg","True Pos"]
-    RunML.make_confusion_matrix(cf_matrix_sum,
-                          group_names=labels,
-                          #categories=data_classes,
-                          cmap="Blues",
-                                #title=title,
-                                cbar=False,figsize=(4,3),title=title)
+    disp = ConfusionMatrixDisplay.from_predictions(
+        y_true=y,
+        y_pred=y_pred,
+        display_labels=sorted(set(y)),  # Use sorted set of labels to ensure consistency
+        cmap='Blues'
+    )
+    
+    # Add metrics below the confusion matrix
+    metrics_text = (f"Accuracy: {accuracy:.4f}\n"
+                    f"Precision: {precision:.4f}\n"
+                    f"Recall: {recall:.4f}\n"
+                    f"F1: {f1:.4f}")
+    disp.ax_.text(0.5, -0.2, metrics_text, ha='center', va='top', fontsize=12, transform=disp.ax_.transAxes)
+
+    plt.tight_layout()  # Adjust layout to make room for the metrics
+    
+    disp.ax_.set_title(title)
+    plt.show()
+
+
+def plotmicro_confusion_matrices(y, y_pred,title):
+    accuracy = metric.accuracy(y, y_pred)
+    precision = metric.micro_precision(y, y_pred)
+    recall =metric.micro_recall(y, y_pred)
+    f1 = metric.micro_f1(y, y_pred)
+    #mcc = metric.mcc_score(actual_labels, predicted_labels)
+
+    disp = ConfusionMatrixDisplay.from_predictions(
+        y_true=y,
+        y_pred=y_pred,
+        display_labels=sorted(set(y)),  # Use sorted set of labels to ensure consistency
+        cmap='Blues'
+    )
+    
+    # Add metrics below the confusion matrix
+    metrics_text = (f"Accuracy: {accuracy:.4f}\n"
+                    f"Precision: {precision:.4f}\n"
+                    f"Recall: {recall:.4f}\n"
+                    f"F1: {f1:.4f}")
+    disp.ax_.text(0.5, -0.2, metrics_text, ha='center', va='top', fontsize=12, transform=disp.ax_.transAxes)
+
+    plt.tight_layout()  # Adjust layout to make room for the metrics
+    
+    disp.ax_.set_title(title)
+    plt.show()

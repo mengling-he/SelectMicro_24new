@@ -169,6 +169,9 @@ def make_confusion_matrix(cf,
     if title:
         plt.title(title)
     plt.show()
+
+
+
 from sklearn.ensemble import RandomForestClassifier
 
 def classificationHeatMap(X,y,data_classes,classifier=RandomForestClassifier(random_state=0),title="title"):
