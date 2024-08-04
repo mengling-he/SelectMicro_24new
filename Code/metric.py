@@ -320,10 +320,66 @@ def micro_f1(y_true, y_pred):
 
 
 def mcc_score(y_true, y_pred):
-    tp = true_positive(y_true, y_pred)
-    tn = true_negative(y_true, y_pred)
-    fp = false_positive(y_true, y_pred)
-    fn = false_negative(y_true, y_pred)
-    mcc =((tp*tn)-(fp*fn))/np.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
+    # find the number of classes
+    num_classes = len(np.unique(y_true))
+
+    # initialize precision to 0
+    mcc = 0
+    
+    # loop over all classes
+    for class_ in list(np.unique(y_true)):
+        
+        # all classes except current are considered negative
+        temp_true = [1 if p == class_ else 0 for p in y_true]
+        temp_pred = [1 if p == class_ else 0 for p in y_pred]
+        
+        
+        # compute tp,tn,fp,fn for current class
+        tp = true_positive(temp_true, temp_pred)
+        tn = true_negative(temp_true, temp_pred)
+        fp = false_positive(temp_true, temp_pred)
+        fn = false_negative(temp_true, temp_pred)
+        
+        
+        # compute precision for current class
+        temp_mcc = ((tp*tn)-(fp*fn))/np.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
+        # keep adding precision for all classes
+        mcc += temp_mcc
+        
+    # calculate and return average precision over all classes
+    mcc /= num_classes
+    
+    return mcc
+
+def mcc_score(y_true, y_pred):
+    # find the number of classes
+    num_classes = len(np.unique(y_true))
+
+    # initialize precision to 0
+    mcc = 0
+    
+    # loop over all classes
+    for class_ in list(np.unique(y_true)):
+        
+        # all classes except current are considered negative
+        temp_true = [1 if p == class_ else 0 for p in y_true]
+        temp_pred = [1 if p == class_ else 0 for p in y_pred]
+        
+        
+        # compute tp,tn,fp,fn for current class
+        tp = true_positive(temp_true, temp_pred)
+        tn = true_negative(temp_true, temp_pred)
+        fp = false_positive(temp_true, temp_pred)
+        fn = false_negative(temp_true, temp_pred)
+        
+        
+        # compute precision for current class
+        temp_mcc = ((tp*tn)-(fp*fn))/np.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
+        # keep adding precision for all classes
+        mcc += temp_mcc
+        
+    # calculate and return average precision over all classes
+    mcc /= num_classes
+    
     return mcc
 
