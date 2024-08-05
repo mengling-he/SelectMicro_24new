@@ -453,7 +453,7 @@ def plot_confusion_matrices(y, y_pred,title,pos_y=1):
     accuracy = metric.accuracy(y, y_pred)
     precision = precision_score(y, y_pred,pos_label=pos_y)
     recall =recall_score(y, y_pred,pos_label=pos_y)
-    f1 = f1_score(y, y_pred,pos_label=pos_y)
+    #f1 = f1_score(y, y_pred,pos_label=pos_y)
     mcc = matthews_corrcoef(y, y_pred)
 
     disp = ConfusionMatrixDisplay.from_predictions(
@@ -467,7 +467,7 @@ def plot_confusion_matrices(y, y_pred,title,pos_y=1):
     metrics_text = (f"Accuracy: {accuracy:.4f}\n"
                     f"Precision: {precision:.4f}\n"
                     f"Recall: {recall:.4f}\n"
-                    f"F1: {f1:.4f}\n"
+                    #f"F1: {f1:.4f}\n"
                     f"Matthew’s correlation coefficient : {mcc:.4f}\n")
     disp.ax_.text(0.5, -0.2, metrics_text, ha='center', va='top', fontsize=12, transform=disp.ax_.transAxes)
 
@@ -481,7 +481,7 @@ def plotmacro_confusion_matrices(y, y_pred,title):
     accuracy = metric.accuracy(y, y_pred)
     precision = metric.macro_precision(y, y_pred)
     recall =metric.macro_recall(y, y_pred)
-    f1 = metric.macro_f1(y, y_pred)
+    #f1 = metric.macro_f1(y, y_pred)
     mcc = metric.mcc_score(y, y_pred)
 
     disp = ConfusionMatrixDisplay.from_predictions(
@@ -495,7 +495,7 @@ def plotmacro_confusion_matrices(y, y_pred,title):
     metrics_text = (f"Accuracy: {accuracy:.4f}\n"
                     f"Precision: {precision:.4f}\n"
                     f"Recall: {recall:.4f}\n"
-                    f"F1: {f1:.4f}\n"
+                    #f"F1: {f1:.4f}\n"
                     f"Matthew’s correlation coefficient : {mcc:.4f}\n")
     disp.ax_.text(0.5, -0.2, metrics_text, ha='center', va='top', fontsize=12, transform=disp.ax_.transAxes)
 
@@ -509,7 +509,7 @@ def plotmicro_confusion_matrices(y, y_pred,title):
     accuracy = metric.accuracy(y, y_pred)
     precision = metric.micro_precision(y, y_pred)
     recall =metric.micro_recall(y, y_pred)
-    f1 = metric.micro_f1(y, y_pred)
+    #f1 = metric.micro_f1(y, y_pred)
     mcc = metric.mcc_score(y, y_pred)
 
     disp = ConfusionMatrixDisplay.from_predictions(
@@ -523,7 +523,7 @@ def plotmicro_confusion_matrices(y, y_pred,title):
     metrics_text = (f"Accuracy: {accuracy:.4f}\n"
                     f"Precision: {precision:.4f}\n"
                     f"Recall: {recall:.4f}\n"
-                    f"F1: {f1:.4f}\n"
+                    #f"F1: {f1:.4f}\n"
                     f"Matthew’s correlation coefficient : {mcc:.4f}\n")
     disp.ax_.text(0.5, -0.2, metrics_text, ha='center', va='top', fontsize=12, transform=disp.ax_.transAxes)
 
