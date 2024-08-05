@@ -13,7 +13,7 @@ from imblearn.combine import SMOTEENN
 from sklearn import preprocessing, __all__, svm
 from imblearn.over_sampling import SMOTE
 from sklearn import svm, datasets
-from sklearn.metrics import auc, roc_auc_score, roc_curve, accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import auc, roc_auc_score, roc_curve, accuracy_score, precision_score, recall_score, f1_score, matthews_corrcoef
 from sklearn.metrics import RocCurveDisplay, confusion_matrix, ConfusionMatrixDisplay
 from sklearn.model_selection import StratifiedKFold, cross_val_score, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
@@ -436,6 +436,47 @@ def runClassifierCV_FScompare(data_subsets,y,N,classifiers): # fine tune the cla
             print("The feature selection type is not included")
 
 
+
+def confusion_matrix2(y_true, y_pred):
+    plt.figure(figsize = (18,8))
+    unique_labels = np.unique(y_true)
+    sns.heatmap(metrics.confusion_matrix(y_true, y_pred), annot = True,fmt='d',
+                annot_kws={"size": 18},xticklabels = unique_labels, yticklabels = unique_labels, cmap = 'summer')
+    plt.xlabel('Predicted Labels')
+    plt.ylabel('True Labels')
+    plt.xticks(fontsize=16)  # Change the size of x-tick labels
+    plt.yticks(fontsize=16)
+    plt.show()
+
+
+def plot_confusion_matrices(y, y_pred,title,pos_y=1):
+    accuracy = metric.accuracy(y, y_pred)
+    precision = precision_score(y, y_pred,pos_label=pos_y)
+    recall =recall_score(y, y_pred,pos_label=pos_y)
+    f1 = f1_score(y, y_pred,pos_label=pos_y)
+    mcc = matthews_corrcoef(y, y_pred)
+
+    disp = ConfusionMatrixDisplay.from_predictions(
+        y_true=y,
+        y_pred=y_pred,
+        display_labels=sorted(set(y)),  # Use sorted set of labels to ensure consistency
+        cmap='Blues'
+    )
+    
+    # Add metrics below the confusion matrix
+    metrics_text = (f"Accuracy: {accuracy:.4f}\n"
+                    f"Precision: {precision:.4f}\n"
+                    f"Recall: {recall:.4f}\n"
+                    f"F1: {f1:.4f}\n"
+                    f"Matthew’s correlation coefficient : {mcc:.4f}\n")
+    disp.ax_.text(0.5, -0.2, metrics_text, ha='center', va='top', fontsize=12, transform=disp.ax_.transAxes)
+
+    plt.tight_layout()  # Adjust layout to make room for the metrics
+    
+    disp.ax_.set_title(title)
+    plt.show()
+
+    
 def plotmacro_confusion_matrices(y, y_pred,title):
     accuracy = metric.accuracy(y, y_pred)
     precision = metric.macro_precision(y, y_pred)
@@ -490,3 +531,5 @@ def plotmicro_confusion_matrices(y, y_pred,title):
     
     disp.ax_.set_title(title)
     plt.show()
+
+

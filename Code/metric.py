@@ -38,18 +38,6 @@ def roc_auc_score_multiclass(actual_class, pred_class, average = "macro"):
     return roc_auc_dict
 
 
-def confusion_matrix2(y_true, y_pred):
-    plt.figure(figsize = (18,8))
-    unique_labels = np.unique(y_true)
-    sns.heatmap(metrics.confusion_matrix(y_true, y_pred), annot = True,fmt='d',
-                annot_kws={"size": 18},xticklabels = unique_labels, yticklabels = unique_labels, cmap = 'summer')
-    plt.xlabel('Predicted Labels')
-    plt.ylabel('True Labels')
-    plt.xticks(fontsize=16)  # Change the size of x-tick labels
-    plt.yticks(fontsize=16)
-    plt.show()
-
-    
 
 def accuracy(y_true, y_pred):
     
@@ -58,7 +46,6 @@ def accuracy(y_true, y_pred):
     -> param y_true: list of true values
     -> param y_pred: list of predicted values
     -> return: accuracy score
-    
     """
     
     # Intitializing variable to store count of correctly predicted classes
