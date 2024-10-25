@@ -2,6 +2,21 @@
 #This file loads different files and convert them into trainning/test matrix and labels (X, y), each function loads a different intput format
 import numpy as np
 import pandas as pd
+
+def relative_abundance(data):# if the input is the original abundance matrix, will convert it into relative abundance matrix; for missing values will return to 0
+    # Convert input to a numpy array
+    data = np.array(data)
+    # Iterate over each row (sample) in the array
+    for i in range(data.shape[0]):
+        # Compute the sum of non-NaN values in the row
+        total_per_sample = np.nansum(data[i])
+        if total_per_sample != 0:  # Avoid division by zero
+            # Normalize the row, ignoring NaNs
+            data[i] = np.divide(data[i], total_per_sample, where=~np.isnan(data[i]))
+        else:
+            data[i] =0
+    return data  
+
 def loadDisease_marker_Cirrhosis(inputF="../DiseasePrediction/marker_Cirrhosis.txt"):
     df=pd.read_csv(inputF,delimiter="\t", index_col=0, header=None).T
     lastLabelIndex=df.columns.get_loc("group")

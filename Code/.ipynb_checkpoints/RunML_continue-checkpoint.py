@@ -7,7 +7,7 @@ import seaborn as sns
 from sklearn import linear_model
 from sklearn.linear_model import RidgeClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OrdinalEncoder, LabelEncoder
+from sklearn.preprocessing import OrdinalEncoder, LabelEncoder, StandardScaler
 from imblearn.over_sampling import ADASYN
 from imblearn.combine import SMOTEENN
 from sklearn import preprocessing, __all__, svm
@@ -17,10 +17,51 @@ from sklearn.metrics import auc, roc_auc_score, roc_curve, accuracy_score, preci
 from sklearn.metrics import RocCurveDisplay, confusion_matrix, ConfusionMatrixDisplay
 from sklearn.model_selection import StratifiedKFold, cross_val_score, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
+import shap
 import time
+
 
 import RunML
 import metric
+
+
+
+def split_and_scale_data(features, labels, test_size=0.3, random_state=5):
+    X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=test_size, random_state=random_state)
+    X_train_scaled, X_test_scaled = standard_scale(X_train, X_test)
+
+    return X_train_scaled, X_test_scaled, y_train, y_test
+
+
+
+def perform_SMOTE(X, y, k_neighbors=5, random_state=1982):
+    sm = SMOTE(k_neighbors=k_neighbors, random_state=random_state)
+    X_sm, y_sm = sm.fit_resample(X, y)
+
+    return X_sm, y_sm
+
+
+
+
+
+
+
+
+def LassoFeatureSelection(X,y,alpha=0.05,tol=0.01):
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    
+    le = LabelEncoder()
+    y= le.fit_transform(y)
+    
+    clf = linear_model.Lasso(alpha=alpha)
+    clf.fit(X_scaled, y)
+
+    selected_features = np.where(clf.coef_ != 0)[0]
+    
+    X=X[:,selected_features]
+    return X,selected_features
+
 
 """
 def CFValidation_AUCstatistic(X,y,classifier = svm.SVC(kernel='linear', probability=True),k=5):# test this
@@ -136,6 +177,7 @@ def run_RF(X, y, k=5):
 """
 
 
+
 def cross_fold_validation(X, y, classifier_name, k=5):
 # this function  will use the  default classifier to do cross validarion
 # return the mean of accuracy and AUC of all folds. return the shuffled actual y, predicted y and predicted prob
@@ -162,8 +204,9 @@ def cross_fold_validation(X, y, classifier_name, k=5):
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
 
+        X_train_sm, y_train_sm = perform_SMOTE(X_train, y_train)
         # Train the model
-        clf.fit(X_train, y_train)
+        clf.fit(X_train_sm, y_train_sm)
 
         # Make predictions
         y_pred = clf.predict(X_test)
@@ -319,6 +362,7 @@ def runClassifier_FScompare(data_subsets,y,N,classifiers): # fine tune the class
 # y is the response variable
 # classifiers: [RF,SVM]
 # N is the times of replicates for random selection and lasso selection 
+# print the AUC  and accuracy, return the prediction results of cross validation 
     Nselection = data_subsets.get('SelectMicro').shape[1] # the number of features selection by the method
     results = {}#  results  to keep the acc and auc
     results_cm ={} # results  to keep the actual y and predicted y and predicted prob
@@ -436,100 +480,38 @@ def runClassifierCV_FScompare(data_subsets,y,N,classifiers): # fine tune the cla
             print("The feature selection type is not included")
 
 
+def  sharp_value(X,y,classifier_name):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-def confusion_matrix2(y_true, y_pred):
-    plt.figure(figsize = (18,8))
-    unique_labels = np.unique(y_true)
-    sns.heatmap(metrics.confusion_matrix(y_true, y_pred), annot = True,fmt='d',
-                annot_kws={"size": 18},xticklabels = unique_labels, yticklabels = unique_labels, cmap = 'summer')
-    plt.xlabel('Predicted Labels')
-    plt.ylabel('True Labels')
-    plt.xticks(fontsize=16)  # Change the size of x-tick labels
-    plt.yticks(fontsize=16)
-    plt.show()
+    X_train_sm, y_train_sm = perform_SMOTE(X_train, y_train)
 
-
-def plot_confusion_matrices(y, y_pred,title,pos_y=1):
-    accuracy = metric.accuracy(y, y_pred)
-    precision = precision_score(y, y_pred,pos_label=pos_y)
-    recall =recall_score(y, y_pred,pos_label=pos_y)
-    #f1 = f1_score(y, y_pred,pos_label=pos_y)
-    mcc = matthews_corrcoef(y, y_pred)
-
-    disp = ConfusionMatrixDisplay.from_predictions(
-        y_true=y,
-        y_pred=y_pred,
-        display_labels=sorted(set(y)),  # Use sorted set of labels to ensure consistency
-        cmap='Blues'
-    )
-    
-    # Add metrics below the confusion matrix
-    metrics_text = (f"Accuracy: {accuracy:.4f}\n"
-                    f"Precision: {precision:.4f}\n"
-                    f"Recall: {recall:.4f}\n"
-                    #f"F1: {f1:.4f}\n"
-                    f"Matthew’s correlation coefficient : {mcc:.4f}\n")
-    disp.ax_.text(0.5, -0.2, metrics_text, ha='center', va='top', fontsize=12, transform=disp.ax_.transAxes)
-
-    plt.tight_layout()  # Adjust layout to make room for the metrics
-    
-    disp.ax_.set_title(title)
-    plt.show()
+    if classifier_name == "RF":
+        clf = RandomForestClassifier(n_jobs=5,random_state=777)
+    elif classifier_name == "SVM":
+        clf = svm.SVC(kernel='linear', probability=True, random_state=777)
+    else:
+        raise ValueError('The classifier is not included')
 
     
-def plotmacro_confusion_matrices(y, y_pred,title):
-    accuracy = metric.accuracy(y, y_pred)
-    precision = metric.macro_precision(y, y_pred)
-    recall =metric.macro_recall(y, y_pred)
-    #f1 = metric.macro_f1(y, y_pred)
-    mcc = metric.mcc_score(y, y_pred)
-
-    disp = ConfusionMatrixDisplay.from_predictions(
-        y_true=y,
-        y_pred=y_pred,
-        display_labels=sorted(set(y)),  # Use sorted set of labels to ensure consistency
-        cmap='Blues'
-    )
+    # Train an  model
+    model = clf.fit(X_train_sm, y_train_sm)
     
-    # Add metrics below the confusion matrix
-    metrics_text = (f"Accuracy: {accuracy:.4f}\n"
-                    f"Precision: {precision:.4f}\n"
-                    f"Recall: {recall:.4f}\n"
-                    #f"F1: {f1:.4f}\n"
-                    f"Matthew’s correlation coefficient : {mcc:.4f}\n")
-    disp.ax_.text(0.5, -0.2, metrics_text, ha='center', va='top', fontsize=12, transform=disp.ax_.transAxes)
-
-    plt.tight_layout()  # Adjust layout to make room for the metrics
+    # Create a SHAP explainer
+    explainer = shap.Explainer(model, X_train_sm)
     
-    disp.ax_.set_title(title)
-    plt.show()
+    # Calculate SHAP values for the test data
+    shap_values = explainer(X_test)
+    shap_values_2d = shap_values[:, :, 0]
+    # Plot the summary plot
+    shap.summary_plot(shap_values_2d, X_test)
 
+    # Plot the waterfall plot for a single prediction
+    shap.waterfall_plot(shap_values_2d[0])
 
-def plotmicro_confusion_matrices(y, y_pred,title):
-    accuracy = metric.accuracy(y, y_pred)
-    precision = metric.micro_precision(y, y_pred)
-    recall =metric.micro_recall(y, y_pred)
-    #f1 = metric.micro_f1(y, y_pred)
-    mcc = metric.mcc_score(y, y_pred)
-
-    disp = ConfusionMatrixDisplay.from_predictions(
-        y_true=y,
-        y_pred=y_pred,
-        display_labels=sorted(set(y)),  # Use sorted set of labels to ensure consistency
-        cmap='Blues'
-    )
+    # Plot the dependence plot for a specific feature
+    # shap.dependence_plot("MedInc", shap_values, X_test)
     
-    # Add metrics below the confusion matrix
-    metrics_text = (f"Accuracy: {accuracy:.4f}\n"
-                    f"Precision: {precision:.4f}\n"
-                    f"Recall: {recall:.4f}\n"
-                    #f"F1: {f1:.4f}\n"
-                    f"Matthew’s correlation coefficient : {mcc:.4f}\n")
-    disp.ax_.text(0.5, -0.2, metrics_text, ha='center', va='top', fontsize=12, transform=disp.ax_.transAxes)
-
-    plt.tight_layout()  # Adjust layout to make room for the metrics
     
-    disp.ax_.set_title(title)
-    plt.show()
+
 
 

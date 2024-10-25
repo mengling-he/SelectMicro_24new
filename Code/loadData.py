@@ -2,6 +2,8 @@
 #This file loads different files and convert them into trainning/test matrix and labels (X, y), each function loads a different intput format
 import numpy as np
 import pandas as pd
+
+
 def loadDisease_marker_Cirrhosis(inputF="../DiseasePrediction/marker_Cirrhosis.txt"):
     df=pd.read_csv(inputF,delimiter="\t", index_col=0, header=None).T
     lastLabelIndex=df.columns.get_loc("group")

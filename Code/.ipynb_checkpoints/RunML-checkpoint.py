@@ -18,6 +18,8 @@ from sklearn import svm, datasets
 from sklearn.metrics import auc, roc_auc_score, roc_curve
 from sklearn.metrics import RocCurveDisplay
 from sklearn.model_selection import StratifiedKFold, cross_val_score
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import StandardScaler
 
 """This 2 functions is transfered to RunML_continue.py
 def CFValidation_AUCstatistic(X,y,classifier = svm.SVC(kernel='linear', probability=True),k=5):# test this
@@ -394,8 +396,8 @@ def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresh
     axes[0].set_xlabel("Presence Ratio in "+posText)
     axes[1].set_xlabel("Presences Ratio "+negText)
 
-    axes[0].set_xlim(0,0.4)
-    axes[1].set_xlim(0,0.4)
+    axes[0].set_xlim(0,0.5)
+    axes[1].set_xlim(0,0.5)
     axes[0].invert_xaxis()
 
     axes[0].set(yticks=y, yticklabels=[])
@@ -420,21 +422,52 @@ def listToRanks(lst):
 
 def normalizingMatrixToRanks(data,cutOff=0.01):
     data=np.array(data)
-    for i in range(np.shape(data)[0]):
-        for j in range(np.shape(data)[1]):
+    for i in range(np.shape(data)[0]):# for each sample
+        for j in range(np.shape(data)[1]):# for each feature
             if data[i][j]>=cutOff:
                 continue
             else:
                 data[i][j]=0
     for i in range(np.shape(data)[0]):
-        data[i]=listToRanks(data[i])
+        data[i]=listToRanks(data[i])# rank each sample's feature ascendinngly, bigger abundance feature will have a higher ranking
     return data
+
+
+def rank_with_cutoff(data, cutOff=0.01):# the function is a replacement of the 2 functions above
+    # Convert input to a numpy array
+    data = np.array(data)
     
-from sklearn.preprocessing import LabelEncoder
+    # Create a new array for the ranked data
+    ranked_data = np.zeros_like(data)  # Initialize with zeros
+
+    for i in range(data.shape[0]):
+        # Get the current row
+        row = data[i]
+        
+        sorted_indices = np.argsort(row)  
+
+        # Second argsort to get ranks
+        ranks = np.argsort(sorted_indices)
+        
+        # Create a mask for values above the cutoff
+        mask = row >= cutOff
+        
+        ranked_data[i][mask] = ranks[mask]  # Assign ranks to values above the cutoff
+        ranked_data[i][~mask] = 0  # Set ranks of values below the cutoff to 0
+
+    return ranked_data
+
+    
+'''
 def LassoFeatureSelection(X,y):
+    
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    
     le = LabelEncoder()
     y= le.fit_transform(y)
-    clf = linear_model.Lasso(alpha=0.1, tol=0.01)
+    
+    clf = linear_model.Lasso(alpha=0.01)
     clf.fit(X, y)
     coefficients = (clf.coef_)
     importance = np.abs(coefficients)
@@ -442,7 +475,7 @@ def LassoFeatureSelection(X,y):
     selectedOTU_index=list(np.where(selectedOTU_index_boolean))
     X=X[:,selectedOTU_index]
     return np.squeeze(X, axis=1)
-
+'''
 
 
 

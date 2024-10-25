@@ -326,46 +326,18 @@ def mcc_score(y_true, y_pred):
         tn = true_negative(temp_true, temp_pred)
         fp = false_positive(temp_true, temp_pred)
         fn = false_negative(temp_true, temp_pred)
+
+        # Calculate the denominator
+        denominator = np.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
+
+        # Check if the denominator is zero to avoid division by zero
+        if denominator == 0:
+            temp_mcc = np.nan  # or 0, depending on how you want to handle this case
+        else:
+            temp_mcc = ((tp * tn) - (fp * fn)) / denominator
         
-        
-        # compute precision for current class
-        temp_mcc = ((tp*tn)-(fp*fn))/np.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
-        # keep adding precision for all classes
         mcc += temp_mcc
         
-    # calculate and return average precision over all classes
-    mcc /= num_classes
-    
-    return mcc
-
-def mcc_score(y_true, y_pred):
-    # find the number of classes
-    num_classes = len(np.unique(y_true))
-
-    # initialize precision to 0
-    mcc = 0
-    
-    # loop over all classes
-    for class_ in list(np.unique(y_true)):
-        
-        # all classes except current are considered negative
-        temp_true = [1 if p == class_ else 0 for p in y_true]
-        temp_pred = [1 if p == class_ else 0 for p in y_pred]
-        
-        
-        # compute tp,tn,fp,fn for current class
-        tp = true_positive(temp_true, temp_pred)
-        tn = true_negative(temp_true, temp_pred)
-        fp = false_positive(temp_true, temp_pred)
-        fn = false_negative(temp_true, temp_pred)
-        
-        
-        # compute precision for current class
-        temp_mcc = ((tp*tn)-(fp*fn))/np.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
-        # keep adding precision for all classes
-        mcc += temp_mcc
-        
-    # calculate and return average precision over all classes
     mcc /= num_classes
     
     return mcc
@@ -387,6 +359,7 @@ def confusion_matrix2(y_true, y_pred):
 
 def plot_confusion_matrices(y, y_pred,title,pos_y=1):
     acc = accuracy(y, y_pred)
+    pos_y = list(np.unique(y))[0]
     precision = precision_score(y, y_pred,pos_label=pos_y)
     recall =recall_score(y, y_pred,pos_label=pos_y)
     #f1 = f1_score(y, y_pred,pos_label=pos_y)
@@ -467,5 +440,9 @@ def plotmicro_confusion_matrices(y, y_pred,title):
     
     disp.ax_.set_title(title)
     plt.show()
+
+
+
+
 
 
