@@ -326,46 +326,18 @@ def mcc_score(y_true, y_pred):
         tn = true_negative(temp_true, temp_pred)
         fp = false_positive(temp_true, temp_pred)
         fn = false_negative(temp_true, temp_pred)
+
+        # Calculate the denominator
+        denominator = np.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
+
+        # Check if the denominator is zero to avoid division by zero
+        if denominator == 0:
+            temp_mcc = np.nan  # or 0, depending on how you want to handle this case
+        else:
+            temp_mcc = ((tp * tn) - (fp * fn)) / denominator
         
-        
-        # compute precision for current class
-        temp_mcc = ((tp*tn)-(fp*fn))/np.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
-        # keep adding precision for all classes
         mcc += temp_mcc
         
-    # calculate and return average precision over all classes
-    mcc /= num_classes
-    
-    return mcc
-
-def mcc_score(y_true, y_pred):
-    # find the number of classes
-    num_classes = len(np.unique(y_true))
-
-    # initialize precision to 0
-    mcc = 0
-    
-    # loop over all classes
-    for class_ in list(np.unique(y_true)):
-        
-        # all classes except current are considered negative
-        temp_true = [1 if p == class_ else 0 for p in y_true]
-        temp_pred = [1 if p == class_ else 0 for p in y_pred]
-        
-        
-        # compute tp,tn,fp,fn for current class
-        tp = true_positive(temp_true, temp_pred)
-        tn = true_negative(temp_true, temp_pred)
-        fp = false_positive(temp_true, temp_pred)
-        fn = false_negative(temp_true, temp_pred)
-        
-        
-        # compute precision for current class
-        temp_mcc = ((tp*tn)-(fp*fn))/np.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
-        # keep adding precision for all classes
-        mcc += temp_mcc
-        
-    # calculate and return average precision over all classes
     mcc /= num_classes
     
     return mcc
@@ -387,6 +359,7 @@ def confusion_matrix2(y_true, y_pred):
 
 def plot_confusion_matrices(y, y_pred,title,pos_y=1):
     acc = accuracy(y, y_pred)
+    pos_y = list(np.unique(y))[0]
     precision = precision_score(y, y_pred,pos_label=pos_y)
     recall =recall_score(y, y_pred,pos_label=pos_y)
     #f1 = f1_score(y, y_pred,pos_label=pos_y)
@@ -467,5 +440,50 @@ def plotmicro_confusion_matrices(y, y_pred,title):
     
     disp.ax_.set_title(title)
     plt.show()
+
+
+def Neg_GINI_origin(X,y, cutOff=0.01):# for a single variable y, calculate the NG for all OTU
+    if not (len(X)==len(y)):
+        raise ValueError('ERROR! Length of OTU and label have difference length')
+    X = X.copy()
+    X[X<cutOff] =0
+    X[X>=cutOff] =1
+    X_transpose=np.transpose(X)
+    ng_List=[]
+    for OTU_across_sample in X_transpose:
+        df_ng = pd.DataFrame({'OTU': OTU_across_sample,'response': y})
+        total_ones = df_ng['OTU'].sum()
+        if total_ones==0:
+            ng_List.append(0)
+        else: 
+            ones_in_each_category = df_ng[df_ng['OTU'] == 1].groupby('response').size()
+            portion_in_each_category = ones_in_each_category/ones_in_each_category.sum()
+            portion_in_each_category = portion_in_each_category.tolist()
+            NG = sum([x**2 for x in portion_in_each_category])
+            ng_List.append(NG)
+    return np.array(ng_List)
+    
+    
+
+
+
+def Neg_GINI(X,Y, cutOff=0.01):#X is the relative abundance matrix(np.array), each row is a sample; y is the classification results
+    # if there is only one response, then y is a 1D array
+    # if there is multiple response variable, then y is a 2D array, each column is one variable
+    Y = np.asarray(Y)
+    if Y.ndim == 1:
+        result = Neg_GINI_origin(X,Y,cutOff)# a 1D array showing the H statistics for all the features
+        return result
+    elif Y.ndim ==2:# if
+        Y_transpose=np.transpose(Y)
+        NG_list = []
+        for yi in Y_transpose:
+            NG_one_class = Neg_GINI_origin(X,yi,cutOff)
+            NG_list.append(NG_one_class)
+        NG_combine = np.vstack(NG_list)
+        return NG_combine
+    else:
+        return "Error: The input Y must be a 1D or 2D array."
+    
 
 
