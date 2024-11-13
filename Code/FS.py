@@ -369,4 +369,22 @@ def Xarray_indice(X,h_scorelist):
     
 
 
-# test_main()
+# get the outliers of the NG
+# Calculate Q1, Q3, and IQR
+def outlier_array(x_arr,label):
+    if not (len(x_arr)==len(label)):
+        raise ValueError('ERROR! Length of the array and label have difference length')
+    Q1 = np.percentile(x_arr, 25)
+    Q3 = np.percentile(x_arr, 75)
+    IQR = Q3 - Q1
+
+    # Define outlier bounds
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    
+    # Get the indices of outliers
+    outlier_indices = np.where((x_arr < lower_bound) | (x_arr > upper_bound))[0]
+    return x_arr[outlier_indices],label[outlier_indices]
+    
+    
+   

@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 
 
 # Read the data back from the file
-with open('../Data/PMI/data_subset_4taxa_noenv.pkl', 'rb') as file:
+with open('../Data/PMI/data_subset_4taxa_noenv_label.pkl', 'rb') as file:
     data_subset_4taxa = pickle.load(file)
 
 

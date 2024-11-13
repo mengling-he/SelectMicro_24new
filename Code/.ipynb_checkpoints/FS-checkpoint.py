@@ -174,7 +174,7 @@ def OTU_H_Score0(x,y,cutOff):#This function's output is the same with that from 
     #pvalue = _get_pvalue(h, chi2, alternative='greater', symmetric=False, xp=np)
     return h
 '''
-def OTU_H_Score(x,y,cutOff=0.01):#x is a list of the relative OTU abundance for each sampele , y is the group for each sample
+def OTU_H_Score(x,y,cutOff=0.01):#x is the relative OTU abundance for each sampele , y is the group for each sample
     #output is the Hstatistics
     x = np.array(x)  # Ensure x is a NumPy array
     x = x.copy()  # Create a copy of x to prevent modification
@@ -229,7 +229,7 @@ def OTU_H_Score_arr(X,y,cutOff=0.01): #X is the relative abundance matrix(np.arr
 def OTU_H_Score_fun(X,Y,cutOff=0.01):#X is the relative abundance matrix(np.array), each row is a sample; y is the classification results
     # if there is only one response, then y is a 1D array
     # if there is multiple response variable, then y is a 2D array, each column is one variable
-    X_transpose=np.transpose(X)
+    #X_transpose=np.transpose(X)
     Y = np.asarray(Y)
     if Y.ndim == 1:
         result = OTU_H_Score_arr(X,Y,cutOff)# a 1D array showing the H statistics for all the features
@@ -245,10 +245,7 @@ def OTU_H_Score_fun(X,Y,cutOff=0.01):#X is the relative abundance matrix(np.arra
     else:
         return "Error: The input Y must be a 1D or 2D array."
 
-    
-            
-
-
+   
 
 
 
@@ -284,7 +281,28 @@ def indice_H_multisig(scorelist,Y,p_cutoff = 0.1):# scorelist is the H statistic
     selected_indices = sorted(indices_above_cutoff, key=lambda col: np.sum(scorelist[:, col]), reverse=True)
     
     return selected_indices,len(selected_indices)
+
+
+
+ 
+# this function will plot the H score
+def plot_Hscore(scorelist,Y,p_cutoff = 0.1):
     
+    Y = np.asarray(Y)
+    if scorelist.shape[0] != Y.shape[1]:
+        raise ValueError("The number of rows in the score must match the columns of the response array.")
+    
+    unique_groups = [np.unique(Y[:, col]).size for col in range(Y.shape[1])]#a list
+    df = [g - 1 for g in unique_groups]
+    
+    h_cutoff = np.array([stats.chi2.ppf(1 - p_cutoff, df_i) for df_i in df])# an array
+    indices_above_cutoff = np.where(np.any(scorelist > h_cutoff[:, None], axis=0))[0]
+    
+    selected_indices = sorted(indices_above_cutoff, key=lambda col: np.sum(scorelist[:, col]), reverse=True)
+    
+    return selected_indices,len(selected_indices)
+
+
 """
 # 3. get the number of features to keep based on elbow point
 # refer to function elbowPoint,plotWeightedIndex
@@ -351,4 +369,22 @@ def Xarray_indice(X,h_scorelist):
     
 
 
-# test_main()
+# get the outliers of the NG
+# Calculate Q1, Q3, and IQR
+def outlier_array(x_arr,label):
+    if not (len(x_arr)==len(label)):
+        raise ValueError('ERROR! Length of the array and label have difference length')
+    Q1 = np.percentile(x_arr, 25)
+    Q3 = np.percentile(x_arr, 75)
+    IQR = Q3 - Q1
+
+    # Define outlier bounds
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    
+    # Get the indices of outliers
+    outlier_indices = np.where((x_arr < lower_bound) | (x_arr > upper_bound))[0]
+    return x_arr[outlier_indices],label[outlier_indices]
+    
+    
+   
