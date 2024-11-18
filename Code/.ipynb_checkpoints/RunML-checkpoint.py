@@ -359,9 +359,12 @@ def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresh
 
     presenceCntPos = []
     presenceCntNeg = []
-    X=X.T
+    
+    X_relative = FS.relative_abundance(df)
+    
+    X_relative = X_relative.T
     if abundanceCutoff==0:
-        flatten_list = list(chain.from_iterable(X))
+        flatten_list = list(chain.from_iterable(X_relative))
         flatten_list_sorted=sorted(flatten_list)
         abundanceCutoff=flatten_list[int(len(flatten_list_sorted)*float(threshold))]
 
@@ -369,8 +372,8 @@ def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresh
         posText=posLabel
         negText="Not "+posLabel
 
-    for k in range(len(X)):## for each OTU
-        OTUs = X[k]## the samples for this OTU
+    for k in range(len(X_relative)):## for each OTU
+        OTUs = X_relative[k]## the samples for this OTU
         pos = 0
         neg = 0
         for i in range(len(OTUs)):
@@ -382,9 +385,11 @@ def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresh
                     neg += 1
         presenceCntPos.append(pos)# len= # of samples; each value is the number of OTUs that exceed the abundanceCutoff for Pos/Neg
         presenceCntNeg.append(neg)
+        
     all_pos_label_cnt=list(label).count(posLabel)
     all_neg_label_cnt=len(label)-all_pos_label_cnt
     print(all_pos_label_cnt,all_neg_label_cnt)# these 3  lines can use  value_count
+    
     presenceRatioPos=[float(x)/all_pos_label_cnt for x in presenceCntPos]# each element is for each OTU; shows the ratio of abundanced pos samples over all pos sample 
     presenceRatioNeg=[float(x)/all_neg_label_cnt for x in presenceCntNeg]
 
@@ -396,9 +401,9 @@ def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresh
     axes[0].set_xlabel("Presence Ratio in "+posText)
     axes[1].set_xlabel("Presences Ratio "+negText)
 
-    axes[0].set_xlim(0,0.5)
-    axes[1].set_xlim(0,0.5)
-    axes[0].invert_xaxis()
+    axes[0].set_xlim(0,1.2)
+    axes[1].set_xlim(0,1.2)
+    axes[0].invert_xaxis()# Invert the x-axis of the first subplot
 
     axes[0].set(yticks=y, yticklabels=[])
     for yloc, selectedASVs in zip(y, featurenames):

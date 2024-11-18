@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 
 
 # Read the data back from the file
-with open('../Data/PMI/data_subset_4taxa_noenv_label.pkl', 'rb') as file:
+with open('../Data/PMI/subset_bact_4taxa_noenv.pkl', 'rb') as file:
     data_subset_4taxa = pickle.load(file)
 
 
@@ -36,7 +36,7 @@ with open('../Data/PMI/data_subset_4taxa_noenv_label.pkl', 'rb') as file:
 
 # read the response variable
     
-df_sample= pd.read_csv('../Data/PMI/bact.ITS.n.otu.noenv.csv') 
+df_sample= pd.read_csv('../Data/PMI/bact.n.otu.noenv.csv') 
 y = df_sample.iloc[:, 0].values 
 # Define the threshold
 y_threshold = 2500
@@ -46,7 +46,7 @@ y = np.where(y > y_threshold, 'LONG', 'SHORT')
     
 
 # model
-iter =30
+iter =100
 cls = ["RF","SVM"]
 targetLabel = y
 
@@ -58,7 +58,7 @@ for i , dataset  in enumerate(data_subset_4taxa):
     dict_cm_list.append(dict_cm)
     
 # Save dictionary to a pickle file
-with open('../results/PMI_cm_list_noenv.pkl', 'wb') as pickle_file:
+with open('../results/PMI_bact_prediction.pkl', 'wb') as pickle_file:
     pickle.dump(dict_cm_list, pickle_file)
 
     

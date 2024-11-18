@@ -361,7 +361,7 @@ def runClassifier_FScompare(data_subsets,y,N,classifiers): # fine tune the class
 # the first input is a dictionary of the 4 dataset with different feature selection method and respect dataset
 # y is the response variable
 # classifiers: [RF,SVM]
-# N is the times of replicates for random selection and lasso selection 
+# N is the times of replicates for random selection
 # print the AUC  and accuracy, return the prediction results of cross validation 
     Nselection = data_subsets.get('SelectMicro').shape[1] # the number of features selection by the method
     results = {}#  results  to keep the acc and auc
@@ -511,7 +511,67 @@ def  sharp_value(X,y,classifier_name):
     # Plot the dependence plot for a specific feature
     # shap.dependence_plot("MedInc", shap_values, X_test)
     
+
+
+
+def plotAvarageAbundance(X,label,featurenames,posLabel,posText="",negText="",thresholdPercent=0.90,abundanceCutoff=0.01,entries=15):
+    import matplotlib as mpl
+    mpl.rcParams['figure.dpi'] = 300
+
+    presenceCntPos = []
+    presenceCntNeg = []
     
+    X_relative = FS.relative_abundance(df)
+    
+    X_relative = X_relative.T
+    if abundanceCutoff==0:
+        flatten_list = list(chain.from_iterable(X_relative))
+        flatten_list_sorted=sorted(flatten_list)
+        abundanceCutoff=flatten_list[int(len(flatten_list_sorted)*float(threshold))]
+
+    if posText=="" or negText=="":
+        posText=posLabel
+        negText="Not "+posLabel
+
+    for k in range(len(X_relative)):## for each OTU
+        OTUs = X_relative[k]## the samples for this OTU
+        pos = 0
+        neg = 0
+        for i in range(len(OTUs)):
+            if label[i] == posLabel:
+                if OTUs[i] > abundanceCutoff:# if the value of OTU exceed the abundanceCutoff
+                    pos += 1
+            else:
+                if OTUs[i] > abundanceCutoff:
+                    neg += 1
+        presenceCntPos.append(pos)# len= # of samples; each value is the number of OTUs that exceed the abundanceCutoff for Pos/Neg
+        presenceCntNeg.append(neg)
+        
+    all_pos_label_cnt=list(label).count(posLabel)
+    all_neg_label_cnt=len(label)-all_pos_label_cnt
+    print(all_pos_label_cnt,all_neg_label_cnt)# these 3  lines can use  value_count
+    
+    presenceRatioPos=[float(x)/all_pos_label_cnt for x in presenceCntPos]# each element is for each OTU; shows the ratio of abundanced pos samples over all pos sample 
+    presenceRatioNeg=[float(x)/all_neg_label_cnt for x in presenceCntNeg]
+
+    import matplotlib.pyplot as plt
+    y = range(entries)
+    fig, axes = plt.subplots(ncols=2, sharey=True)
+    axes[0].barh(y, presenceRatioPos, align='center', color='#ff7f00')
+    axes[1].barh(y, presenceRatioNeg, align='center', color='#377eb8')
+    axes[0].set_xlabel("Presence Ratio in "+posText)
+    axes[1].set_xlabel("Presences Ratio "+negText)
+
+    axes[0].set_xlim(0,1.2)
+    axes[1].set_xlim(0,1.2)
+    axes[0].invert_xaxis()# Invert the x-axis of the first subplot
+
+    axes[0].set(yticks=y, yticklabels=[])
+    for yloc, selectedASVs in zip(y, featurenames):
+        axes[0].annotate(selectedASVs, (0.5, yloc), xycoords=('figure fraction', 'data'),
+                         ha='center', va='center', fontsize=9)
+    fig.tight_layout(pad=2.0)
+    plt.show()
 
 
 

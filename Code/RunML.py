@@ -353,59 +353,7 @@ def plotBinaryHeapmap(df,ASVs):
     ax.imshow(df.T, interpolation='none', cmap=cmap, norm=norm)
 
 
-def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresholdPercent=0.90,abundanceCutoff=0.01,entries=15):
-    import matplotlib as mpl
-    mpl.rcParams['figure.dpi'] = 300
 
-    presenceCntPos = []
-    presenceCntNeg = []
-    X=X.T
-    if abundanceCutoff==0:
-        flatten_list = list(chain.from_iterable(X))
-        flatten_list_sorted=sorted(flatten_list)
-        abundanceCutoff=flatten_list[int(len(flatten_list_sorted)*float(threshold))]
-
-    if posText=="" or negText=="":
-        posText=posLabel
-        negText="Not "+posLabel
-
-    for k in range(len(X)):## for each OTU
-        OTUs = X[k]## the samples for this OTU
-        pos = 0
-        neg = 0
-        for i in range(len(OTUs)):
-            if label[i] == posLabel:
-                if OTUs[i] > abundanceCutoff:# if the value of OTU exceed the abundanceCutoff
-                    pos += 1
-            else:
-                if OTUs[i] > abundanceCutoff:
-                    neg += 1
-        presenceCntPos.append(pos)# len= # of samples; each value is the number of OTUs that exceed the abundanceCutoff for Pos/Neg
-        presenceCntNeg.append(neg)
-    all_pos_label_cnt=list(label).count(posLabel)
-    all_neg_label_cnt=len(label)-all_pos_label_cnt
-    print(all_pos_label_cnt,all_neg_label_cnt)# these 3  lines can use  value_count
-    presenceRatioPos=[float(x)/all_pos_label_cnt for x in presenceCntPos]# each element is for each OTU; shows the ratio of abundanced pos samples over all pos sample 
-    presenceRatioNeg=[float(x)/all_neg_label_cnt for x in presenceCntNeg]
-
-    import matplotlib.pyplot as plt
-    y = range(entries)
-    fig, axes = plt.subplots(ncols=2, sharey=True)
-    axes[0].barh(y, presenceRatioPos, align='center', color='#ff7f00')
-    axes[1].barh(y, presenceRatioNeg, align='center', color='#377eb8')
-    axes[0].set_xlabel("Presence Ratio in "+posText)
-    axes[1].set_xlabel("Presences Ratio "+negText)
-
-    axes[0].set_xlim(0,0.5)
-    axes[1].set_xlim(0,0.5)
-    axes[0].invert_xaxis()
-
-    axes[0].set(yticks=y, yticklabels=[])
-    for yloc, selectedASVs in zip(y, featurenames):
-        axes[0].annotate(selectedASVs, (0.5, yloc), xycoords=('figure fraction', 'data'),
-                         ha='center', va='center', fontsize=9)
-    fig.tight_layout(pad=2.0)
-    plt.show()
 
 def normalizingMatrix(data,cutOff=0.01):
     data=np.array(data)
