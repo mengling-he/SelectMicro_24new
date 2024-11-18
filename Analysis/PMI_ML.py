@@ -46,7 +46,7 @@ y = np.where(y > y_threshold, 'LONG', 'SHORT')
     
 
 # model
-iter =100
+iter =30
 cls = ["RF","SVM"]
 targetLabel = y
 
