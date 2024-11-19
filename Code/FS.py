@@ -380,11 +380,9 @@ def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresh
     presenceCntPos = []
     presenceCntNeg = []
     
-    X_relative = relative_abundance(X)
-    
-    X_relative = X_relative.T
+    X = X.T
     if abundanceCutoff==0:
-        flatten_list = list(chain.from_iterable(X_relative))
+        flatten_list = list(chain.from_iterable(X))
         flatten_list_sorted=sorted(flatten_list)
         abundanceCutoff=flatten_list[int(len(flatten_list_sorted)*float(threshold))]
 
@@ -392,8 +390,8 @@ def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresh
         posText=posLabel
         negText="Not "+posLabel
 
-    for k in range(len(X_relative)):## for each OTU
-        OTUs = X_relative[k]## the samples for this OTU
+    for k in range(len(X)):## for each OTU
+        OTUs = X[k]## the samples for this OTU
         pos = 0
         neg = 0
         for i in range(len(OTUs)):
@@ -416,10 +414,19 @@ def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresh
     import matplotlib.pyplot as plt
     y = range(entries)
     fig, axes = plt.subplots(ncols=2, sharey=True)
-    axes[0].barh(y, presenceRatioPos, align='center', color='#ff7f00')
-    axes[1].barh(y, presenceRatioNeg, align='center', color='#377eb8')
+    bars_pos = axes[0].barh(y, presenceRatioPos, align='center', color='#ff7f00')
+    bars_neg =axes[1].barh(y, presenceRatioNeg, align='center', color='#377eb8')
     axes[0].set_xlabel("Presence Ratio in "+posText)
     axes[1].set_xlabel("Presences Ratio "+negText)
+
+    # Annotate each bar in the first subplot
+    for i, bar in enumerate(bars_pos):
+        axes[0].text(presenceRatioPos[i], bar.get_y() + bar.get_height() / 2, f'{presenceRatioPos[i]:.2f}', va='center', ha='left')
+
+    # Annotate each bar in the second subplot
+    for i, bar in enumerate(bars_neg):
+        axes[1].text(presenceRatioNeg[i], bar.get_y() + bar.get_height() / 2, f'{presenceRatioNeg[i]:.2f}', va='center', ha='left')
+
 
     axes[0].set_xlim(0,1.2)
     axes[1].set_xlim(0,1.2)
@@ -441,7 +448,7 @@ def plotAvarageAbundance(X,label,featurenames,posLabel,posText="",negText="",thr
     presenceCntPos = []
     presenceCntNeg = []
     
-    X_relative = FS.relative_abundance(X)
+    X_relative = relative_abundance(X)
     
     X_relative = X_relative.T
     if abundanceCutoff==0:
