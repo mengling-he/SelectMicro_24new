@@ -5,7 +5,7 @@
 #SBATCH -A ACF-UTK0011
 #SBATCH -p short
 #SBATCH -q short
-#SBATCH --output=results/PMI_default_%j.out   # Output file (%j will be replaced by the job ID)
+#SBATCH --output=../results/PMI_default_%j.out   # Output file (%j will be replaced by the job ID)
 #SBATCH -t 02:00:00
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=mhe8@vols.utk.edu
@@ -13,4 +13,4 @@
 
 module load Python
 source /lustre/isaac/scratch/mhe8/myenv/bin/activate
-python PMI_ML_default.py
+python PMI_ML_update.py

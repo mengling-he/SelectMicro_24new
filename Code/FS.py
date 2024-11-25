@@ -119,7 +119,7 @@ def test_main():
 # new FS pipeline-------------
 
 # 1. Relative abundance matrix
-def relative_abundance(data):# if the input is the original abundance matrix, will convert it into relative abundance matrix; for missing values will return to 0
+def relative_abundance(data,cutOff=0.01):# if the input is the original abundance matrix, will convert it into relative abundance matrix; for missing values will return to 0
     # Convert input to a numpy array
     data = np.array(data) 
     # Iterate over each row (sample) in the array
@@ -128,7 +128,8 @@ def relative_abundance(data):# if the input is the original abundance matrix, wi
         print("All rows have zero total.")  # Check for zero totals
 
     data_new = np.divide(data, total_per_sample, where=(total_per_sample != 0))  # Normalize
-    return np.nan_to_num(data_new)  # Replace NaNs with 0
+    data_new[data_new<cutOff] =0
+    return np.nan_to_num(data_new)  
 
 
 
@@ -174,13 +175,12 @@ def OTU_H_Score0(x,y,cutOff):#This function's output is the same with that from 
     #pvalue = _get_pvalue(h, chi2, alternative='greater', symmetric=False, xp=np)
     return h
 '''
-def OTU_H_Score(x,y,cutOff=0.01):#x is the relative OTU abundance for each sampele , y is the group for each sample
+def OTU_H_Score(x,y):#x is the relative OTU abundance for each sampele , y is the group for each sample
     #output is the Hstatistics
     x = np.array(x)  # Ensure x is a NumPy array
     x = x.copy()  # Create a copy of x to prevent modification
     if not (len(x)==len(y)):
         raise ValueError('ERROR! Length of OTU and label have difference length')
-    x[x<cutOff] =0 # this will put  it at the lowest ranking
     unique_groups = np.unique(y)
     samples = [x[np.array(y) == group] for group in unique_groups]
     num_groups = len(unique_groups)# df = num_groups-1
@@ -216,29 +216,29 @@ def OTU_H_Score(x,y,cutOff=0.01):#x is the relative OTU abundance for each sampe
 
 
 
-def OTU_H_Score_arr(X,y,cutOff=0.01): #X is the relative abundance matrix(np.array), each row is a sample; y is the classification
+def OTU_H_Score_arr(X,y): #X is the relative abundance matrix(np.array), each row is a sample; y is the classification
     X_transpose=np.transpose(X)
     score_List=[]
     for OTU_across_sample in X_transpose:
-        h_score=OTU_H_Score(OTU_across_sample,y,cutOff)
+        h_score=OTU_H_Score(OTU_across_sample,y)
         score_List.append(h_score)
     return np.array(score_List)
 
 
 # this is the function to use
-def OTU_H_Score_fun(X,Y,cutOff=0.01):#X is the relative abundance matrix(np.array), each row is a sample; y is the classification results
+def OTU_H_Score_fun(X,Y):#X is the relative abundance matrix(np.array), each row is a sample; y is the classification results
     # if there is only one response, then y is a 1D array
     # if there is multiple response variable, then y is a 2D array, each column is one variable
     #X_transpose=np.transpose(X)
     Y = np.asarray(Y)
     if Y.ndim == 1:
-        result = OTU_H_Score_arr(X,Y,cutOff)# a 1D array showing the H statistics for all the features
+        result = OTU_H_Score_arr(X,Y)# a 1D array showing the H statistics for all the features
         return result
     elif Y.ndim ==2:# if
         Y_transpose=np.transpose(Y)
         H_list = []
         for yi in Y_transpose:
-            h_one_class = OTU_H_Score_arr(X,yi,cutOff)
+            h_one_class = OTU_H_Score_arr(X,yi)
             H_list.append(h_one_class)
         H_combine = np.vstack(H_list)
         return H_combine
@@ -421,11 +421,11 @@ def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresh
 
     # Annotate each bar in the first subplot
     for i, bar in enumerate(bars_pos):
-        axes[0].text(presenceRatioPos[i], bar.get_y() + bar.get_height() / 2, f'{presenceRatioPos[i]:.2f}', va='center', ha='left')
+        axes[0].text(presenceRatioPos[i], bar.get_y() + bar.get_height() / 2, f'{presenceRatioPos[i]:.2f}', va='center', ha='right',fontsize=6)
 
     # Annotate each bar in the second subplot
     for i, bar in enumerate(bars_neg):
-        axes[1].text(presenceRatioNeg[i], bar.get_y() + bar.get_height() / 2, f'{presenceRatioNeg[i]:.2f}', va='center', ha='left')
+        axes[1].text(presenceRatioNeg[i], bar.get_y() + bar.get_height() / 2, f'{presenceRatioNeg[i]:.2f}', va='center', ha='left',fontsize=6)
 
 
     axes[0].set_xlim(0,1.2)
@@ -434,10 +434,11 @@ def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresh
 
     axes[0].set(yticks=y, yticklabels=[])
     for yloc, selectedASVs in zip(y, featurenames):
-        axes[0].annotate(selectedASVs, (0.5, yloc), xycoords=('figure fraction', 'data'),
-                         ha='center', va='center', fontsize=9)
+        axes[0].annotate(selectedASVs, (0.485, yloc), xycoords=('figure fraction', 'data'),
+                         ha='center', va='center', fontsize=6)
     fig.tight_layout(pad=2.0)
     plt.show()
+
 
 
 
@@ -448,9 +449,7 @@ def plotAvarageAbundance(X,label,featurenames,posLabel,posText="",negText="",thr
     presenceCntPos = []
     presenceCntNeg = []
     
-    X_relative = relative_abundance(X)
-    
-    X_relative = X_relative.T
+    X = X.T
     if abundanceCutoff==0:
         flatten_list = list(chain.from_iterable(X_relative))
         flatten_list_sorted=sorted(flatten_list)
@@ -460,24 +459,14 @@ def plotAvarageAbundance(X,label,featurenames,posLabel,posText="",negText="",thr
         posText=posLabel
         negText="Not "+posLabel
 
-    for k in range(len(X_relative)):## for each OTU
-        OTUs = X_relative[k]## the samples for this OTU
-        pos = 0
-        neg = 0
-        for i in range(len(OTUs)):
-            if label[i] == posLabel:
-                if OTUs[i] > abundanceCutoff:# if the value of OTU exceed the abundanceCutoff
-                    pos += 1
-            else:
-                if OTUs[i] > abundanceCutoff:
-                    neg += 1
+    unique_label = np.unique(label)
+
+    for k in range(len(X)):## for each OTU
+        label_mean = {cat:X[k][label == cat].mean() for cat in unique_label}
+
         presenceCntPos.append(pos)# len= # of samples; each value is the number of OTUs that exceed the abundanceCutoff for Pos/Neg
         presenceCntNeg.append(neg)
-        
-    all_pos_label_cnt=list(label).count(posLabel)
-    all_neg_label_cnt=len(label)-all_pos_label_cnt
-    print(all_pos_label_cnt,all_neg_label_cnt)# these 3  lines can use  value_count
-    
+           
     AvarageAbundanceDiffPos=[float(x)/all_pos_label_cnt for x in presenceCntPos]# each element is for each OTU; shows the ratio of abundanced pos samples over all pos sample 
     AvarageAbundanceDiffNeg=[float(x)/all_neg_label_cnt for x in presenceCntNeg]
 
@@ -488,7 +477,14 @@ def plotAvarageAbundance(X,label,featurenames,posLabel,posText="",negText="",thr
     axes[1].barh(y, presenceRatioNeg, align='center', color='#377eb8')
     axes[0].set_xlabel("Presence Ratio in "+posText)
     axes[1].set_xlabel("Presences Ratio "+negText)
+    # Annotate each bar in the first subplot
+    for i, bar in enumerate(bars_pos):
+        axes[0].text(presenceRatioPos[i], bar.get_y() + bar.get_height() / 2, f'{presenceRatioPos[i]:.2f}', va='center', ha='right',fontsize=6)
 
+    # Annotate each bar in the second subplot
+    for i, bar in enumerate(bars_neg):
+        axes[1].text(presenceRatioNeg[i], bar.get_y() + bar.get_height() / 2, f'{presenceRatioNeg[i]:.2f}', va='center', ha='left',fontsize=6)
+        
     axes[0].set_xlim(0,1.2)
     axes[1].set_xlim(0,1.2)
     axes[0].invert_xaxis()# Invert the x-axis of the first subplot
@@ -496,7 +492,7 @@ def plotAvarageAbundance(X,label,featurenames,posLabel,posText="",negText="",thr
     axes[0].set(yticks=y, yticklabels=[])
     for yloc, selectedASVs in zip(y, featurenames):
         axes[0].annotate(selectedASVs, (0.5, yloc), xycoords=('figure fraction', 'data'),
-                         ha='center', va='center', fontsize=9)
+                         ha='center', va='center', fontsize=6)
     fig.tight_layout(pad=2.0)
     plt.show()
 

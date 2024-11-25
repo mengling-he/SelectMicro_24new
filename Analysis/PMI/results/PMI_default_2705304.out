@@ -1,0 +1,24 @@
+Analysis for OTU
+             RF_Accuracy    RF_AUC  SVM_Accuracy   SVM_AUC
+AllFeatures     0.758333  0.840873      0.576667  0.178968
+SelectMicro     0.848333  0.894048      0.576667  0.153571
+Lasso           0.899167  0.963492      0.576667  0.069048
+Random          0.736417  0.803029      0.580306  0.256005
+Analysis for class
+             RF_Accuracy    RF_AUC  SVM_Accuracy   SVM_AUC
+AllFeatures     0.798333  0.880952      0.655000  0.188889
+SelectMicro     0.848333  0.897619      0.680000  0.180556
+Lasso           0.847500  0.914484      0.680833  0.084921
+Random          0.796083  0.857864      0.637500  0.220946
+Analysis for order
+             RF_Accuracy    RF_AUC  SVM_Accuracy   SVM_AUC
+AllFeatures     0.809167  0.829365      0.693333  0.189286
+SelectMicro     0.810000  0.851190      0.680000  0.152778
+Lasso           0.874167  0.923810      0.706667  0.128968
+Random          0.778472  0.827434      0.642194  0.223803
+Analysis for phylum
+             RF_Accuracy    RF_AUC  SVM_Accuracy   SVM_AUC
+AllFeatures     0.759167  0.814683      0.694167  0.271429
+SelectMicro     0.784167  0.831151      0.680833  0.272024
+Lasso           0.785000  0.842857      0.706667  0.270635
+Random          0.741556  0.813538      0.644583  0.252837
