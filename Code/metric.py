@@ -442,12 +442,11 @@ def plotmicro_confusion_matrices(y, y_pred,title):
     plt.show()
 
 
-def Neg_GINI_origin(X,y, cutOff=0.01):# for a single variable y, calculate the NG for all OTU
+def Neg_GINI_origin(X,y):# for a single variable y, calculate the NG for all OTU
     if not (len(X)==len(y)):
         raise ValueError('ERROR! Length of OTU and label have difference length')
     X = X.copy()
-    X[X<cutOff] =0
-    X[X>=cutOff] =1
+    X = np.where(X != 0, 1, 0)
     X_transpose=np.transpose(X)
     ng_List=[]
     for OTU_across_sample in X_transpose:
@@ -467,18 +466,18 @@ def Neg_GINI_origin(X,y, cutOff=0.01):# for a single variable y, calculate the N
 
 
 
-def Neg_GINI(X,Y, cutOff=0.01):#X is the relative abundance matrix(np.array), each row is a sample; y is the classification results
+def Neg_GINI(X,Y):#X is the relative abundance matrix(np.array), each row is a sample; y is the classification results
     # if there is only one response, then y is a 1D array
     # if there is multiple response variable, then y is a 2D array, each column is one variable
     Y = np.asarray(Y)
     if Y.ndim == 1:
-        result = Neg_GINI_origin(X,Y,cutOff)# a 1D array showing the H statistics for all the features
+        result = Neg_GINI_origin(X,Y)# a 1D array showing the H statistics for all the features
         return result
     elif Y.ndim ==2:# if
         Y_transpose=np.transpose(Y)
         NG_list = []
         for yi in Y_transpose:
-            NG_one_class = Neg_GINI_origin(X,yi,cutOff)
+            NG_one_class = Neg_GINI_origin(X,yi)
             NG_list.append(NG_one_class)
         NG_combine = np.vstack(NG_list)
         return NG_combine

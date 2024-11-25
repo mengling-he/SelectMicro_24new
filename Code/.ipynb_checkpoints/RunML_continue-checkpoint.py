@@ -361,9 +361,12 @@ def runClassifier_FScompare(data_subsets,y,N,classifiers): # fine tune the class
 # the first input is a dictionary of the 4 dataset with different feature selection method and respect dataset
 # y is the response variable
 # classifiers: [RF,SVM]
-# N is the times of replicates for random selection and lasso selection 
+# N is the times of replicates for random selection
 # print the AUC  and accuracy, return the prediction results of cross validation 
-    Nselection = data_subsets.get('SelectMicro').shape[1] # the number of features selection by the method
+    if 'SelectMicro' in data_subsets and data_subsets['SelectMicro'] is not None:
+        Nselection = data_subsets['SelectMicro'].shape[1]  # the number of features selected by the method
+    else:
+        Nselection = 0
     results = {}#  results  to keep the acc and auc
     results_cm ={} # results  to keep the actual y and predicted y and predicted prob
     for datatype, subset in data_subsets.items():
@@ -511,7 +514,10 @@ def  sharp_value(X,y,classifier_name):
     # Plot the dependence plot for a specific feature
     # shap.dependence_plot("MedInc", shap_values, X_test)
     
-    
+
+
+
+
 
 
 
