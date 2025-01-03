@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 
 
 # Read the data back from the file
-with open('../data/subset_bact_4taxa_noenv_update.pkl', 'rb') as file:
+with open('../data/data_subset_4taxa_noenv_label_ft.pkl', 'rb') as file:
     data_subset_4taxa = pickle.load(file)
 
 
@@ -58,7 +58,7 @@ for i , dataset  in enumerate(data_subset_4taxa):
     dict_cm_list.append(dict_cm)
     
 # Save dictionary to a pickle file
-with open('../results/PMI_bact_prediction.pkl', 'wb') as pickle_file:
+with open('../results/PMI_bact_prediction_ft.pkl', 'wb') as pickle_file:
     pickle.dump(dict_cm_list, pickle_file)
 
     

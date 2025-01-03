@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH -J PMI_ML_noenv
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=48
+#SBATCH -A ACF-UTK0011
+#SBATCH -p short
+#SBATCH -q short
+#SBATCH --output=../results/rf_finetune2data_%j.out   # Output file (%j will be replaced by the job ID)
+#SBATCH -t 02:00:00
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=mhe8@vols.utk.edu
+
+
+module load Python
+source /lustre/isaac/scratch/mhe8/myenv/bin/activate
+python smoky_rf_finetunemodel.py

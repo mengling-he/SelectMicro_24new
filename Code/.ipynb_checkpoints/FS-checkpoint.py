@@ -8,113 +8,6 @@ sys.path.append('./Code')
 import loadData
 import pandas as pd
 from scipy import stats
-'''
-def binarizeSampleDataByLabel(OTU_acrossSample,y):
-    if not (len(set(y))==2):
-        print("ERROR! Getting Non Binary Label Class!!",len(set(y)),set(y))
-        return
-    elif not (len(OTU_acrossSample)==len(y)):
-        print("ERROR! Length of OTU and label have difference length")
-        return
-    else:
-        posList = []
-        negList = []
-        negLabel=""
-        if "no" in str(list(set(y))[0]).lower():
-            negLabel=list(set(y))[0]
-        else:
-            negLabel = list(set(y))[1]
-        for i in range(len(y)):
-            if y[i]==negLabel:
-                negList.append(OTU_acrossSample[i])
-            else:
-                posList.append(OTU_acrossSample[i])
-        #print("negative label is ",negLabel)
-        return posList,negList
-
-def multiLabelFeatureWeighting(X,yList):
-    # print(np.shape(X))
-    from scipy import stats
-    y_info_index_List=[]
-    X_transpose=np.transpose(X)
-    weighted_OTU_h_index_List_sum=[0]*(np.shape(X)[1])
-    for y in yList:
-        OTU_h_score_List=[]
-        for OTU_across_sample in X_transpose:
-            posList,negList=binarizeSampleDataByLabel(OTU_across_sample,y)
-            try:
-                OTU_h_score=stats.kruskal(posList,negList)[0]
-            except:
-                OTU_h_score=0
-            OTU_h_score_List.append(OTU_h_score)
-        y_info_index=sum(OTU_h_score_List)
-        y_info_index_List.append(y_info_index)
-        # print(y_info_index_List
-        weighted_OTU_h_index_List=[ i*y_info_index for i in  OTU_h_score_List]
-        weighted_OTU_h_index_List_sum=[x+y for (x,y) in zip(weighted_OTU_h_index_List,weighted_OTU_h_index_List_sum)]
-    return (weighted_OTU_h_index_List_sum)
-
-def singleLabelFeatureWeighting(X,y):
-    from scipy import stats
-    X_transpose=np.transpose(X)
-    weighted_OTU_h_index_List_sum=[0]*(np.shape(X)[1])
-    OTU_h_score_List=[]
-    for OTU_across_sample in X_transpose:
-        posList,negList=binarizeSampleDataByLabel(OTU_across_sample,y)
-        try:
-            OTU_h_score=stats.kruskal(posList,negList)[0]
-        except:
-            OTU_h_score=0
-        OTU_h_score_List.append(OTU_h_score)
-    return (OTU_h_score_List)
-
-def feature_select(X,y,topFeature=150):
-    weights=multiLabelFeatureWeighting(X,y)
-    weightRanks=np.flip(np.argsort(weights))
-    selectedOTU_index=weightRanks[:topFeature]
-    X_FS=(X[:,selectedOTU_index])
-    return X_FS,selectedOTU_index
-
-def feature_select_singleLabel(X,yList,topFeature=150):
-    weights=singleLabelFeatureWeighting(X,yList)
-    weightRanks=np.flip(np.argsort(weights))
-    selectedOTU_index=weightRanks[:topFeature]
-    X_FS=(X[:,selectedOTU_index])
-
-
-    return X_FS,selectedOTU_index
-
-
-def elbowPoint(scores,curveType="elbow"):
-    curveName="convex"
-    if curveType!="elbow":
-        curveName="concave"
-
-    from kneed import KneeLocator
-    kn = KneeLocator(range(1, len(scores)+1), scores, curve='convex', direction='decreasing',interp_method="polynomial")
-
-    kn.plot_knee_normalized()
-    kn.plot_knee()
-
-    return kn.knee
-
-
-
-
-
-def test_main():
-    data, burn_label, un_label, duration_label, ASVs, df = loadData.loadSoilData("../Data/merge_soil.csv")
-    yList=[list(burn_label),list(un_label),list(duration_label)]
-    weights=multiLabelFeatureWeighting(data,yList)
-    feature_select(data,yList)
-'''
-
-
-
-
-
-
-
 
 # new FS pipeline-------------
 
@@ -133,7 +26,6 @@ def relative_abundance(data,cutOff=0.01):# if the input is the original abundanc
 
 
 
-
 # 2. rank the samples within each feature and do the H test on the features
 def _square_of_sums(a, axis=0):
     s = np.sum(a, axis)
@@ -141,40 +33,8 @@ def _square_of_sums(a, axis=0):
         return s.astype(float) * s
     else:
         return float(s) * s
-'''
-def OTU_H_Score0(x,y,cutOff):#This function's output is the same with that from the library
-    if not (len(x)==len(y)):
-        raise ValueError('ERROR! Length of OTU and label have difference length')
-        
-    unique_groups = np.unique(y)
-    samples = [x[np.array(y) == group] for group in unique_groups]
-    num_groups = len(unique_groups)
-    if num_groups < 2:
-        raise ValueError("Need at least two groups in stats.kruskal()")
-    
-    n = np.asarray(list(map(len, samples)))# an array, each element is the number of samples in each group
-    alldata = np.concatenate(samples)
-    ranked = stats.rankdata(alldata)# choose alldata or x, the result are different
-    #ranked[alldata < cutOff] = 1
-    ties = stats.tiecorrect(ranked)# leave ties problem for now
-    #if ties == 0:
-    #    raise ValueError('All numbers are identical in kruskal')
-        
-    # Compute sum^2/n for each group and sum
-    j = np.insert(np.cumsum(n), 0, 0)
-    ssbn = 0
-    for i in range(num_groups):
-        ssbn += _square_of_sums(ranked[j[i]:j[i+1]]) / n[i]
 
-    totaln = np.sum(n, dtype=float)
-    h = 12.0 / (totaln * (totaln + 1)) * ssbn - 3 * (totaln + 1)
-    #df = num_groups - 1
-    h /= ties
 
-    #chi2 = _SimpleChi2(df)
-    #pvalue = _get_pvalue(h, chi2, alternative='greater', symmetric=False, xp=np)
-    return h
-'''
 def OTU_H_Score(x,y):#x is the relative OTU abundance for each sampele , y is the group for each sample
     #output is the Hstatistics
     x = np.array(x)  # Ensure x is a NumPy array
@@ -214,8 +74,6 @@ def OTU_H_Score(x,y):#x is the relative OTU abundance for each sampele , y is th
     return h
 
 
-
-
 def OTU_H_Score_arr(X,y): #X is the relative abundance matrix(np.array), each row is a sample; y is the classification
     X_transpose=np.transpose(X)
     score_List=[]
@@ -245,8 +103,6 @@ def OTU_H_Score_fun(X,Y):#X is the relative abundance matrix(np.array), each row
     else:
         return "Error: The input Y must be a 1D or 2D array."
 
-   
-
 
 
 # 3. get the number of features to keep based on significance
@@ -262,6 +118,64 @@ def indice_H_unisig(scorelist,y):# scorelist is the H statistics for featues, nu
     selected_indices = sorted(indices_above_cutoff, key=lambda x: scorelist[x], reverse=True)
 
     return selected_indices,len(selected_indices)
+
+def SelectOTU_fun(scorelist,y,plot=True):# same with the function above, but add plot output
+    unique_groups = len(np.unique(y))
+    df = unique_groups-1
+    p_cutoff = 0.1
+    h_cutoff = stats.chi2.ppf(1 - p_cutoff, df)
+    indices_above_cutoff = [index for index, value in enumerate(scorelist) if value > h_cutoff]
+    # Sort the indices based on the corresponding values in descending order
+    selected_indices = sorted(indices_above_cutoff, key=lambda x: scorelist[x], reverse=True)
+
+    if plot:
+        # Sorting the array in descending order and saving the indices
+        sorted_indices = np.argsort(scorelist)[::-1]  # Get indices for sorted order (descending)
+        sorted_array = scorelist[sorted_indices]      # Sort the array using the indices
+        
+        # Plotting the sorted array
+        plt.figure(figsize=(8, 5))
+        plt.scatter(np.arange(len(sorted_array)), sorted_array, color='blue', s=5)
+        #plt.axhline(y=stats.chi2.ppf(1 - 0.1, 1), color='green', linestyle='--', linewidth=1, label='significance cutoff')
+        plt.axvline(x=len(selected_indices), color='green', linestyle='-', linewidth=1, label=f"number of selected OTUs ={len(selected_indices)}")
+        # Adding labels and title
+        plt.xlabel("Number of OTUs", fontsize=12)
+        plt.ylabel("H statistics", fontsize=12)
+        #plt.title("Dot Plot of Sorted Array (Descending)", fontsize=14)
+        #plt.grid(True, linestyle='--', alpha=0.7)
+        plt.legend()
+
+    return selected_indices
+
+
+
+def SelectMicro_fun(df,y, p_cutoff=0.1,plot=True):
+    """
+    combine calculating H and feature selection in one function
+    return selected array (data), selected column names, selected indices and all the H statistics with the original indices, plot H if needed
+    input: dataframe (to get the column names), target variable
+    """
+    if y.ndim != 1:
+        raise ValueError("Response variable must be 1D array")
+    colnames = df.columns
+    x = df.to_numpy()
+    x = relative_abundance(x)
+    scorelist = OTU_H_Score_arr(x,y)
+
+    selected_indices = SelectOTU_fun(scorelist,y,plot=plot)
+
+    selected_data = x[:,selected_indices]
+    selected_columnames = colnames[selected_indices]
+    
+    result = {"selected_data": selected_data,
+              "selected_columnames": selected_columnames,
+              "selected_indices": selected_indices,
+              "relative_abundance_data": x,
+              "H_score": scorelist}
+    
+    return result
+
+
 
 
 
@@ -284,7 +198,7 @@ def indice_H_multisig(scorelist,Y,p_cutoff = 0.1):# scorelist is the H statistic
 
 
 
- 
+"""
 # this function will plot the H score
 def plot_Hscore(scorelist,Y,p_cutoff = 0.1):
     
@@ -301,6 +215,13 @@ def plot_Hscore(scorelist,Y,p_cutoff = 0.1):
     selected_indices = sorted(indices_above_cutoff, key=lambda col: np.sum(scorelist[:, col]), reverse=True)
     
     return selected_indices,len(selected_indices)
+"""
+
+
+
+
+
+
 
 
 """
@@ -367,29 +288,28 @@ def Xarray_indice(X,h_scorelist):
 """ 
 
     
-
-
-
+def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresholdPercent=0.90,abundanceCutoff=0.01):
+     # input X is the abundance array, label is the index, featurenames is the column names of X
+    if X.shape[0] != len(label):
+        raise ValueError('ERROR! The number of samples in X must match the length of label')
+    if X.shape[1] != len(featurenames):
+        raise ValueError('ERROR! The number of features in X must match the length of featurenames.')
     
-
-
-def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresholdPercent=0.90,abundanceCutoff=0.01,entries=15):
-    import matplotlib as mpl
-    mpl.rcParams['figure.dpi'] = 300
-
-    presenceCntPos = []
-    presenceCntNeg = []
-    
-    X = X.T
-    if abundanceCutoff==0:
-        flatten_list = list(chain.from_iterable(X))
-        flatten_list_sorted=sorted(flatten_list)
-        abundanceCutoff=flatten_list[int(len(flatten_list_sorted)*float(threshold))]
+    # Continue with the rest of your function...
+    print("Validation passed: Dimensions are correct.")
 
     if posText=="" or negText=="":
         posText=posLabel
         negText="Not "+posLabel
-
+    
+    all_pos_label_cnt=list(label).count(posLabel)
+    all_neg_label_cnt=len(label)-all_pos_label_cnt
+    print(f"{posText}= {all_pos_label_cnt}, {negText} = {all_neg_label_cnt}")# these 3  lines can use  value_count
+   
+    presenceCntPos = []
+    presenceCntNeg = []
+    
+    X = X.T
     for k in range(len(X)):## for each OTU
         OTUs = X[k]## the samples for this OTU
         pos = 0
@@ -403,42 +323,51 @@ def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresh
                     neg += 1
         presenceCntPos.append(pos)# len= # of samples; each value is the number of OTUs that exceed the abundanceCutoff for Pos/Neg
         presenceCntNeg.append(neg)
-        
-    all_pos_label_cnt=list(label).count(posLabel)
-    all_neg_label_cnt=len(label)-all_pos_label_cnt
-    print(all_pos_label_cnt,all_neg_label_cnt)# these 3  lines can use  value_count
-    
+       
     presenceRatioPos=[float(x)/all_pos_label_cnt for x in presenceCntPos]# each element is for each OTU; shows the ratio of abundanced pos samples over all pos sample 
     presenceRatioNeg=[float(x)/all_neg_label_cnt for x in presenceCntNeg]
 
-    import matplotlib.pyplot as plt
-    y = range(entries)
-    fig, axes = plt.subplots(ncols=2, sharey=True)
-    bars_pos = axes[0].barh(y, presenceRatioPos, align='center', color='#ff7f00')
-    bars_neg =axes[1].barh(y, presenceRatioNeg, align='center', color='#377eb8')
+    data_barh = {'OTU': featurenames, 'presence_pos': presenceRatioPos,'presence_neg': presenceRatioNeg}
+    df_barh = pd.DataFrame(data_barh)
+    print(df_barh)
+
+    # Create the figure and axes
+    fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+    # Plot the first horizontal bar plot
+    df_barh.plot.barh(x='OTU', y='presence_pos', color='skyblue', ax=axes[0])
+    # Plot the second horizontal bar plot
+    df_barh.plot.barh(x='OTU', y='presence_neg', color='salmon', ax=axes[1])
+
+    left_1 =0.1
+    width =0.3
+    bottom_ =0.1
+    height_ =0.8
+    middle_ = 0.05
+    axes[0].set_position([left_1,bottom_, width,height_])  # (left, bottom, width, height)
+    axes[1].set_position([left_1+width+middle_+0.05, bottom_, width, height_])  # Adjust position of second plot
+
     axes[0].set_xlabel("Presence Ratio in "+posText)
-    axes[1].set_xlabel("Presences Ratio "+negText)
+    axes[1].set_xlabel("Presences Ratio in "+negText)   
+    for ax in axes:
+        ax.set_ylabel("")
+        ax.invert_yaxis()
+        ax.legend().remove()
+        ax.set_xlim(0,1)
 
-    # Annotate each bar in the first subplot
-    for i, bar in enumerate(bars_pos):
-        axes[0].text(presenceRatioPos[i], bar.get_y() + bar.get_height() / 2, f'{presenceRatioPos[i]:.2f}', va='center', ha='right',fontsize=6)
-
-    # Annotate each bar in the second subplot
-    for i, bar in enumerate(bars_neg):
-        axes[1].text(presenceRatioNeg[i], bar.get_y() + bar.get_height() / 2, f'{presenceRatioNeg[i]:.2f}', va='center', ha='left',fontsize=6)
-
-
-    axes[0].set_xlim(0,1.2)
-    axes[1].set_xlim(0,1.2)
+    # Remove y-ticks from the first plot
+    axes[0].set_yticks([])
     axes[0].invert_xaxis()# Invert the x-axis of the first subplot
-
-    axes[0].set(yticks=y, yticklabels=[])
-    for yloc, selectedASVs in zip(y, featurenames):
-        axes[0].annotate(selectedASVs, (0.485, yloc), xycoords=('figure fraction', 'data'),
-                         ha='center', va='center', fontsize=6)
-    fig.tight_layout(pad=2.0)
+    #axes[0].set_yticklabels([""] * len(featurenames))
+    # Move the labels towards the left by adjusting labelpad (negative value moves to the left)
+    # Move the labels left (negative) or right (positive) using labelpad for x-axis
+    """
+    for tick in axes[1].get_yticklabels():
+        tick.set_horizontalalignment('right')  # Align labels to the right
+        tick.set_position((tick.get_position()[0], tick.get_position()[1]))  # Move labels left by 0.05
+    """
+    plt.tight_layout()
     plt.show()
-
+    
 
 
 
@@ -459,24 +388,14 @@ def plotAvarageAbundance(X,label,featurenames,posLabel,posText="",negText="",thr
         posText=posLabel
         negText="Not "+posLabel
 
+    unique_label = np.unique(label)
+
     for k in range(len(X)):## for each OTU
-        OTUs = X[k]## the samples for this OTU
-        pos = 0
-        neg = 0
-        for i in range(len(OTUs)):
-            if label[i] == posLabel:
-                if OTUs[i] > abundanceCutoff:# if the value of OTU exceed the abundanceCutoff
-                    pos += 1
-            else:
-                if OTUs[i] > abundanceCutoff:
-                    neg += 1
+        label_mean = {cat:X[k][label == cat].mean() for cat in unique_label}
+
         presenceCntPos.append(pos)# len= # of samples; each value is the number of OTUs that exceed the abundanceCutoff for Pos/Neg
         presenceCntNeg.append(neg)
-        
-    all_pos_label_cnt=list(label).count(posLabel)
-    all_neg_label_cnt=len(label)-all_pos_label_cnt
-    print(all_pos_label_cnt,all_neg_label_cnt)# these 3  lines can use  value_count
-    
+           
     AvarageAbundanceDiffPos=[float(x)/all_pos_label_cnt for x in presenceCntPos]# each element is for each OTU; shows the ratio of abundanced pos samples over all pos sample 
     AvarageAbundanceDiffNeg=[float(x)/all_neg_label_cnt for x in presenceCntNeg]
 
@@ -486,7 +405,7 @@ def plotAvarageAbundance(X,label,featurenames,posLabel,posText="",negText="",thr
     axes[0].barh(y, presenceRatioPos, align='center', color='#ff7f00')
     axes[1].barh(y, presenceRatioNeg, align='center', color='#377eb8')
     axes[0].set_xlabel("Presence Ratio in "+posText)
-    axes[1].set_xlabel("Presences Ratio "+negText)
+    axes[1].set_xlabel("Presences Ratio in "+negText)
     # Annotate each bar in the first subplot
     for i, bar in enumerate(bars_pos):
         axes[0].text(presenceRatioPos[i], bar.get_y() + bar.get_height() / 2, f'{presenceRatioPos[i]:.2f}', va='center', ha='right',fontsize=6)

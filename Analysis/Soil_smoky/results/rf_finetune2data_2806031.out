@@ -1,0 +1,15 @@
+[['No' 'Natural' 'Annual']
+ ['No' 'Natural' 'Perennial']
+ ['No' 'Urban' 'Perennial']
+ ['No' 'Urban' 'Annual']
+ ['No' 'Urban' 'Perennial']]
+Yes    42
+No     17
+Name: count, dtype: int64
+Urban      33
+Natural    26
+Name: count, dtype: int64
+Perennial    37
+Annual       22
+Name: count, dtype: int64
+slurmstepd: error: *** JOB 2806031 ON il1340 CANCELLED AT 2025-01-03T10:54:06 DUE TO TIME LIMIT ***
