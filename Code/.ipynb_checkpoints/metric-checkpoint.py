@@ -357,6 +357,65 @@ def confusion_matrix2(y_true, y_pred):
     plt.show()
 
 
+
+
+def metric_tb(y, y_pred):
+    acc = accuracy(y, y_pred)
+    pos_y = list(np.unique(y))[0]
+    neg_y = list(np.unique(y))[1]
+    precision = precision_score(y, y_pred, pos_label=pos_y)
+    spec = recall_score(y, y_pred, pos_label=neg_y)
+    recall = recall_score(y, y_pred, pos_label=pos_y)
+    mcc = matthews_corrcoef(y, y_pred)
+    result = {"Accuracy": acc,
+              "Precision": precision,
+              "Recall": recall,
+              "Specification":spec,
+              "Mcc": mcc}
+    return result
+
+
+
+def metric_sum(prediction_dictionary):
+
+    valuelist = []
+
+    # Iterate over the first level of the dictionary
+    for key1, sub_dict in prediction_dictionary.items():
+        # Iterate over the second level of the dictionary
+        for key2, value in sub_dict.items():
+            valuelist.append(((f"{key1}_{key2}"), value))
+
+    first_values = [item[0] for item in valuelist]
+    names = first_values
+
+    second_values = [item[1] for item in valuelist]
+    actual_list = []
+    for i in range(len(second_values)):
+        actual = second_values[i][0]
+        actual_list.append(actual)
+
+    predict_list = []
+    for i in range(len(second_values)):
+         predict = second_values[i][1]
+         predict_list.append(predict)
+    
+    # List to store metric results
+    results = []
+
+    for i in range(len(second_values)):
+        result = metric_tb(actual_list[i], predict_list[i])
+        results.append(result)
+
+    # Convert the results into a DataFrame, using dataset_names as the index
+    df_results = pd.DataFrame(results, index=names)
+
+    return df_results
+
+
+
+
+
 def plot_confusion_matrices(y, y_pred,title,pos_y=1):
     acc = accuracy(y, y_pred)
     pos_y = list(np.unique(y))[0]
@@ -385,6 +444,31 @@ def plot_confusion_matrices(y, y_pred,title,pos_y=1):
     disp.ax_.set_title(title)
     plt.show()
 
+
+def plot_confusion_matrices2(y, y_pred, title, pos_y=1):
+    acc = accuracy(y, y_pred)
+    pos_y = list(np.unique(y))[0]
+    precision = precision_score(y, y_pred, pos_label=pos_y)
+    recall = recall_score(y, y_pred, pos_label=pos_y)
+    mcc = matthews_corrcoef(y, y_pred)
+
+    disp = ConfusionMatrixDisplay.from_predictions(
+        y_true=y,
+        y_pred=y_pred,
+        display_labels=sorted(set(y)),  # Use sorted set of labels to ensure consistency
+        cmap='Blues'
+    )
+    
+    # Add metrics below the confusion matrix
+    metrics_text = (f"Accuracy: {acc:.4f}\n"
+                    f"Precision: {precision:.4f}\n"
+                    f"Recall: {recall:.4f}\n"
+                    f"Matthew’s correlation coefficient: {mcc:.4f}\n")
+    disp.ax_.text(0.5, -0.2, metrics_text, ha='center', va='top', fontsize=12, transform=disp.ax_.transAxes)
+
+    plt.tight_layout()  # Adjust layout to make room for the metrics
+    disp.ax_.set_title(title)
+    # Removed plt.show()
     
 def plotmacro_confusion_matrices(y, y_pred,title):
     acc = accuracy(y, y_pred)
@@ -483,6 +567,49 @@ def Neg_GINI(X,Y):#X is the relative abundance matrix(np.array), each row is a s
         return NG_combine
     else:
         return "Error: The input Y must be a 1D or 2D array."
+
+
+
+def fisher_discriminant_ratio(features, labels):
+    """
+    Calculate the Fisher's discriminant ratio (F1) for an entire dataset.
+
+    Parameters:
+    - features: A 2D numpy array of feature values (samples x features).
+    - labels: A 1D numpy array of class labels corresponding to the samples.
+
+    Returns:
+    - F1: Fisher's discriminant ratio for the dataset.
+    """
+    # Ensure features and labels are numpy arrays
+    features = np.array(features)
+    labels = np.array(labels)
+
+    # Get unique classes
+    classes = np.unique(labels)
+    if len(classes) != 2:
+        raise ValueError("This implementation only supports two classes.")
+
+    # Calculate class-wise means and overall mean
+    overall_mean = np.mean(features, axis=0)
+    class_means = [np.mean(features[labels == c], axis=0) for c in classes]
+
+    # Calculate between-class scatter
+    between_class_scatter = sum(
+        len(features[labels == c]) * np.outer((class_mean - overall_mean), (class_mean - overall_mean))
+        for c, class_mean in zip(classes, class_means)
+    )
+
+    # Calculate within-class scatter
+    within_class_scatter = sum(
+        sum(np.outer((sample - class_mean), (sample - class_mean)) for sample in features[labels == c])
+        for c, class_mean in zip(classes, class_means)
+    )
+
+    # Compute Fisher's discriminant ratio
+    F1 = np.trace(between_class_scatter) / np.trace(within_class_scatter)
+
+    return F1
     
 
 

@@ -8,6 +8,8 @@ sys.path.append('./Code')
 import loadData
 import pandas as pd
 from scipy import stats
+import seaborn as sns
+import math
 
 # new FS pipeline-------------
 
@@ -119,10 +121,10 @@ def indice_H_unisig(scorelist,y):# scorelist is the H statistics for featues, nu
 
     return selected_indices,len(selected_indices)
 
-def SelectOTU_fun(scorelist,y,plot=True):# same with the function above, but add plot output
+def SelectOTU_fun(scorelist,y,p_cutoff=0.1,plot=True):# same with the function above, but add plot output
     unique_groups = len(np.unique(y))
     df = unique_groups-1
-    p_cutoff = 0.1
+    p_cutoff = p_cutoff
     h_cutoff = stats.chi2.ppf(1 - p_cutoff, df)
     indices_above_cutoff = [index for index, value in enumerate(scorelist) if value > h_cutoff]
     # Sort the indices based on the corresponding values in descending order
@@ -178,6 +180,10 @@ def SelectMicro_fun(df,y, p_cutoff=0.1,plot=True):
 
 
 
+
+
+
+
 #################
 def indice_H_multisig(scorelist,Y,p_cutoff = 0.1):# scorelist is the H statistics for featues, num_groups is the number of classes in y
     #return to the indices of significant features and the numer of featurs kept
@@ -197,6 +203,48 @@ def indice_H_multisig(scorelist,Y,p_cutoff = 0.1):# scorelist is the H statistic
     return selected_indices,len(selected_indices)
 
 
+################# This is a combined function ######################################
+def SelectMicro_multi_fun(df,Y, p_cutoff=0.1,plot=True):
+    """
+    combine calculating H and feature selection in one function
+    return selected array (data), selected column names, selected indices and all the H statistics with the original indices, plot H if needed
+    input: dataframe (to get the column names), target variable
+    """
+    Y = np.asarray(Y)
+
+    unique_groups = [np.unique(Y[:, col]).size for col in range(Y.shape[1])]#a list
+    dof = [g - 1 for g in unique_groups]
+    
+    h_cutoff = np.array([stats.chi2.ppf(1 - p_cutoff, df_i) for df_i in dof])# an array
+    
+    if Y.ndim != 2:
+        raise ValueError("Response variable must be 2D array")
+
+    colnames = df.columns
+    weights_list = []
+    for i in range(Y.shape[1]):
+        selectedresult=SelectMicro_fun(df,Y[:,i],plot=False)
+        weights = selectedresult['H_score']
+        weights_list.append(weights)
+        
+    H_combine = np.vstack(weights_list)
+    x = selectedresult['relative_abundance_data']
+    indices_above_cutoff = np.where(np.any(H_combine > h_cutoff[:, None], axis=0))[0]
+    
+    selected_indices = sorted(indices_above_cutoff, key=lambda col: np.sum(H_combine[:, col]), reverse=True)
+    selected_data = x[:,selected_indices]
+    selected_columnames = colnames[selected_indices]
+    
+    result = {"selected_data": selected_data,
+              "selected_columnames": selected_columnames,
+              "selected_indices": selected_indices,
+              "relative_abundance_data": x,
+              "H_score": H_combine}
+    
+    return result
+
+
+    
 
 """
 # this function will plot the H score
@@ -424,6 +472,80 @@ def plotAvarageAbundance(X,label,featurenames,posLabel,posText="",negText="",thr
                          ha='center', va='center', fontsize=6)
     fig.tight_layout(pad=2.0)
     plt.show()
+
+
+
+def OTUviolin(X,label,featurenames,y_max=None,single=True,title = 'Violin Plot for OTUs',plot_per_row=5):
+    """
+    input X is the abundance array, 
+    label is the index, 
+    featurenames is the column names of X
+    singel: if what to show each feature's violin plot separately, change it to False
+    """
+    df = pd.DataFrame(X, columns=featurenames)
+    df['Y'] = label
+
+    if single:
+        # Melt the DataFrame for seaborn's violinplot
+        df_melted = df.melt(id_vars='Y', value_vars=featurenames,
+                            var_name='Feature', value_name='RelativeAbundance')
+        # Plot the violin plot for all features in one plot
+        plt.figure(figsize=(16, 8))
+        # KDE helps in visualizing the distribution of data by smoothing the data points
+        sns.violinplot(x='Feature', y='RelativeAbundance', hue='Y', data=df_melted, split=True,inner="quart", legend=False,
+                       density_norm='width',  # Make the violins use the full width
+                       width=0.8,      # Adjust the width of the violins for clarity
+                       dodge=True)     # Separate violins for each group
+        # Rotate the x-axis labels for better visibility
+        if y_max is not None:
+            y_lim = y_max
+        else:
+            y_lim = df_melted['RelativeAbundance'].max()
+        #plt.ylim(0, ylim].max())  # Adjust the y-axis limits to avoid negative values
+        plt.ylim(0, y_lim)  # Adjust the y-axis limits to avoid negative values
+        plt.xlabel('')
+        plt.xticks(rotation=45)  # You can change 45 to any other angle if you want a different rotation
+        plt.title(title)
+        plt.tight_layout()
+        plt.show()
+    else:
+        n_features = X.shape[1]
+        # Calculate the number of rows needed (with up to 4 features per row)
+        n_cols = plot_per_row  # You want 4 plots per row
+        n_rows = math.ceil(n_features / n_cols)  # Calculate required rows
+        
+        # Plot a violin plot for each feature
+        plt.figure(figsize=(15, 5 * n_rows))  # Adjust the height of the plot for multiple rows
+        
+        for i in range(n_features):
+            plt.subplot(n_rows, n_cols, i+1)  # Subplot for each feature
+            sns.violinplot(x='Y', y=df.iloc[:, i], data=df, inner="quart", hue='Y', legend=False)
+            plt.title(f'{featurenames[i]}')
+            plt.ylabel('')
+    
+        plt.tight_layout()
+        plt.show()
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

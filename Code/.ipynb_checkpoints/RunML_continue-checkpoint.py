@@ -11,6 +11,8 @@ from sklearn.preprocessing import OrdinalEncoder, LabelEncoder, StandardScaler
 from imblearn.over_sampling import ADASYN
 from imblearn.combine import SMOTEENN
 from sklearn import preprocessing, __all__, svm
+from sklearn.naive_bayes import GaussianNB
+from catboost import CatBoostClassifier
 from imblearn.over_sampling import SMOTE
 #from sklearn import svm, datasets
 from sklearn.metrics import auc, roc_auc_score, roc_curve, accuracy_score, precision_score, recall_score, f1_score, matthews_corrcoef
@@ -249,7 +251,7 @@ def cross_fold_validation(X, y, classifier_name, SMOTE=False,k=5):
         clf = svm.SVC(kernel='rbf', probability=True, random_state=777)#{'precomputed', 'poly', 'rbf', 'sigmoid', 'linear'}
     else:
         print("The classifier is not included")
-        return None, None, None, None, None
+        return None
 
     # Set up 5-fold cross-validation
     kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=777)
@@ -292,12 +294,95 @@ def cross_fold_validation(X, y, classifier_name, SMOTE=False,k=5):
     mean_accuracy = np.mean(accuracies)
     mean_roc_auc = np.mean(roc_aucs)
 
-    #print(f'Mean Accuracy: {mean_accuracy:.4f}')
-    #print(f'Mean ROC AUC: {mean_roc_auc:.4f}')
+    result = {'mean_accuracy': mean_accuracy,
+              'mean_auc': mean_roc_auc,
+              'y_true': y_true_all,
+              'y_pred':y_pred_all,
+              'y_pred_prob': y_prob_all}
 
-    return mean_accuracy, mean_roc_auc, y_true_all, y_pred_all, y_prob_all
+    return result
 
 
+def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
+    """
+    calculate the ML model results using stratefied cross validation. (This functionn is used in another function)
+
+    Parameters:
+        X: ndarray
+            Features.
+        y: ndarray
+            Labels.
+   classifier_name:
+        RF or SVM or catboost or NB(naive bayes) 
+    SMOTE (bool): Whether to apply SMOTE oversampling (default: False)
+    Returns:
+        5 results : average of accuracy and AUC of all folds; the shuffled actual y, predicted y and predicted prob
+    """ 
+    if classifier_name == "RF":
+        clf = RandomForestClassifier(n_jobs=5,random_state=777)
+    elif classifier_name == "SVM":
+        clf = svm.SVC(kernel='rbf', probability=True, random_state=777)#{'precomputed', 'poly', 'rbf', 'sigmoid', 'linear'}
+    
+    elif classifier_name == "CatBoost":
+        clf = CatBoostClassifier(iterations=100, learning_rate=0.1, depth=6,verbose=0, random_state=777)
+        
+    elif classifier_name == "NB":
+        clf = GaussianNB()
+    else:
+        print("The classifier is not included")
+        return None
+
+    # Set up 5-fold cross-validation
+    kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=777)
+
+    # Lists to store the results
+    accuracies = []
+    roc_aucs = []
+    y_true_all = []
+    y_pred_all = []
+    y_prob_all = []
+
+    for train_index, test_index in kf.split(X, y):
+        # Split the data
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = y[train_index], y[test_index]
+
+        # Apply SMOTE if specified
+        if SMOTE:
+            X_train, y_train = perform_SMOTE(X_train, y_train)
+
+        clf.fit(X_train, y_train)
+
+        # Make predictions
+        y_pred = clf.predict(X_test)
+        y_prob = clf.predict_proba(X_test)[:, 1]
+
+        # Evaluate the model
+        accuracy = accuracy_score(y_test, y_pred)
+        roc_auc = roc_auc_score(y_test, y_prob)
+
+        accuracies.append(accuracy)
+        roc_aucs.append(roc_auc)
+
+        y_true_all.extend(y_test)# Using extend to add multiple elements
+        y_pred_all.extend(y_pred)
+        y_prob_all.extend([float(prob) for prob in y_prob])
+        #print(f'Fold Accuracy: {accuracy:.4f}, ROC AUC: {roc_auc:.4f}')
+
+    # Calculate the mean accuracy and ROC AUC
+    mean_accuracy = np.mean(accuracies)
+    mean_roc_auc = np.mean(roc_aucs)
+
+    result = {'mean_accuracy': mean_accuracy,
+              'mean_auc': mean_roc_auc,
+              'y_true': y_true_all,
+              'y_pred':y_pred_all,
+              'y_pred_prob': y_prob_all}
+    
+    for key, value in result.items():
+        print(f"Key: {key}, Type: {type(value)}")
+
+    return result
 
 
 
@@ -312,9 +397,12 @@ def runClassifier_FScompare(data_subsets,y,N,classifiers,SMOTE=False): # fine tu
         Nselection = data_subsets['SelectMicro'].shape[1]  # the number of features selected by the method
     else:
         Nselection = 0
+        
     results = {}#  results  to keep the acc and auc
     results_cm ={} # results  to keep the actual y and predicted y and predicted prob
+    
     for datatype, subset in data_subsets.items():
+        
         results[datatype] = {}
         results_cm[datatype] = {}    
 
@@ -330,7 +418,9 @@ def runClassifier_FScompare(data_subsets,y,N,classifiers,SMOTE=False): # fine tu
                 selected_indices = random.sample(range(num_columns), Nselection)
                 new_df = df[:, selected_indices]
                 for clf in classifiers:
-                    acc, auc, _, _, _= cross_fold_validation(new_df, y,clf,SMOTE=SMOTE)
+                    results_clf = ML_model_SCV(new_df, y,clf,SMOTE=SMOTE)
+                    acc = results_clf['mean_accuracy']
+                    auc = results_clf['mean_auc']
                     acc_eachrun.append(acc)
                     auc_eachrun.append(auc)
                 acc_allrun.append(acc_eachrun)
@@ -343,9 +433,17 @@ def runClassifier_FScompare(data_subsets,y,N,classifiers,SMOTE=False): # fine tu
             for index, clf in enumerate(classifiers):
                 results[datatype][f"{clf}_Accuracy"] = acc_list[index]
                 results[datatype][f"{clf}_AUC"] = auc_list[index]
+                
         else:
             for clf in classifiers:
-                acc, auc,  y_actual, y_pred, y_prob = cross_fold_validation(subset, y,clf)
+                #print(f"{datatype}_{clf}")
+                results_clf = ML_model_SCV(subset, y,clf,SMOTE=SMOTE)
+                acc = results_clf['mean_accuracy']
+                auc = results_clf['mean_auc']
+                y_actual  = results_clf['y_true']
+                y_pred = results_clf['y_pred']
+                y_prob = results_clf['y_pred_prob']
+            
                 results[datatype][f"{clf}_Accuracy"] = acc
                 results[datatype][f"{clf}_AUC"] = auc
                 results_cm[datatype][clf] = np.array([y_actual,y_pred,y_prob])

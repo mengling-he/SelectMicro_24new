@@ -1,0 +1,30 @@
+Analysis for OTU
+                RF_Accuracy    RF_AUC  SVM_Accuracy   SVM_AUC
+AllFeatures        0.861667  0.894048      0.782500  0.889286
+SelectMicro        0.835000  0.921429      0.846667  0.909127
+Lasso              0.848333  0.931746      0.885000  0.910714
+Lasso_finetune     0.795000  0.902381      0.822500  0.898810
+Random             0.555972  0.506508      0.555944  0.499418
+Analysis for class
+                RF_Accuracy    RF_AUC  SVM_Accuracy   SVM_AUC
+AllFeatures        0.822500  0.907540      0.820833  0.890873
+SelectMicro        0.809167  0.910317      0.833333  0.898016
+Lasso              0.846667  0.923016      0.859167  0.933730
+Lasso_finetune     0.846667  0.923016      0.859167  0.933730
+Random             0.719000  0.785714      0.748111  0.774299
+Analysis for order
+                RF_Accuracy    RF_AUC  SVM_Accuracy   SVM_AUC
+AllFeatures        0.848333  0.905754      0.820000  0.888492
+SelectMicro        0.783333  0.904762      0.833333  0.904762
+Lasso              0.847500  0.924206      0.846667  0.921032
+Lasso_finetune     0.846667  0.936508      0.794167  0.886905
+Random             0.660778  0.698472      0.674556  0.650066
+Analysis for phylum
+                RF_Accuracy    RF_AUC  SVM_Accuracy   SVM_AUC
+AllFeatures        0.770000  0.919048      0.770833  0.894841
+SelectMicro        0.821667  0.920635      0.785000  0.900794
+Lasso              0.834167  0.930952      0.872500  0.958730
+Lasso_finetune     0.834167  0.930952      0.872500  0.958730
+Random             0.717667  0.796858      0.716222  0.786210
+/var/spool/slurm/spool/job2812667/slurm_script: line 17: syntax error near unexpected token `'This is the result of SVM parameter changed, while the dataset is the same with the version before Jan 4''
+/var/spool/slurm/spool/job2812667/slurm_script: line 17: `print('This is the result of SVM parameter changed, while the dataset is the same with the version before Jan 4')'

@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 
 
 # Read the data back from the file
-with open('../data/data_subset_4taxa_noenv_label_ft.pkl', 'rb') as file:
+with open('../data/data_subset_4taxa_noenv_updatefunction.pkl', 'rb') as file:
     data_subset_4taxa = pickle.load(file)
 
 
@@ -47,7 +47,7 @@ y = np.where(y > y_threshold, 'LONG', 'SHORT')
 
 # model
 iter =30
-cls = ["RF","SVM"]
+cls = ["RF","SVM", "CatBoost","NB"]
 targetLabel = y
 
 taxlabels = ['OTU', 'class', 'order', 'phylum']
@@ -55,13 +55,10 @@ dict_cm_list = []
 for i , dataset  in enumerate(data_subset_4taxa):
     print(f"Analysis for {taxlabels[i]}")
     dict_cm = RunML_continue.runClassifier_FScompare(data_subsets= dataset,y= targetLabel,N=iter,classifiers=cls)
-    dict_cm_list.append(dict_cm)
+    print(metric.metric_sum(dict_cm))
     
 # Save dictionary to a pickle file
-with open('../results/PMI_bact_prediction_ft.pkl', 'wb') as pickle_file:
-    pickle.dump(dict_cm_list, pickle_file)
-
-    
+print('This is the result of add NB and CatBoost, while the dataset is the same with the version before Jan 4')    
     
     
  

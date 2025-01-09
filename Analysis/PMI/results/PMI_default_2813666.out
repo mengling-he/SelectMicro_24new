@@ -1,0 +1,103 @@
+TBB Warning: The number of workers is currently limited to 47. The request for 55 workers is ignored. Further requests for more workers will be silently ignored until the limit changes.
+
+Analysis for OTU
+                RF_Accuracy    RF_AUC  ...  NB_Accuracy    NB_AUC
+AllFeatures        0.861667  0.894048  ...     0.718333  0.744643
+SelectMicro        0.835000  0.921429  ...     0.769167  0.905952
+Lasso              0.848333  0.931746  ...     0.757500  0.826984
+Lasso_finetune     0.795000  0.902381  ...     0.795833  0.925397
+
+[4 rows x 8 columns]
+                         Accuracy  Precision    Recall  Specification       Mcc
+AllFeatures_RF           0.858974   0.875000  0.800000       0.906977  0.714857
+AllFeatures_SVM          0.782051   0.781250  0.714286       0.837209  0.557643
+AllFeatures_CatBoost     0.794872   0.806452  0.714286       0.860465  0.584142
+AllFeatures_NB           0.717949   0.658537  0.771429       0.674419  0.444080
+SelectMicro_RF           0.833333   0.866667  0.742857       0.906977  0.664338
+SelectMicro_SVM          0.846154   0.848485  0.800000       0.883721  0.688310
+SelectMicro_CatBoost     0.807692   0.812500  0.742857       0.860465  0.610048
+SelectMicro_NB           0.769231   0.814815  0.628571       0.883721  0.535574
+Lasso_RF                 0.846154   0.870968  0.771429       0.906977  0.689490
+Lasso_SVM                0.884615   0.861111  0.885714       0.883721  0.767652
+Lasso_CatBoost           0.820513   0.818182  0.771429       0.860465  0.636135
+Lasso_NB                 0.756410   0.807692  0.600000       0.883721  0.510358
+Lasso_finetune_RF        0.794872   0.806452  0.714286       0.860465  0.584142
+Lasso_finetune_SVM       0.820513   0.862069  0.714286       0.906977  0.639361
+Lasso_finetune_CatBoost  0.794872   0.806452  0.714286       0.860465  0.584142
+Lasso_finetune_NB        0.794872   0.880000  0.628571       0.930233  0.595552
+Analysis for class
+                RF_Accuracy    RF_AUC  ...  NB_Accuracy    NB_AUC
+AllFeatures        0.822500  0.907540  ...     0.770000  0.828968
+SelectMicro        0.809167  0.910317  ...     0.770000  0.900794
+Lasso              0.846667  0.923016  ...     0.794167  0.875397
+Lasso_finetune     0.846667  0.923016  ...     0.794167  0.875397
+
+[4 rows x 8 columns]
+                         Accuracy  Precision    Recall  Specification       Mcc
+AllFeatures_RF           0.820513   0.800000  0.800000       0.837209  0.637209
+AllFeatures_SVM          0.820513   0.800000  0.800000       0.837209  0.637209
+AllFeatures_CatBoost     0.833333   0.823529  0.800000       0.860465  0.662449
+AllFeatures_NB           0.769231   0.688889  0.885714       0.674419  0.563892
+SelectMicro_RF           0.807692   0.777778  0.800000       0.813953  0.612531
+SelectMicro_SVM          0.833333   0.823529  0.800000       0.860465  0.662449
+SelectMicro_CatBoost     0.833333   0.789474  0.857143       0.813953  0.667777
+SelectMicro_NB           0.769231   0.688889  0.885714       0.674419  0.563892
+Lasso_RF                 0.846154   0.828571  0.828571       0.860465  0.689037
+Lasso_SVM                0.858974   0.833333  0.857143       0.860465  0.715945
+Lasso_CatBoost           0.769231   0.742857  0.742857       0.790698  0.533555
+Lasso_NB                 0.794872   0.756757  0.800000       0.790698  0.588357
+Lasso_finetune_RF        0.846154   0.828571  0.828571       0.860465  0.689037
+Lasso_finetune_SVM       0.858974   0.833333  0.857143       0.860465  0.715945
+Lasso_finetune_CatBoost  0.769231   0.742857  0.742857       0.790698  0.533555
+Lasso_finetune_NB        0.794872   0.756757  0.800000       0.790698  0.588357
+Analysis for order
+                RF_Accuracy    RF_AUC  ...  NB_Accuracy    NB_AUC
+AllFeatures        0.848333  0.905754  ...     0.744167  0.771230
+SelectMicro        0.783333  0.904762  ...     0.782500  0.897222
+Lasso              0.847500  0.924206  ...     0.859167  0.909722
+Lasso_finetune     0.846667  0.936508  ...     0.885000  0.947222
+
+[4 rows x 8 columns]
+                         Accuracy  Precision    Recall  Specification       Mcc
+AllFeatures_RF           0.846154   0.828571  0.828571       0.860465  0.689037
+AllFeatures_SVM          0.820513   0.818182  0.771429       0.860465  0.636135
+AllFeatures_CatBoost     0.871795   0.857143  0.857143       0.883721  0.740864
+AllFeatures_NB           0.743590   0.702703  0.742857       0.744186  0.485113
+SelectMicro_RF           0.782051   0.764706  0.742857       0.813953  0.558483
+SelectMicro_SVM          0.833333   0.823529  0.800000       0.860465  0.662449
+SelectMicro_CatBoost     0.807692   0.794118  0.771429       0.837209  0.610466
+SelectMicro_NB           0.782051   0.695652  0.914286       0.674419  0.595267
+Lasso_RF                 0.846154   0.848485  0.800000       0.883721  0.688310
+Lasso_SVM                0.846154   0.828571  0.828571       0.860465  0.689037
+Lasso_CatBoost           0.846154   0.848485  0.800000       0.883721  0.688310
+Lasso_NB                 0.858974   0.833333  0.857143       0.860465  0.715945
+Lasso_finetune_RF        0.846154   0.828571  0.828571       0.860465  0.689037
+Lasso_finetune_SVM       0.794872   0.806452  0.714286       0.860465  0.584142
+Lasso_finetune_CatBoost  0.871795   0.857143  0.857143       0.883721  0.740864
+Lasso_finetune_NB        0.884615   0.842105  0.914286       0.860465  0.770919
+Analysis for phylum
+                RF_Accuracy    RF_AUC  ...  NB_Accuracy    NB_AUC
+AllFeatures        0.770000  0.919048  ...     0.705833  0.912302
+SelectMicro        0.821667  0.920635  ...     0.705833  0.909127
+Lasso              0.834167  0.930952  ...     0.718333  0.941270
+Lasso_finetune     0.834167  0.930952  ...     0.718333  0.941270
+
+[4 rows x 8 columns]
+                         Accuracy  Precision    Recall  Specification       Mcc
+AllFeatures_RF           0.769231   0.729730  0.771429       0.767442  0.536735
+AllFeatures_SVM          0.769231   0.757576  0.714286       0.813953  0.531784
+AllFeatures_CatBoost     0.807692   0.777778  0.800000       0.813953  0.612531
+AllFeatures_NB           0.705128   0.607143  0.971429       0.488372  0.508197
+SelectMicro_RF           0.820513   0.769231  0.857143       0.790698  0.644424
+SelectMicro_SVM          0.782051   0.750000  0.771429       0.790698  0.560824
+SelectMicro_CatBoost     0.833333   0.805556  0.828571       0.837209  0.664238
+SelectMicro_NB           0.705128   0.607143  0.971429       0.488372  0.508197
+Lasso_RF                 0.833333   0.805556  0.828571       0.837209  0.664238
+Lasso_SVM                0.871795   0.857143  0.857143       0.883721  0.740864
+Lasso_CatBoost           0.846154   0.810811  0.857143       0.837209  0.691600
+Lasso_NB                 0.717949   0.614035  1.000000       0.488372  0.547611
+Lasso_finetune_RF        0.833333   0.805556  0.828571       0.837209  0.664238
+Lasso_finetune_SVM       0.871795   0.857143  0.857143       0.883721  0.740864
+Lasso_finetune_CatBoost  0.846154   0.810811  0.857143       0.837209  0.691600
+Lasso_finetune_NB        0.717949   0.614035  1.000000       0.488372  0.547611
+This is the result of add NB and CatBoost, while the dataset is the same with the version before Jan 4
