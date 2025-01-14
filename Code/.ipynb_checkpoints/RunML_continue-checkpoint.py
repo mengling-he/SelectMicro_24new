@@ -1,30 +1,20 @@
 import pandas as pd
 import numpy as np
 import random
-import matplotlib
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn import linear_model
-from sklearn.linear_model import RidgeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OrdinalEncoder, LabelEncoder, StandardScaler
-from imblearn.over_sampling import ADASYN
-from imblearn.combine import SMOTEENN
 from sklearn import preprocessing, __all__, svm
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import GaussianNB
 from catboost import CatBoostClassifier
 from imblearn.over_sampling import SMOTE
 #from sklearn import svm, datasets
-from sklearn.metrics import auc, roc_auc_score, roc_curve, accuracy_score, precision_score, recall_score, f1_score, matthews_corrcoef
-from sklearn.metrics import RocCurveDisplay, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import auc, roc_auc_score, roc_curve, accuracy_score, precision_score, recall_score, f1_score, matthews_corrcoef, RocCurveDisplay, confusion_matrix, ConfusionMatrixDisplay
 from sklearn.model_selection import StratifiedKFold, cross_val_score, GridSearchCV, LeaveOneOut
-from sklearn.ensemble import RandomForestClassifier
-import shap
+import tensorflow as tf
+from tensorflow.keras import layers
 import time
-
-
-import RunML
-import metric
 
 
 
@@ -35,7 +25,7 @@ def split_and_scale_data(features, labels, test_size=0.3, random_state=777):
     X_test_scaled = sc.transform(X_test)
     return X_train_scaled, X_test_scaled, y_train, y_test
 
-def perform_SMOTE(X, y, k_neighbors=5, random_state=777):#do I need this function?
+def perform_SMOTE(X, y, k_neighbors=5, random_state=777):
     sm = SMOTE(k_neighbors=k_neighbors, random_state=random_state)
     X_sm, y_sm = sm.fit_resample(X, y)
 
@@ -43,6 +33,7 @@ def perform_SMOTE(X, y, k_neighbors=5, random_state=777):#do I need this functio
 
 
 
+# --------------------------------------------------------------------------------------------------#
 
 def LassoFeatureSelection(X,y,alpha=0.05,tol=0.01):
     """
@@ -115,120 +106,97 @@ def LassoFS_CV(X,y, param_grid=None):
     return X,selected_features
 
 
-"""
-def CFValidation_AUCstatistic(X,y,classifier = svm.SVC(kernel='linear', probability=True),k=5):# test this
-    cv = StratifiedKFold(n_splits=k, shuffle=True,random_state = 777)
-    aucs = []
-   # tprs = []
-   # mean_fpr = np.linspace(0, 1, 100)
-   # fig, ax = plt.subplots()
-    for i, (train, test) in enumerate(cv.split(X, y)):
-        classifier.fit(X[train], y[train])
-        # Predict probabilities
-        y_prob = classifier.predict_proba(X[test])[:, 1]
-        # Calculate AUC
-        auc = roc_auc_score(y[test], y_prob)
-        aucs.append(auc)
-    #return aucs.mean(), aucs.std()
-    mean_auc = np.mean(aucs)
-    return mean_auc
+# --------------------------------------------------------------------------------------------------#
 
-
-# calculate the stratified-cross-validation score mean and std
-# score : accuracy,f1,roc_auc...
-# this function not be tested
-def CFValidation_score(X, y,k=5,classifier = svm.SVC(kernel='linear', probability=True),score='accuracy'):# test this
-    cv = StratifiedKFold(n_splits=k, shuffle=True,random_state = 777)
-    acs = []
-    results = cross_val_score(classifier, X_train=X, y_train=y, cv = cv,scoring=score)#scoring, only a single metric is permitted
-    return results.mean(),results.std()
-"""
-
-"""refer to the function runClassifier_FScompare below
-def CalculateAUClist(data_subsets,y,classifiers,N):
-# the first input is a dictionary of the 4 dataset with different feature selection method and respect dataset
-# y is the response variable
-# classifiers is a dictionary of classifiers
-# N is the times of replicates for random selection and lasso selection 
-    Nselection = data_subsets.get('SelectMicro').shape[1] # the number of features selection by the method, will use this in random selection 
-    for datatype, subset in data_subsets.items():
-        if datatype == "AllFeatures" or datatype == "SelectMicro":
-            start_time = time.time()
-            auc_scores = {}
-            for name, clf in classifiers.items():
-                auc = CFValidation_AUCstatistic(subset,y,classifier= clf)
-                auc_scores[name] = auc
-            print(f"datatype '{datatype}': {auc_scores}")
-            end_time = time.time()
-            print(f"{datatype} took {end_time - start_time:.2f} seconds")
-        elif datatype == "Random":
-            start_time = time.time()
-            auc_list  = []
-            for ii in range(N):
-                auc_scores = {}
-                random.seed(1992)
-                randomFeatures=random.sample(list(range(np.shape(subset)[1])), Nselection)
-                X_randomFeatures=np.array(subset)[:,randomFeatures]
-                for name, clf in classifiers.items():
-                    auc = CFValidation_AUCstatistic(X_randomFeatures,y,classifier= clf)
-                    auc_scores[name] = auc
-                auc_list.append(auc_scores)
-            auc_pd = pd.DataFrame(auc_list)
-            print("Random Selection",auc_pd.mean())
-            end_time = time.time()
-            print(f"Random Selection took {end_time - start_time:.2f} seconds")
-        elif datatype == "Lasso":
-            start_time = time.time()
-            auc_list  = []
-            for ii in range(N):
-                auc_scores = {}
-                X_Lasso=RunML.LassoFeatureSelection(subset,y)
-                for name, clf in classifiers.items():
-                    auc = CFValidation_AUCstatistic(X_Lasso,y,classifier= clf)
-                    auc_scores[name] = auc
-                auc_list.append(auc_scores)
-            auc_pd = pd.DataFrame(auc_list)
-            print("LASSO Selection",auc_pd.mean())
-            end_time = time.time()
-            print(f"LASSO Selection took {end_time - start_time:.2f} seconds")
-        else:
-            print("The feature selection type is not included")
-
-"""
-
-"""refer to the function cross_fold_validation below
-def run_RF(X, y, k=5):
-     #Initialize the RandomForestClassifier
-    rf = RandomForestClassifier(n_estimators=100, random_state=42)
-
-    # Set up 5-fold cross-validation
-    kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=42)
+# Define the Autoencoder Model
+def create_AE(input_dim=1, latent_dim=100, activation='relu', loss='mae', optimizer='adam'):
+    autoencoder = tf.keras.Sequential([
+        tf.keras.Input(shape=(input_dim,)),
+        layers.Flatten(),
+        layers.Dense(latent_dim, activation=activation),
+        layers.Dense(input_dim, activation='sigmoid')  # Decoder to reconstruct the input
+    ])
     
-    # Lists to store the results
-    accuracies = []
-    roc_aucs = []
-    for train_index, test_index in kf.split(X, y):
-        # Split the data
-        X_train, X_test = X[train_index], X[test_index]
-        y_train, y_test = y[train_index], y[test_index]
+    autoencoder.compile(loss=loss, optimizer=optimizer, metrics=['mse'])
     
-        # Train the model
-        rf.fit(X_train, y_train)
+    return autoencoder
+
+# Manual GridSearchCV function
+def run_AE(X_train_scaled, X_test_scaled, param_grid=None):
+    if param_grid is None:
+        param_grid = {
+            'input_dim': [X_train_scaled.shape[1]], 
+            'latent_dim': [10, 25, 50, 100],
+            'activation': ['relu', 'sigmoid', 'tanh'],
+            'loss': ['mae'],#, 'binary_crossentropy'],#
+            'optimizer': ['sgd', 'adam'],
+            'epochs': [10],
+            'batch_size': [32]
+        }
+
+    # Manually define a function for model training
+    def fit_model(input_dim, latent_dim, activation, loss, optimizer, epochs, batch_size):
+        autoencoder = create_AE(input_dim=input_dim, latent_dim=latent_dim, activation=activation, 
+                                 loss=loss, optimizer=optimizer)
+        
+        # Fit the model with validation data
+        autoencoder.fit(X_train_scaled, X_train_scaled, epochs=epochs, batch_size=batch_size, 
+                        validation_data=(X_test_scaled, X_test_scaled), verbose=0)
+        return autoencoder
+
+    # Custom GridSearchCV logic
+    best_model = None
+    best_params = None
+    best_score = float('inf')
+
+    for latent_dim in param_grid['latent_dim']:
+        for activation in param_grid['activation']:
+            for loss in param_grid['loss']:
+                for optimizer in param_grid['optimizer']:
+                    for epochs in param_grid['epochs']:
+                        for batch_size in param_grid['batch_size']:
+                            
+                            # Fit the model with a specific combination of hyperparameters
+                            autoencoder = fit_model(X_train_scaled.shape[1], latent_dim, activation, loss, optimizer, epochs, batch_size)
+                            
+                            # Get the validation loss (first item in the returned list)
+                            val_loss = autoencoder.evaluate(X_test_scaled, X_test_scaled, verbose=0)[0]
+                            # Track the best parameters based on validation loss
+                            if val_loss < best_score:
+                                best_score = val_loss
+                                best_params = {
+                                    'latent_dim': latent_dim,
+                                    'activation': activation,
+                                    'loss': loss,
+                                    'optimizer': optimizer,
+                                    'epochs': epochs,
+                                    'batch_size': batch_size
+                                }
+                                best_model = autoencoder
+    print(f"latent dimension: {latent_dim}, activation:{activation}, opt:{optimizer}")               
+    # Ensure the best model is built
+    best_model.predict(X_train_scaled[:1])  # Call the model on one sample to build it
+
+    # **New Fix: Call the encoder with proper outputs**
+    encoder_layer = tf.keras.Sequential(best_model.layers[:2])  # Extract only the encoder layers
     
-        # Make predictions
-        y_pred = rf.predict(X_test)
-        y_prob = rf.predict_proba(X_test)[:, 1]
-    
-        # Evaluate the model
-        accuracy = accuracy_score(y_test, y_pred)
-        roc_auc = roc_auc_score(y_test, y_prob)
-    
-        accuracies.append(accuracy)
-        roc_aucs.append(roc_auc)
-    return np.mean(accuracies), np.mean(roc_aucs)
-"""
+    # Ensure the encoder is also built
+    encoder_layer.predict(X_train_scaled[:1])  # Trigger the encoder to initialize
+
+    # Generate latent features from encoder representation
+    AE_train = pd.DataFrame(encoder_layer.predict(X_train_scaled))
+    AE_train = AE_train.add_prefix('feature_')
 
 
+    AE_test = pd.DataFrame(encoder_layer.predict(X_test_scaled))
+    AE_test = AE_test.add_prefix('feature_')
+    
+    return AE_train, AE_test
+
+
+
+
+# --------------------------------------------------------------------------------------------------#
 
 def cross_fold_validation(X, y, classifier_name, SMOTE=False,k=5):
     """
@@ -378,13 +346,14 @@ def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
               'y_true': y_true_all,
               'y_pred':y_pred_all,
               'y_pred_prob': y_prob_all}
-    
+    """
     for key, value in result.items():
         print(f"Key: {key}, Type: {type(value)}")
-
+    """
     return result
 
 
+# --------------------------------------------------------------------------------------------------#
 
 # an update function of runAUC_FScompare- no fine tune
 def runClassifier_FScompare(data_subsets,y,N,classifiers,SMOTE=False): # fine tune the classifier
@@ -455,6 +424,7 @@ def runClassifier_FScompare(data_subsets,y,N,classifiers,SMOTE=False): # fine tu
 
 
 
+# --------------------------------------------------------------------------------------------------#
 
 def nested_loocv(X, y,classifier="SVM", smote=False):
     """
@@ -717,37 +687,7 @@ def run_SVM_finetune(X, y, param_grid=None, label=None, title=None, k=5):
 
 
 
-def  sharp_value(X,y,classifier_name):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    X_train_sm, y_train_sm = perform_SMOTE(X_train, y_train)
-
-    if classifier_name == "RF":
-        clf = RandomForestClassifier(n_jobs=5,random_state=777)
-    elif classifier_name == "SVM":
-        clf = svm.SVC(kernel='linear', probability=True, random_state=777)
-    else:
-        raise ValueError('The classifier is not included')
-
-    
-    # Train an  model
-    model = clf.fit(X_train_sm, y_train_sm)
-    
-    # Create a SHAP explainer
-    explainer = shap.Explainer(model, X_train_sm)
-    
-    # Calculate SHAP values for the test data
-    shap_values = explainer(X_test)
-    shap_values_2d = shap_values[:, :, 0]
-    # Plot the summary plot
-    shap.summary_plot(shap_values_2d, X_test)
-
-    # Plot the waterfall plot for a single prediction
-    shap.waterfall_plot(shap_values_2d[0])
-
-    # Plot the dependence plot for a specific feature
-    # shap.dependence_plot("MedInc", shap_values, X_test)
-    
 
 
 

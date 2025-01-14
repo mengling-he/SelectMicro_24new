@@ -571,6 +571,41 @@ def Neg_GINI(X,Y):#X is the relative abundance matrix(np.array), each row is a s
 
 
 
+
+def  sharp_value(X,y,classifier_name):# need to be update
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    X_train_sm, y_train_sm = perform_SMOTE(X_train, y_train)
+
+    if classifier_name == "RF":
+        clf = RandomForestClassifier(n_jobs=5,random_state=777)
+    elif classifier_name == "SVM":
+        clf = svm.SVC(kernel='linear', probability=True, random_state=777)
+    else:
+        raise ValueError('The classifier is not included')
+
+    
+    # Train an  model
+    model = clf.fit(X_train_sm, y_train_sm)
+    
+    # Create a SHAP explainer
+    explainer = shap.Explainer(model, X_train_sm)
+    
+    # Calculate SHAP values for the test data
+    shap_values = explainer(X_test)
+    shap_values_2d = shap_values[:, :, 0]
+    # Plot the summary plot
+    shap.summary_plot(shap_values_2d, X_test)
+
+    # Plot the waterfall plot for a single prediction
+    shap.waterfall_plot(shap_values_2d[0])
+
+    # Plot the dependence plot for a specific feature
+    # shap.dependence_plot("MedInc", shap_values, X_test)
+    
+
+
+
 def fisher_discriminant_ratio(features, labels):
     """
     Calculate the Fisher's discriminant ratio (F1) for an entire dataset.
