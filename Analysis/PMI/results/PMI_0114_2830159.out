@@ -1,0 +1,64 @@
+2025-01-14 15:29:48.874428: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-01-14 15:29:48.876919: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-01-14 15:29:48.880713: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-01-14 15:29:48.889716: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1736886588.904139 2276302 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1736886588.908619 2276302 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-01-14 15:29:48.925218: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+TBB Warning: The number of workers is currently limited to 47. The request for 55 workers is ignored. Further requests for more workers will be silently ignored until the limit changes.
+
+Analysis for OTU
+                  RF_Accuracy   RF_AUC   SVM_Accuracy   SVM_AUC  CatBoost_Accuracy  CatBoost_AUC  NB_Accuracy   NB_AUC 
+FS_Lasso           0.848333    0.891667    0.821667    0.902778      0.809167         0.878968     0.756667    0.911111
+FS_Lassofinetune   0.848333    0.891667    0.821667    0.902778      0.809167         0.878968     0.756667    0.911111
+                           Accuracy  Precision   Recall   Specification     Mcc  
+FS_Lasso_RF                0.846154  0.870968   0.771429    0.906977     0.689490
+FS_Lasso_SVM               0.820513  0.818182   0.771429    0.860465     0.636135
+FS_Lasso_CatBoost          0.807692  0.794118   0.771429    0.837209     0.610466
+FS_Lasso_NB                0.756410  0.653846   0.971429    0.581395     0.583266
+FS_Lassofinetune_RF        0.846154  0.870968   0.771429    0.906977     0.689490
+FS_Lassofinetune_SVM       0.820513  0.818182   0.771429    0.860465     0.636135
+FS_Lassofinetune_CatBoost  0.807692  0.794118   0.771429    0.837209     0.610466
+FS_Lassofinetune_NB        0.756410  0.653846   0.971429    0.581395     0.583266
+Analysis for class
+                  RF_Accuracy   RF_AUC   SVM_Accuracy   SVM_AUC  CatBoost_Accuracy  CatBoost_AUC  NB_Accuracy   NB_AUC 
+FS_Lasso           0.859167    0.921429    0.859167    0.937302      0.794167         0.921825      0.7825     0.919444
+FS_Lassofinetune   0.859167    0.921429    0.859167    0.937302      0.794167         0.921825      0.7825     0.919444
+                           Accuracy  Precision   Recall   Specification     Mcc  
+FS_Lasso_RF                0.858974  0.833333   0.857143    0.860465     0.715945
+FS_Lasso_SVM               0.858974  0.833333   0.857143    0.860465     0.715945
+FS_Lasso_CatBoost          0.794872  0.756757   0.800000    0.790698     0.588357
+FS_Lasso_NB                0.782051  0.704545   0.885714    0.697674     0.585141
+FS_Lassofinetune_RF        0.858974  0.833333   0.857143    0.860465     0.715945
+FS_Lassofinetune_SVM       0.858974  0.833333   0.857143    0.860465     0.715945
+FS_Lassofinetune_CatBoost  0.794872  0.756757   0.800000    0.790698     0.588357
+FS_Lassofinetune_NB        0.782051  0.704545   0.885714    0.697674     0.585141
+Analysis for order
+                  RF_Accuracy   RF_AUC   SVM_Accuracy   SVM_AUC  CatBoost_Accuracy  CatBoost_AUC  NB_Accuracy  NB_AUC 
+FS_Lasso           0.834167    0.929167    0.846667    0.921032      0.808333         0.909524     0.794167    0.93373
+FS_Lassofinetune   0.834167    0.929167    0.846667    0.921032      0.808333         0.909524     0.794167    0.93373
+                           Accuracy  Precision   Recall   Specification     Mcc  
+FS_Lasso_RF                0.833333  0.805556   0.828571    0.837209     0.664238
+FS_Lasso_SVM               0.846154  0.828571   0.828571    0.860465     0.689037
+FS_Lasso_CatBoost          0.807692  0.812500   0.742857    0.860465     0.610048
+FS_Lasso_NB                0.794872  0.693878   0.971429    0.651163     0.640729
+FS_Lassofinetune_RF        0.833333  0.805556   0.828571    0.837209     0.664238
+FS_Lassofinetune_SVM       0.846154  0.828571   0.828571    0.860465     0.689037
+FS_Lassofinetune_CatBoost  0.807692  0.812500   0.742857    0.860465     0.610048
+FS_Lassofinetune_NB        0.794872  0.693878   0.971429    0.651163     0.640729
+Analysis for phylum
+                  RF_Accuracy   RF_AUC   SVM_Accuracy  SVM_AUC  CatBoost_Accuracy  CatBoost_AUC  NB_Accuracy  NB_AUC 
+FS_Lasso             0.835     0.911706     0.8725     0.95873      0.821667         0.934524     0.718333    0.94127
+FS_Lassofinetune     0.835     0.911706     0.8725     0.95873      0.821667         0.934524     0.718333    0.94127
+                           Accuracy  Precision   Recall   Specification     Mcc  
+FS_Lasso_RF                0.833333  0.843750   0.771429    0.883721     0.662453
+FS_Lasso_SVM               0.871795  0.857143   0.857143    0.883721     0.740864
+FS_Lasso_CatBoost          0.820513  0.818182   0.771429    0.860465     0.636135
+FS_Lasso_NB                0.717949  0.614035   1.000000    0.488372     0.547611
+FS_Lassofinetune_RF        0.833333  0.843750   0.771429    0.883721     0.662453
+FS_Lassofinetune_SVM       0.871795  0.857143   0.857143    0.883721     0.740864
+FS_Lassofinetune_CatBoost  0.820513  0.818182   0.771429    0.860465     0.636135
+FS_Lassofinetune_NB        0.717949  0.614035   1.000000    0.488372     0.547611
+This is the result of add NB and CatBoost, while the dataset is the same with the version before Jan 4

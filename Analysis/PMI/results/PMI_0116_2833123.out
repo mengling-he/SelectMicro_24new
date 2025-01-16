@@ -1,0 +1,64 @@
+2025-01-16 11:26:21.160529: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-01-16 11:26:21.164124: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-01-16 11:26:21.382525: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-01-16 11:26:21.449574: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1737044781.618948 2215646 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1737044782.090672 2215646 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-01-16 11:26:22.238591: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+TBB Warning: The number of workers is currently limited to 47. The request for 55 workers is ignored. Further requests for more workers will be silently ignored until the limit changes.
+
+Analysis for OTU
+            RF_Accuracy   RF_AUC   SVM_Accuracy   SVM_AUC  CatBoost_Accuracy  CatBoost_AUC  NB_Accuracy   NB_AUC 
+Allfeature   0.861667    0.894048     0.7825     0.889286      0.795000         0.887698     0.718333    0.744643
+AE           0.565833    0.519048     0.5125     0.601984      0.435833         0.380952     0.461667    0.440079
+                     Accuracy  Precision   Recall   Specification     Mcc  
+Allfeature_RF        0.858974  0.875000   0.800000    0.906977     0.714857
+Allfeature_SVM       0.782051  0.781250   0.714286    0.837209     0.557643
+Allfeature_CatBoost  0.794872  0.806452   0.714286    0.860465     0.584142
+Allfeature_NB        0.717949  0.658537   0.771429    0.674419     0.444080
+AE_RF                0.564103  0.516129   0.457143    0.651163     0.110075
+AE_SVM               0.512821  0.285714   0.057143    0.883721    -0.102907
+AE_CatBoost          0.435897  0.354839   0.314286    0.534884    -0.153295
+AE_NB                0.461538  0.400000   0.400000    0.511628    -0.088372
+Analysis for class
+            RF_Accuracy  RF_AUC   SVM_Accuracy   SVM_AUC  CatBoost_Accuracy  CatBoost_AUC  NB_Accuracy   NB_AUC 
+Allfeature   0.822500    0.90754    0.820833    0.890873      0.835000         0.890079     0.770000    0.828968
+AE           0.446667    0.43631    0.513333    0.491270      0.445833         0.460317     0.473333    0.514286
+                     Accuracy  Precision   Recall   Specification     Mcc  
+Allfeature_RF        0.820513  0.800000   0.800000    0.837209     0.637209
+Allfeature_SVM       0.820513  0.800000   0.800000    0.837209     0.637209
+Allfeature_CatBoost  0.833333  0.823529   0.800000    0.860465     0.662449
+Allfeature_NB        0.769231  0.688889   0.885714    0.674419     0.563892
+AE_RF                0.448718  0.357143   0.285714    0.581395    -0.137784
+AE_SVM               0.512821  0.411765   0.200000    0.767442    -0.039223
+AE_CatBoost          0.448718  0.357143   0.285714    0.581395    -0.137784
+AE_NB                0.474359  0.411765   0.400000    0.534884    -0.065312
+Analysis for order
+            RF_Accuracy   RF_AUC   SVM_Accuracy   SVM_AUC  CatBoost_Accuracy  CatBoost_AUC  NB_Accuracy   NB_AUC 
+Allfeature   0.848333    0.905754    0.820000    0.888492      0.872500         0.894444     0.744167    0.771230
+AE           0.460833    0.431944    0.473333    0.501984      0.511667         0.519048     0.475000    0.382143
+                     Accuracy  Precision   Recall   Specification     Mcc  
+Allfeature_RF        0.846154  0.828571   0.828571    0.860465     0.689037
+Allfeature_SVM       0.820513  0.818182   0.771429    0.860465     0.636135
+Allfeature_CatBoost  0.871795  0.857143   0.857143    0.883721     0.740864
+Allfeature_NB        0.743590  0.702703   0.742857    0.744186     0.485113
+AE_RF                0.461538  0.370370   0.285714    0.604651    -0.114617
+AE_SVM               0.474359  0.250000   0.085714    0.790698    -0.170366
+AE_CatBoost          0.512821  0.454545   0.428571    0.581395     0.010034
+AE_NB                0.474359  0.400000   0.342857    0.581395    -0.077438
+Analysis for phylum
+            RF_Accuracy   RF_AUC   SVM_Accuracy   SVM_AUC  CatBoost_Accuracy  CatBoost_AUC  NB_Accuracy   NB_AUC 
+Allfeature   0.770000    0.919048    0.770833    0.894841      0.807500         0.943651     0.705833    0.912302
+AE           0.500833    0.487897    0.462500    0.573810      0.525833         0.532143     0.462500    0.492063
+                     Accuracy  Precision   Recall   Specification     Mcc  
+Allfeature_RF        0.769231  0.729730   0.771429    0.767442     0.536735
+Allfeature_SVM       0.769231  0.757576   0.714286    0.813953     0.531784
+Allfeature_CatBoost  0.807692  0.777778   0.800000    0.813953     0.612531
+Allfeature_NB        0.705128  0.607143   0.971429    0.488372     0.508197
+AE_RF                0.500000  0.433333   0.371429    0.604651    -0.024454
+AE_SVM               0.461538  0.294118   0.142857    0.720930    -0.164095
+AE_CatBoost          0.525641  0.464286   0.371429    0.651163     0.023423
+AE_NB                0.461538  0.418605   0.514286    0.418605    -0.067110
+This is the result of PMI_AEdata, using  the updated function and the added models
