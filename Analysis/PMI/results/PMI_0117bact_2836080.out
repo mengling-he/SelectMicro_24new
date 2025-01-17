@@ -1,0 +1,69 @@
+2025-01-17 12:25:29.711719: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-01-17 12:25:29.715460: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-01-17 12:25:30.054901: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-01-17 12:25:30.113044: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1737134730.243602 2530273 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1737134730.513131 2530273 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-01-17 12:25:30.597413: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Analysis for OTU
+                RF_Accuracy   RF_AUC   SVM_Accuracy   SVM_AUC
+AllFeatures      0.784167    0.853175    0.758333    0.874206
+SelectMicro      0.796667    0.870040    0.744167    0.885714
+Lasso            0.899167    0.965675    0.783333    0.934524
+Lasso_finetune   0.848333    0.969048    0.835833    0.924603
+                    Accuracy  Precision   Recall   Specification     Mcc  
+AllFeatures_RF      0.782051  0.736842   0.800000    0.767442     0.564635
+AllFeatures_SVM     0.756410  0.735294   0.714286    0.790698     0.506500
+SelectMicro_RF      0.794872  0.771429   0.771429    0.813953     0.585382
+SelectMicro_SVM     0.743590  0.758621   0.628571    0.837209     0.479350
+Lasso_RF            0.897436  0.864865   0.914286    0.883721     0.794844
+Lasso_SVM           0.782051  0.800000   0.685714    0.860465     0.558370
+Lasso_finetune_RF   0.846154  0.828571   0.828571    0.860465     0.689037
+Lasso_finetune_SVM  0.833333  0.823529   0.800000    0.860465     0.662449
+Analysis for order
+                RF_Accuracy   RF_AUC   SVM_Accuracy   SVM_AUC
+AllFeatures      0.824167    0.888095    0.733333    0.857143
+SelectMicro      0.849167    0.894444    0.746667    0.882540
+Lasso            0.860833    0.932143    0.821667    0.928571
+Lasso_finetune   0.848333    0.924206    0.783333    0.915476
+                    Accuracy  Precision   Recall   Specification     Mcc  
+AllFeatures_RF      0.820513  0.783784   0.828571    0.813953     0.639979
+AllFeatures_SVM     0.730769  0.769231   0.571429    0.860465     0.455677
+SelectMicro_RF      0.846154  0.810811   0.857143    0.837209     0.691600
+SelectMicro_SVM     0.743590  0.777778   0.600000    0.860465     0.481391
+Lasso_RF            0.858974  0.815789   0.885714    0.837209     0.719348
+Lasso_SVM           0.820513  0.888889   0.685714    0.930233     0.643939
+Lasso_finetune_RF   0.846154  0.794872   0.885714    0.813953     0.695978
+Lasso_finetune_SVM  0.782051  0.846154   0.628571    0.906977     0.565039
+Analysis for class
+                RF_Accuracy   RF_AUC   SVM_Accuracy   SVM_AUC
+AllFeatures      0.821667    0.842063    0.732500    0.864683
+SelectMicro      0.796667    0.834921    0.746667    0.872619
+Lasso            0.848333    0.909921    0.732500    0.894841
+Lasso_finetune   0.848333    0.909921    0.732500    0.894841
+                    Accuracy  Precision   Recall   Specification     Mcc  
+AllFeatures_RF      0.820513  0.783784   0.828571    0.813953     0.639979
+AllFeatures_SVM     0.730769  0.850000   0.485714    0.930233     0.473780
+SelectMicro_RF      0.794872  0.756757   0.800000    0.790698     0.588357
+SelectMicro_SVM     0.743590  0.857143   0.514286    0.930233     0.498438
+Lasso_RF            0.846154  0.810811   0.857143    0.837209     0.691600
+Lasso_SVM           0.730769  0.888889   0.457143    0.953488     0.484739
+Lasso_finetune_RF   0.846154  0.810811   0.857143    0.837209     0.691600
+Lasso_finetune_SVM  0.730769  0.888889   0.457143    0.953488     0.484739
+Analysis for phylum
+                RF_Accuracy   RF_AUC   SVM_Accuracy   SVM_AUC
+AllFeatures      0.732500    0.825794    0.732500    0.897222
+SelectMicro      0.745000    0.821230    0.745000    0.898016
+Lasso            0.771667    0.863492    0.719167    0.891270
+Lasso_finetune   0.771667    0.863492    0.719167    0.891270
+                    Accuracy  Precision   Recall   Specification     Mcc  
+AllFeatures_RF      0.730769  0.694444   0.714286    0.744186     0.457409
+AllFeatures_SVM     0.730769  0.888889   0.457143    0.953488     0.484739
+SelectMicro_RF      0.743590  0.714286   0.714286    0.767442     0.481728
+SelectMicro_SVM     0.743590  0.777778   0.600000    0.860465     0.481391
+Lasso_RF            0.769231  0.707317   0.828571    0.720930     0.547324
+Lasso_SVM           0.717949  0.709677   0.628571    0.790698     0.426119
+Lasso_finetune_RF   0.769231  0.707317   0.828571    0.720930     0.547324
+Lasso_finetune_SVM  0.717949  0.709677   0.628571    0.790698     0.426119

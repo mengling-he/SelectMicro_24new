@@ -151,7 +151,7 @@ def SelectOTU_fun(scorelist,y,p_cutoff=0.1,plot=True):# same with the function a
 
 
 ################# This is a combined function ######################################
-def SelectMicro_fun(df,y, p_cutoff=0.1,plot=True):
+def SelectMicro_fun(df,y,threshold=0.01, p_cutoff=0.1,plot=True):
     """
     combine calculating H and feature selection in one function
     return selected array (data), selected column names, selected indices and all the H statistics with the original indices, plot H if needed
@@ -161,7 +161,7 @@ def SelectMicro_fun(df,y, p_cutoff=0.1,plot=True):
         raise ValueError("Response variable must be 1D array")
     colnames = df.columns
     x = df.to_numpy()
-    x = relative_abundance(x)
+    x = relative_abundance(x,cutOff=threshold)
     scorelist = OTU_H_Score_arr(x,y)
 
     selected_indices = SelectOTU_fun(scorelist,y,plot=plot)

@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 
 
 # Read the data back from the file
-with open('../data/data_subset_4taxa_noenv_label.pkl', 'rb') as file:
+with open('../data/data_subset_4taxa_paperthreshold_bac.pkl', 'rb') as file:
     data_subset_4taxa = pickle.load(file)
 
 
@@ -50,17 +50,12 @@ iter =30
 cls = ["RF","SVM"]
 targetLabel = y
 
-taxlabels = ['OTU', 'class', 'order', 'phylum']
+taxlabels = ['OTU', 'order', 'class', 'phylum']
 dict_cm_list = []
 for i , dataset  in enumerate(data_subset_4taxa):
     print(f"Analysis for {taxlabels[i]}")
     dict_cm = RunML_continue.runClassifier_FScompare(data_subsets= dataset,y= targetLabel,N=iter,classifiers=cls)
-    dict_cm_list.append(dict_cm)
-    
-# Save dictionary to a pickle file
-with open('../results/PMI_bact_prediction.pkl', 'wb') as pickle_file:
-    pickle.dump(dict_cm_list, pickle_file)
-
+    print(metric.metric_sum(dict_cm))
     
     
     
