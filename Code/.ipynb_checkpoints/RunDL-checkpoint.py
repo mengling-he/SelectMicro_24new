@@ -7,6 +7,29 @@ from tensorflow.keras import layers
 
 # --------------------------------------------------------------------------------------------------#
 
+# To define your model, use the Keras Model Subclassing API.
+class Autoencoder(Model):
+  def __init__(self, latent_dim, actual_dim):
+    super(Autoencoder, self).__init__()
+    self.latent_dim = latent_dim
+    self.actual_dim = actual_dim
+      
+    self.encoder = tf.keras.Sequential([
+      layers.Flatten(),
+      layers.Dense(latent_dim, activation='relu'),
+    ])
+      
+    self.decoder = tf.keras.Sequential([
+      layers.Dense(tf.math.reduce_prod(actual_dim).numpy(), activation='sigmoid'),
+      layers.Reshape(actual_dim)
+    ])
+
+  def call(self, x):
+    encoded = self.encoder(x)
+    decoded = self.decoder(encoded)
+    return decoded
+
+
 # Define the Autoencoder Model
 def create_AE(input_dim=1, latent_dim=100, activation='relu', loss='mae', optimizer='adam'):
     autoencoder = tf.keras.Sequential([
