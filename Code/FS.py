@@ -147,7 +147,7 @@ def SelectOTU_fun(scorelist,y,p_cutoff=0.1,plot=True):# same with the function a
         #plt.grid(True, linestyle='--', alpha=0.7)
         plt.legend()
 
-    return selected_indices
+    return np.array(selected_indices)
 
 
 ################# This is a combined function ######################################

@@ -8,6 +8,7 @@ from sklearn import preprocessing, __all__, svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import GaussianNB
 from catboost import CatBoostClassifier
+import xgboost as xgb
 from imblearn.over_sampling import SMOTE
 #from sklearn import svm, datasets
 from sklearn.metrics import auc, roc_auc_score, roc_curve, accuracy_score, precision_score, recall_score, f1_score, matthews_corrcoef, RocCurveDisplay, confusion_matrix, ConfusionMatrixDisplay
@@ -109,22 +110,9 @@ def LassoFS_CV(X,y, param_grid=None):
 
 
 # --------------------------------------------------------------------------------------------------#
-
+"""
 def cross_fold_validation(X, y, classifier_name, SMOTE=False,k=5):
-    """
-    calculate the model results. This functionn is used in another function
-
-    Parameters:
-        X: ndarray
-            Features.
-        y: ndarray
-            Labels.
-   classifier_name:
-        RF or SVM
-    SMOTE (bool): Whether to apply SMOTE oversampling (default: False)
-    Returns:
-        5 results : mean of accuracy and AUC of all folds.  the shuffled actual y, predicted y and predicted prob
-    """ 
+  
     if classifier_name == "RF":
         clf = RandomForestClassifier(n_jobs=5,random_state=777)
     elif classifier_name == "SVM":
@@ -181,9 +169,9 @@ def cross_fold_validation(X, y, classifier_name, SMOTE=False,k=5):
               'y_pred_prob': y_prob_all}
 
     return result
+"""
 
-
-def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
+def ML_model_SCV2(X, y, classifier_name, SMOTE=False,k=5):
     """
     calculate the ML model results using stratefied cross validation. (This functionn is used in another function)
 
@@ -265,20 +253,109 @@ def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
     return result
 
 
+
+def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
+    
+    
+    # Set up 5-fold cross-validation
+    kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=777)
+
+    # Lists to store the results
+    accuracies = []
+    roc_aucs = []
+    y_true_all = []
+    y_pred_all = []
+    y_prob_all = []
+
+    for train_index, test_index in kf.split(X, y):
+        # Split the data
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = y[train_index], y[test_index]
+
+        # Apply SMOTE if specified
+        if SMOTE:
+            X_train, y_train = perform_SMOTE(X_train, y_train)
+
+        if classifier_name.lower() == "xgboost":# not valid
+            # Prepare DMatrix for XGBoost
+            dtrain = xgb.DMatrix(X_train, label=y_train)
+            dtest = xgb.DMatrix(X_test, label=y_test)
+            # Define XGBoost parameters
+            params = {
+                "objective": "binary:logistic","eval_metric": "logloss","max_depth": 5,
+                "eta": 0.1,"subsample": 0.8,"colsample_bytree": 0.8,"seed": 42
+            }
+            # Train the model
+            model = xgb.train(params, dtrain, num_boost_round=100,early_stopping_rounds=10, verbose_eval=False)
+            # Predict probabilities
+            y_prob = model.predict(dtest)
+            y_pred = (y_prob > 0.5).astype(int)
+
+        if classifier_name.lower() == "rf":
+            clf = RandomForestClassifier(n_jobs=5,random_state=777)
+            clf.fit(X_train, y_train)
+            y_pred = clf.predict(X_test)
+            y_prob = clf.predict_proba(X_test)[:, 1]
+        elif classifier_name.lower() == "svm":
+            clf = svm.SVC(kernel='rbf', probability=True, random_state=777)#{'precomputed', 'poly', 'rbf', 'sigmoid', 'linear'}
+            clf.fit(X_train, y_train)
+            y_pred = clf.predict(X_test)
+            y_prob = clf.predict_proba(X_test)[:, 1]
+        
+        elif classifier_name.lower() == "catboost":
+            clf = CatBoostClassifier(iterations=100, learning_rate=0.1, depth=6,verbose=0, random_state=777)
+            clf.fit(X_train, y_train)
+            y_pred = clf.predict(X_test)
+            y_prob = clf.predict_proba(X_test)[:, 1]
+            
+        elif classifier_name.lower() == "nb":
+            clf = GaussianNB()
+            clf.fit(X_train, y_train)
+            y_pred = clf.predict(X_test)
+            y_prob = clf.predict_proba(X_test)[:, 1]
+        else:
+            raise ValueError("Invalid classifier_name. Please choose 'xgboost', 'catboost','NB', 'RF' or 'svm'.")     
+
+        # Evaluate the model
+        accuracy = accuracy_score(y_test, y_pred)
+        roc_auc = roc_auc_score(y_test, y_prob)
+
+        accuracies.append(accuracy)
+        roc_aucs.append(roc_auc)
+
+        y_true_all.extend(y_test)# Using extend to add multiple elements
+        y_pred_all.extend(y_pred)
+        y_prob_all.extend([float(prob) for prob in y_prob])
+        #print(f'Fold Accuracy: {accuracy:.4f}, ROC AUC: {roc_auc:.4f}')
+
+    # Calculate the mean accuracy and ROC AUC
+    mean_accuracy = np.mean(accuracies)
+    mean_roc_auc = np.mean(roc_aucs)
+    print(roc_aucs)
+    result = {'mean_accuracy': mean_accuracy,
+              'std_accuracy':np.std(accuracies),
+              'mean_auc': mean_roc_auc,
+              'std_auc':np.std(roc_aucs),
+              'y_true': y_true_all,
+              'y_pred':y_pred_all,
+              'y_pred_prob': y_prob_all}
+    """
+    for key, value in result.items():
+        print(f"Key: {key}, Type: {type(value)}")
+    """
+    return result
+
+
 # --------------------------------------------------------------------------------------------------#
 
 # an update function of runAUC_FScompare- no fine tune
-def runClassifier_FScompare(data_subsets,y,N,classifiers,SMOTE=False): # fine tune the classifier
+def runClassifier_FScompare(data_subsets,y,classifiers,SMOTE=False): # fine tune the classifier
 # the first input is a dictionary of the 4 dataset with different feature selection method and respect dataset
 # y is the response variable
 # classifiers: [RF,SVM]
 # N is the times of replicates for random selection
 # print the AUC  and accuracy, return the prediction results of cross validation 
-    if 'SelectMicro' in data_subsets and data_subsets['SelectMicro'] is not None:
-        Nselection = data_subsets['SelectMicro'].shape[1]  # the number of features selected by the method
-    else:
-        Nselection = 0
-        
+   
     results = {}#  results  to keep the acc and auc
     results_cm ={} # results  to keep the actual y and predicted y and predicted prob
     
@@ -287,48 +364,21 @@ def runClassifier_FScompare(data_subsets,y,N,classifiers,SMOTE=False): # fine tu
         results[datatype] = {}
         results_cm[datatype] = {}    
 
-        if datatype == "Random":
-            df = data_subsets.get('Random')# which is an numpy array not a df
-            num_columns = df.shape[1]  # Get the number of columns in the DataFrame
-            acc_allrun = []
-            auc_allrun = []
-            random.seed(1992)
-            for _ in range(N):
-                acc_eachrun = []
-                auc_eachrun = []
-                selected_indices = random.sample(range(num_columns), Nselection)
-                new_df = df[:, selected_indices]
-                for clf in classifiers:
-                    results_clf = ML_model_SCV(new_df, y,clf,SMOTE=SMOTE)
-                    acc = results_clf['mean_accuracy']
-                    auc = results_clf['mean_auc']
-                    acc_eachrun.append(acc)
-                    auc_eachrun.append(auc)
-                acc_allrun.append(acc_eachrun)
-                auc_allrun.append(auc_eachrun)
-            acc_allrun = np.array(acc_allrun)
-            auc_allrun = np.array(auc_allrun)
-
-            acc_list = np.average(acc_allrun, axis=0)
-            auc_list = np.average(auc_allrun, axis=0)
-            for index, clf in enumerate(classifiers):
-                results[datatype][f"{clf}_Accuracy"] = acc_list[index]
-                results[datatype][f"{clf}_AUC"] = auc_list[index]
-                
-        else:
-            for clf in classifiers:
-                #print(f"{datatype}_{clf}")
-                results_clf = ML_model_SCV(subset, y,clf,SMOTE=SMOTE)
-                acc = results_clf['mean_accuracy']
-                auc = results_clf['mean_auc']
-                y_actual  = results_clf['y_true']
-                y_pred = results_clf['y_pred']
-                y_prob = results_clf['y_pred_prob']
+        for clf in classifiers:
+            #print(f"{datatype}_{clf}")
+            results_clf = ML_model_SCV(subset, y,clf,SMOTE=SMOTE)
+            acc = results_clf['mean_accuracy']
+            auc = results_clf['mean_auc']
+            y_actual  = results_clf['y_true']
+            y_pred = results_clf['y_pred']
+            y_prob = results_clf['y_pred_prob']
+        
+            results[datatype][f"{clf}_Accuracy"] = acc
+            results[datatype][f"{clf}_AUC"] = auc
+            results[datatype][f"{clf}_Accuracy_std"] = results_clf['std_accuracy']
+            results[datatype][f"{clf}_AUC_std"] = results_clf['std_auc']
+            results_cm[datatype][clf] = np.array([y_actual,y_pred,y_prob])
             
-                results[datatype][f"{clf}_Accuracy"] = acc
-                results[datatype][f"{clf}_AUC"] = auc
-                results_cm[datatype][clf] = np.array([y_actual,y_pred,y_prob])
-                
     results_df = pd.DataFrame(results).T
         # Adjust display options
     pd.set_option('display.max_rows', None)  # Show all rows
