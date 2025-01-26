@@ -62,7 +62,7 @@ def accuracy(y_true, y_pred):
 
 
 
-
+# --------------------------------------------------------------------------------------------------#
 # TP, TN, FP, FN
 def true_positive(y_true, y_pred):
     
@@ -106,7 +106,7 @@ def false_negative(y_true, y_pred):
             fn += 1
             
     return fn
-
+# --------------------------------------------------------------------------------------------------#
 
 
 
@@ -171,11 +171,7 @@ def micro_precision(y_true, y_pred):
     # calculate and return overall precision
     precision = tp / (tp + fp)
     return precision
-
-
-
-
-
+# --------------------------------------------------------------------------------------------------#
 
 # Computation of macro-averaged recall
 
@@ -241,7 +237,7 @@ def micro_recall(y_true, y_pred):
     # calculate and return overall recall
     recall = tp / (tp + fn)
     return recall
-
+# --------------------------------------------------------------------------------------------------#
 
 
 # F1 Score is the weighted average of Precision and Recall
@@ -304,7 +300,7 @@ def micro_f1(y_true, y_pred):
     f1 = 2*P*R / (P + R)    
 
     return f1
-
+# --------------------------------------------------------------------------------------------------#
 
 def mcc_score(y_true, y_pred):
     # find the number of classes
@@ -341,7 +337,7 @@ def mcc_score(y_true, y_pred):
     mcc /= num_classes
     
     return mcc
-
+# --------------------------------------------------------------------------------------------------#
 
 
 
