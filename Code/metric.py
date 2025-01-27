@@ -16,6 +16,7 @@ from sklearn.metrics import auc, roc_auc_score, roc_curve, accuracy_score, preci
 from sklearn.metrics import RocCurveDisplay, confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib.lines import Line2D
 
 def roc_auc_score_multiclass(actual_class, pred_class, average = "macro"):
     
@@ -521,6 +522,64 @@ def plotmicro_confusion_matrices(y, y_pred,title):
     
     disp.ax_.set_title(title)
     plt.show()
+
+
+
+
+
+def plotcompare(data_dict,metric='Accuracy'):
+    # Marker styles for each metric
+    markers = {'SelectMicro': 'o', 'Lasso': 's', 'SelectMicrro_Lasso': '^'}
+    labels = {'SelectMicro': 'SelectMicro', 'Lasso': 'Lasso', 'SelectMicrro_Lasso': 'SelectMicrro_Lasso'}
+    
+    # Plot each element in the dataset
+    plt.figure(figsize=(8, 6))
+    if metric=='AUC':
+        j=2
+    elif metric == 'F':
+        j=3
+    else:
+        j=1
+
+    # Create a list to collect the line handles for the legend
+    line_handles = []
+
+    
+    # Iterate over the outer dictionary (keys are 'Smocky_Burn', 'Smocky_urban', etc.)
+    for region, metrics in data_dict.items():
+        # Collect all points for the region
+        x_vals = []
+        y_vals = []
+        
+        # Collect points for each metric
+        for method, values in metrics.items():
+            x_vals.append(values[0])  # First element (x-coordinate)
+            y_vals.append(values[j])  # Second element (y-coordinate)
+            
+            # Plot the point for each metric with different markers based on the metric name
+            plt.scatter(values[0], values[j], marker=markers[method], color='black')
+    
+       # Plot the line connecting the points for the region and store the line handle for the legend
+        line_handle, = plt.plot(x_vals, y_vals, label=f"{region}")
+        line_handles.append(line_handle)
+    
+    # Create custom legend handles for the markers with black color
+    legend_handles = [Line2D([0], [0], marker=markers[method], color='black', markerfacecolor='black', markersize=8, label=labels[method]) for method in markers]
+    
+    # Set labels and title
+    plt.xlabel('Number of Features Selected')
+    plt.ylabel(metric)
+    plt.title(f'{metric} of each Feature Selection Method in each dataset')
+    
+    # Display the legend with both line handles and marker handles
+    plt.legend(handles=line_handles + legend_handles)
+    
+    
+    # Show the plot
+    #plt.grid(True)
+    plt.show()
+
+
 
 
 def Neg_GINI_origin(X,y):# for a single variable y, calculate the NG for all OTU
