@@ -1,0 +1,9 @@
+This folder contains data downloaded from  the original github repo https://github.com/mengling-he/ARF-seasonal/tree/main
+
+The data can be used for downstream analysis, the mothur object and metadata
+
+downstream analysis:
+
+1. generate OTU tables in R
+
+2. do prediction in python
