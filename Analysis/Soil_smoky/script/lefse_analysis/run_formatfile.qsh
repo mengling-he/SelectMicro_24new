@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH -J smoky_lefse
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=48
+#SBATCH -A ACF-UTK0011
+#SBATCH -p short
+#SBATCH -q short
+#SBATCH --output=smoky_lefse_%j.out   # Output file (%j will be replaced by the job ID)
+#SBATCH -t 02:00:00
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=mhe8@vols.utk.edu
+
+
+souce /lustre/isaac24/scratch/mhe8/myenv/bin/activate
+lefse_format_input.py asv_smoky_mountain.txt formatted_smoky_asv.in -c 2 -u 1  -o 1
+

@@ -15,6 +15,7 @@ from sklearn.metrics import auc, roc_auc_score, roc_curve, accuracy_score, preci
 from sklearn.model_selection import StratifiedKFold, cross_val_score, GridSearchCV, LeaveOneOut
 import tensorflow as tf
 from tensorflow.keras import layers
+import shap
 import time
 import sys
 sys.path.append('./Code')
@@ -262,8 +263,10 @@ def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
      
     if classifier_name.lower() == "rf":
         clf = RandomForestClassifier(n_jobs=5, random_state=777)
+        explainer = shap.TreeExplainer(clf)
     elif classifier_name.lower() == "svm":
         clf = svm.SVC(kernel='rbf', probability=True, random_state=777)
+        
     elif classifier_name.lower() == "catboost":
         clf = CatBoostClassifier(iterations=100, learning_rate=0.1, depth=6, verbose=0, random_state=777)
     elif classifier_name.lower() == "nb":
@@ -284,6 +287,7 @@ def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
     y_true_all = []
     y_pred_all = []
     y_prob_all = []
+    shap_values_list = []  # Store SHAP values for each fold
 
     for train_index, test_index in kf.split(X, y):
         # Split the data
@@ -335,6 +339,91 @@ def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
     return result
 
 
+
+
+
+# --------------------------------------------------------------------------------------------------#
+def RF_model_SCV(X, y, plot=False,columnnames=None,SMOTE=False,k=5):
+     # Initialize the classifier
+    le = LabelEncoder()
+    y = le.fit_transform(y)  
+    print("Classes:", le.classes_)#[0,1]
+    clf = RandomForestClassifier(n_jobs=5, random_state=777)
+
+    # Set up 5-fold cross-validation
+    kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=777)
+
+    # Lists to store the results
+    accuracies = []
+    roc_aucs = []
+    mcc_s = []
+    f_scores = []
+    y_true_all = []
+    
+    x_true_all = np.empty((0, X.shape[1]))  # Ensure correct number of columns
+    shap_values_all = np.empty((0, X.shape[1]))   # Store SHAP values for each fold
+    y_pred_all = []
+    y_prob_all = []
+    
+
+    for train_index, test_index in kf.split(X, y):
+        # Split the data
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = y[train_index], y[test_index]
+
+        # Apply SMOTE if specified
+        if SMOTE:
+            X_train, y_train = perform_SMOTE(X_train, y_train)
+     
+        clf.fit(X_train, y_train)
+        y_pred = clf.predict(X_test)
+        y_prob = clf.predict_proba(X_test)[:, 1]
+        
+        # Evaluate the model
+        accuracy = accuracy_score(y_test, y_pred)
+        roc_auc = roc_auc_score(y_test, y_prob)
+        mcc = metric.mcc_score(y_test,y_pred)
+        f_score = f1_score(y_test,y_pred)
+
+        explainer = shap.TreeExplainer(clf)
+        shap_values = explainer.shap_values(X_test)
+        #print(X_test.shape,shap_values.shape)
+        
+        accuracies.append(accuracy)
+        roc_aucs.append(roc_auc)
+        mcc_s.append(mcc)
+        f_scores.append(f_score)
+        #shap_values_list.append(shap_values[:,:,0])
+        #shap_values_list.append(np.abs(pd.DataFrame(shap_values[:,:,0]).values).mean(0))
+        y_true_all.extend(y_test)# Using extend to add multiple elements
+        x_true_all = np.vstack((x_true_all, X_test))
+        shap_values_all = np.vstack((shap_values_all,shap_values[:, :, 1]))# save the SHAP of [1] in the result
+        y_pred_all.extend(y_pred)
+        y_prob_all.extend([float(prob) for prob in y_prob])
+        #print(f'Fold Accuracy: {accuracy:.4f}, ROC AUC: {roc_auc:.4f}')
+
+    # Calculate the mean accuracy and ROC AUC
+    mean_accuracy = np.mean(accuracies)
+    mean_roc_auc = np.mean(roc_aucs)
+    mean_mcc = np.mean(mcc_s)
+    mean_f = np.mean(f_scores)
+    
+    result = {'mean_accuracy': mean_accuracy,
+              'std_accuracy':np.std(accuracies),
+              'mean_auc': mean_roc_auc,
+              'std_auc':np.std(roc_aucs),
+              'mean_mcc':mean_mcc,
+              'mean_f':mean_f,
+              'y_true': y_true_all,
+              'y_pred':y_pred_all,
+              'y_pred_prob': y_prob_all,
+              'x_true':x_true_all,
+             'SHAP':shap_values_all}
+    if plot:
+        x_true_df = pd.DataFrame(x_true_all, columns=columnnames)
+        shap.summary_plot(shap_values_all, x_true_df)
+    return result
+
 # --------------------------------------------------------------------------------------------------#
 
 # an update function of runAUC_FScompare- no fine tune
@@ -350,15 +439,30 @@ def runClassifier_FScompare(data_subsets,y,classifiers,SMOTE=False): # fine tune
     print("Classes:", le.classes_)#[0,1]
     results = {}#  results  to keep the acc and auc
     results_cm ={} # results  to keep the actual y and predicted y and predicted prob
-    
+    shap_summary = {}
     for datatype, subset in data_subsets.items():
         
         results[datatype] = {}
-        results_cm[datatype] = {}    
+        results_cm[datatype] = {} 
+        shap_summary[datatype] = {}
 
         for clf in classifiers:
             #print(f"{datatype}_{clf}")
-            results_clf = ML_model_SCV(subset, y,clf,SMOTE=SMOTE)
+            if clf.lower() == "rf":
+                results_clf = RF_model_SCV(subset, y,SMOTE=SMOTE)
+        
+            elif clf.lower() == "svm":
+                results_clf = SVM_model_SCV(subset, y,SMOTE=SMOTE)
+                
+            elif clf.lower() == "catboost":
+                results_clf = CB_model_SCV(subset, y,SMOTE=SMOTE)
+            elif clf.lower() == "nb":
+                results_clf = NB_model_SCV(subset, y,SMOTE=SMOTE)
+            elif clf.lower() == "xgboost":
+               results_clf = xg_model_SCV(subset, y,SMOTE=SMOTE)
+            else:
+                raise ValueError("Invalid classifier_name. Please choose 'xgboost', 'catboost','NB', 'RF' or 'svm'.")    
+                    
             acc = results_clf['mean_accuracy']
             auc = results_clf['mean_auc']
             y_actual  = results_clf['y_true']
@@ -372,6 +476,7 @@ def runClassifier_FScompare(data_subsets,y,classifiers,SMOTE=False): # fine tune
             results[datatype][f"{clf}_mcc"] = results_clf['mean_mcc']
             results[datatype][f"{clf}_F"] = results_clf['mean_f']
             results_cm[datatype][clf] = np.array([y_actual,y_pred,y_prob])
+            shap_summary[datatype][clf] = results_clf['mean_SHAP']
             
     results_df = pd.DataFrame(results).T
         # Adjust display options
@@ -381,7 +486,8 @@ def runClassifier_FScompare(data_subsets,y,classifiers,SMOTE=False): # fine tune
     pd.set_option('display.colheader_justify', 'center')  # Center-align column headers
 
     print(results_df)
-    return results_cm # return a dict of dict each dict is for a feature selection method, each sub dict is a dict of arrays, each array is the 3 columns of y for res classifier
+    return {'cm_data':results_cm,
+           'SHAP':shap_summary}# return a dict of dict each dict is for a feature selection method, each sub dict is a dict of arrays, each array is the 3 columns of y for res classifier
 
 
 # an update function of runAUC_FScompare- no fine tune

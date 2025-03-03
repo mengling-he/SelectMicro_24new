@@ -1,0 +1,12 @@
+/var/spool/slurm/spool/job2985349/slurm_script: line 14: souce: command not found
+Traceback (most recent call last):
+  File "/nfs/home/mhe8/miniforge3/bin/lefse_format_input.py", line 10, in <module>
+    sys.exit(format_input())
+             ^^^^^^^^^^^^^^
+  File "/nfs/home/mhe8/miniforge3/lib/python3.12/site-packages/lefse/lefse_format_input.py", line 437, in format_input
+    class_sl,subclass_sl,class_hierarchy = get_class_slices(list(zip(cls['class'], cls['subclass'], cls['subject'])))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nfs/home/mhe8/miniforge3/lib/python3.12/site-packages/lefse/lefse_format_input.py", line 163, in get_class_slices
+    previous_class = data[0][0]
+                     ~~~~^^^
+IndexError: list index out of range
