@@ -244,7 +244,7 @@ def SelectMicro_multi_fun(df,Y, p_cutoff=0.1,plot=True):
     return result
 
 
-    
+
 
 """
 # this function will plot the H score
@@ -335,7 +335,7 @@ def Xarray_indice(X,h_scorelist):
     return X[:,selectedOTU_index]
 """ 
 
-    
+
 def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresholdPercent=0.90,abundanceCutoff=0.01):
      # input X is the abundance array, label is the index, featurenames is the column names of X
     if X.shape[0] != len(label):
@@ -415,7 +415,7 @@ def plotPresenseRatio(X,label,featurenames,posLabel,posText="",negText="",thresh
     """
     plt.tight_layout()
     plt.show()
-    
+
 
 
 
@@ -525,7 +525,7 @@ def OTUviolin(X,label,featurenames,y_max=None,single=True,title = 'Violin Plot f
     
         plt.tight_layout()
         plt.show()
-                
+
 
 
 

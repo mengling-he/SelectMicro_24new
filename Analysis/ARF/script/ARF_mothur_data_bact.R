@@ -56,15 +56,15 @@ metadata_1b_sp16$Phase <- ifelse(metadata_1b_sp16$Study_day %in% c(0), "Initial"
 
 # make one feature to control for individual difference
 # Depth can be used to control for depth difference
-metadata_1b_sp16$Donor <- ifelse(metadata_1b_sp16$Sample %in% c('con15_mean','conint_mean'), "Control",
-                                 ifelse(metadata_1b_sp16$Sample %in% c('gr_15_sp1', 'gr_int_sp1'), "Donor1",
-                                        ifelse(metadata_1b_sp16$Sample %in%c('gr_15_sp2', 'gr_int_sp2'),'Donor2',
-                                               ifelse(metadata_1b_sp16$Sample %in% c('gr_15_sp3', 'gr_int_sp3'),'Donor3','others'))))
+metadata_1b_sp16$Donor <- ifelse(metadata_1b_sp16$Sample %in% c('con15_mean','conint_mean'), "Control_sp",
+                                 ifelse(metadata_1b_sp16$Sample %in% c('gr_15_sp1', 'gr_int_sp1'), "Donor1_sp",
+                                        ifelse(metadata_1b_sp16$Sample %in%c('gr_15_sp2', 'gr_int_sp2'),'Donor2_sp',
+                                               ifelse(metadata_1b_sp16$Sample %in% c('gr_15_sp3', 'gr_int_sp3'),'Donor3_sp','others'))))
 sample_data(mothur_merged1b_sp16) <- metadata_1b_sp16
 table(metadata_1b_sp16$Phase)
 table(metadata_1b_sp16$Donor)
 # use Depth(core/interface) and 
-write.csv(data.frame(metadata_1b_sp16) , here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_SP_metadata.csv"),row.names = TRUE)
+#write.csv(data.frame(metadata_1b_sp16) , here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_SP_metadata.csv"),row.names = TRUE)
 
 # explore the object ------------
 #*************************************************************
@@ -98,8 +98,29 @@ dim(data.frame(metadata_1b_sp16))
 dim(bact_OTU_sp_n_df)
 dim(bact.sp_OTU_tax_table)
 
-write.csv(bact_OTU_sp_n_df, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_OTU.csv"),row.names = TRUE)
-write.csv(bact.sp_OTU_tax_table, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_SP_taxtable.csv"),row.names = TRUE) 
+#write.csv(bact_OTU_sp_n_df, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_OTU.csv"),row.names = TRUE)
+
+
+
+
+
+# Family table of SP16S-------------
+#*************************************************************
+bact_phylo_family_sp = mothur_merged1b_sp16 %>% tax_glom(taxrank="Family")
+bact_phylo_family_sp_n=transform_sample_counts(bact_phylo_family_sp, function(x) {x/sum(x)*10000})
+bact_phylo_family_sp_n=prune_taxa(taxa_sums(bact_phylo_family_sp_n) > 10, bact_phylo_family_sp_n)
+#note: went from 640 to 489 taxa
+
+bact_family_sp_n=as(otu_table(bact_phylo_family_sp_n), "matrix")
+if(taxa_are_rows(bact_phylo_family_sp_n)){bact_family_sp_n=t(bact_family_sp_n)}
+bact_family_sp_n_df=as.data.frame(bact_family_sp_n)
+
+bact.sp_f_tax_table = as.data.frame(tax_table(bact_phylo_family_sp_n))
+
+dim(data.frame(metadata_1b_sp16))
+dim(bact_family_sp_n_df)
+dim(bact.sp_f_tax_table)
+
 
 # Class table of SP16S-------------
 #*************************************************************
@@ -139,41 +160,29 @@ dim(bact_phylum_sp_n_df)
 dim(bact.sp_p_tax_table)
 
 
-# Family table of SP16S-------------
-#*************************************************************
-bact_phylo_family_sp = mothur_merged1b_sp16 %>% tax_glom(taxrank="Family")
-bact_phylo_family_sp_n=transform_sample_counts(bact_phylo_family_sp, function(x) {x/sum(x)*10000})
-bact_phylo_family_sp_n=prune_taxa(taxa_sums(bact_phylo_family_sp_n) > 10, bact_phylo_family_sp_n)
-#note: went from 640 to 489 taxa
-
-bact_family_sp_n=as(otu_table(bact_phylo_family_sp_n), "matrix")
-if(taxa_are_rows(bact_phylo_family_sp_n)){bact_family_sp_n=t(bact_family_sp_n)}
-bact_family_sp_n_df=as.data.frame(bact_family_sp_n)
-
-bact.sp_f_tax_table = as.data.frame(tax_table(bact_phylo_family_sp_n))
-
-dim(data.frame(metadata_1b_sp16))
-dim(bact_family_sp_n_df)
-dim(bact.sp_f_tax_table)
-
-
 
 # Rename column names of count tables-------------
 #*************************************************************
 colnames(bact_class_sp_n_df)
 colnames(bact_phylum_sp_n_df)
+bact_family_sp_n_df <- rename_tax_fun(bact_family_sp_n_df,bact.sp_f_tax_table,'Family')
 bact_class_sp_n_df <- rename_tax_fun(bact_class_sp_n_df,bact.sp_c_tax_table,'Class')
 bact_phylum_sp_n_df <- rename_tax_fun(bact_phylum_sp_n_df,bact.sp_p_tax_table,'Phylum')
-bact_family_sp_n_df <- rename_tax_fun(bact_family_sp_n_df,bact.sp_f_tax_table,'Family')
+
 colnames(bact_OTU_sp_n_df)
 colnames(bact_class_sp_n_df)
 colnames(bact_phylum_sp_n_df)
 colnames(bact_family_sp_n_df)
 
-write.csv(bact_class_sp_n_df, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_Class.csv"),row.names = TRUE)
-write.csv(bact_phylum_sp_n_df, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_Phylum.csv"),row.names = TRUE)
-write.csv(bact_family_sp_n_df, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_Family.csv"),row.names = TRUE)
+write.csv(bact.sp_OTU_tax_table, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_SP_taxtable.csv"),row.names = TRUE) 
 
+
+
+
+# write.csv(bact_class_sp_n_df, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_Class.csv"),row.names = TRUE)
+# write.csv(bact_phylum_sp_n_df, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_Phylum.csv"),row.names = TRUE)
+# write.csv(bact_family_sp_n_df, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_Family.csv"),row.names = TRUE)
+# 
 
 
 
@@ -271,7 +280,6 @@ dim(data.frame(metadata_1b_win16))
 dim(bact_OTU_win_n_df)
 dim(bact.win_OTU_tax_table)
 
-write.csv(bact.win_OTU_tax_table, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_WIN_taxtable.csv"),row.names = TRUE) 
 
 # Family table of WIN16S-------------
 #*************************************************************
@@ -334,7 +342,7 @@ colnames(bact_phylum_win_n_df)
 colnames(bact_family_win_n_df)
 bact_class_win_n_df <- rename_tax_fun(bact_class_win_n_df,bact.win_c_tax_table,'Class')
 bact_phylum_win_n_df <- rename_tax_fun(bact_phylum_win_n_df,bact.win_p_tax_table,'Phylum')
-bact_phylum_win_n_df <- rename_tax_fun(bact_family_win_n_df,bact.win_f_tax_table,'Family')
+bact_family_win_n_df <- rename_tax_fun(bact_family_win_n_df,bact.win_f_tax_table,'Family')
 
 colnames(bact_class_win_n_df)
 colnames(bact_phylum_win_n_df)
@@ -342,6 +350,7 @@ colnames(bact_family_win_n_df)
 
 
 
+write.csv(bact.win_OTU_tax_table, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_WIN_taxtable.csv"),row.names = TRUE) 
 
 
 
@@ -353,55 +362,94 @@ colnames(bact_family_win_n_df)
 # right now can only develop models for SP and WIN separately
 #*************************************************************
 #* rename sample row names for SP and WIN samples
-
+# have same row names in SP and WIN
 row.names(metadata_1b_win16)
 row.names(bact_family_win_n_df)
-
 row.names(metadata_1b_sp16)
 row.names(bact_family_sp_n_df)
+
+metadata_1b_sp16 = data.frame(metadata_1b_sp16)
+metadata_1b_win16 = data.frame(metadata_1b_win16)
+
+# Convert the Study_day column to integer type in both data frames
+metadata_1b_sp16$Study_day <- as.integer(sp_16s_data_list[[1]]$Study_day)
+metadata_1b_win16$Study_day <- as.integer(win_16s_data_list[[1]]$Study_day)
+
+
+
+
+
+
 
 sp_16s_data_list <- list(metadata =metadata_1b_sp16, ctb_OTU=bact_OTU_sp_n_df,
                          ctb_family=bact_family_sp_n_df,ctb_class = bact_class_sp_n_df,
                          ctb_phylum = bact_phylum_sp_n_df)
+sp_16s_data_list <- lapply(sp_16s_data_list, function(df) {
+  rownames(df) <- paste0("SP_", rownames(df))
+  return(df)
+})
+# Function to reorder a data frame based on row names of a reference data frame
+fn_mapsample <- function(df, ref_df) {
+  df[match(rownames(ref_df), rownames(df)), , drop = FALSE]
+}
+# Reorder all data frames based on the row names of metadata
+sp_16s_data_list <- lapply(sp_16s_data_list, fn_mapsample, ref_df = sp_16s_data_list[[1]])
+
+
+sp_file_names <- c(here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_SP_metadata.csv"),
+                   here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_OTU.csv"), 
+                   here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_Family.csv"), 
+                   here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_Class.csv"), 
+                   here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_Phylum.csv"))
+for (i in seq_along(sp_16s_data_list)) {
+  write.csv(sp_16s_data_list[[i]], file = sp_file_names[i], row.names = TRUE)
+}
 
 
 win_16s_data_list <- list(metadata =metadata_1b_win16, ctb_OTU=bact_OTU_win_n_df,
                          ctb_family=bact_family_win_n_df,ctb_class = bact_class_win_n_df,
                          ctb_phylum = bact_phylum_win_n_df)
-
-sp_16s_data_list <- lapply(sp_16s_data_list, function(df) {
-  rownames(df) <- paste0("SP_", rownames(df))
-  return(df)
-})
-
 win_16s_data_list <- lapply(win_16s_data_list, function(df) {
   rownames(df) <- paste0("WIN_", rownames(df))
   return(df)
 })
-
-metadata_16S_sp <- sp_16s_data_list[1]
-ctb_OTU_sp <- sp_16s_data_list[2]
-ctb_family_sp <- sp_16s_data_list[3]
-ctb_class_sp <- sp_16s_data_list[4]
-ctb_phylum_sp <- sp_16s_data_list[5]
-
-metadata_16S_win <- win_16s_data_list[1]
-ctb_OTU_win <- win_16s_data_list[2]
-ctb_family_win <- win_16s_data_list[3]
-ctb_class_win <- win_16s_data_list[4]
-ctb_phylum_win <- win_16s_data_list[5]
-
-write.csv(metadata_16S_sp , here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_SP_metadata.csv"),row.names = TRUE)
-write.csv(ctb_OTU_sp, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_OTU.csv"),row.names = TRUE)
-write.csv(ctb_family_sp, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_Family.csv"),row.names = TRUE)
-write.csv(ctb_class_sp, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_Class.csv"),row.names = TRUE)
-write.csv(ctb_phylum_sp, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_SP_Phylum.csv"),row.names = TRUE)
+# Reorder all data frames based on the row names of metadata
+win_16s_data_list <- lapply(win_16s_data_list, fn_mapsample, ref_df = win_16s_data_list[[1]])
 
 
-write.csv(metadata_16S_win , here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_WIN_metadata.csv"),row.names = TRUE)
-write.csv(ctb_OTU_win, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_WIN_OTU.csv"),row.names = TRUE)
-write.csv(ctb_family_win, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_WIN_Family.csv"),row.names = TRUE)
-write.csv(ctb_class_win, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_WIN_Class.csv"),row.names = TRUE)
-write.csv(ctb_phylum_win, here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_WIN_Phylum.csv"),row.names = TRUE)
+win_file_names <- c(here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_WIN_metadata.csv"),
+                   here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_WIN_OTU.csv"), 
+                   here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_WIN_Family.csv"), 
+                   here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_WIN_Class.csv"), 
+                   here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_WIN_Phylum.csv"))
+for (i in seq_along(win_16s_data_list)) {
+  write.csv(win_16s_data_list[[i]], file = win_file_names[i], row.names = TRUE)
+}
 
-  
+
+
+# combine sp and win data based on the same row names
+sp_16s_data_list_reduced <- sp_16s_data_list
+win_16s_data_list_reduced <- win_16s_data_list
+for (i in seq_along(win_16s_data_list)) {
+  common_columns <- intersect(colnames(sp_16s_data_list[[i]]), colnames(win_16s_data_list[[i]]))
+  sp_16s_data_list_reduced[[i]] <- sp_16s_data_list[[i]][, common_columns, drop = FALSE]
+  win_16s_data_list_reduced[[i]] <- win_16s_data_list[[i]][, common_columns, drop = FALSE]
+}
+combined_list <- mapply(function(df1, df2) bind_rows(df1, df2),
+                        sp_16s_data_list_reduced, win_16s_data_list_reduced, 
+                        SIMPLIFY = FALSE)
+combine_file_names <- c(here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_metadata.csv"),
+                   here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_OTU.csv"), 
+                   here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_Family.csv"), 
+                   here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_Class.csv"), 
+                   here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_ctb_Phylum.csv"))
+for (i in seq_along(win_16s_data_list)) {
+  print(paste("the dataset ", i))
+  print(dim(sp_16s_data_list[[i]]))
+  print(dim(win_16s_data_list[[i]]))
+  print(dim(combined_list[[i]]))
+  write.csv(combined_list[[i]], file = combine_file_names[i], row.names = TRUE)
+}
+
+

@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
 import random
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+import matplotlib.pyplot as plt
 from sklearn import linear_model
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OrdinalEncoder, LabelEncoder, StandardScaler
@@ -39,6 +42,7 @@ def perform_SMOTE(X, y, k_neighbors=5, random_state=777):
 
 # --------------------------------------------------------------------------------------------------#
 
+# +
 def LassoFeatureSelection(X,y,alpha=0.05,tol=0.01):
     """
     Perform feature selection using default Lasso regression
@@ -55,9 +59,6 @@ def LassoFeatureSelection(X,y,alpha=0.05,tol=0.01):
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
     
-    le = LabelEncoder()
-    y= le.fit_transform(y)
-    
     clf = linear_model.Lasso(alpha=alpha)
     clf.fit(X_scaled, y)
 
@@ -73,9 +74,6 @@ def LassoFS_CV(X,y, param_grid=None):
 
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
-    
-    le = LabelEncoder()
-    y_encoded= le.fit_transform(y)
 
     # Initialize Lasso regression model
     model = linear_model.Lasso(max_iter=10000)
@@ -83,7 +81,7 @@ def LassoFS_CV(X,y, param_grid=None):
     # Set up GridSearchCV
     clf = GridSearchCV(model, param_grid, cv=5, scoring='neg_mean_squared_error', n_jobs=-1)
     # Perform the grid search
-    clf.fit(X_scaled,y_encoded)
+    clf.fit(X_scaled,y)
 
     # Best Lasso model and alpha
     best_lasso = clf.best_estimator_
@@ -97,22 +95,14 @@ def LassoFS_CV(X,y, param_grid=None):
     X=X[:,selected_features]
     return X,selected_features
 # --------------------------------------------------------------------------------------------------#
+
+
+# +
+
 def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
      # Initialize the classifier
      
-    if classifier_name.lower() == "rf":
-        clf = RandomForestClassifier(n_jobs=5, random_state=777)
-    elif classifier_name.lower() == "svm":
-        clf = svm.SVC(kernel='rbf', probability=True, random_state=777)
-    elif classifier_name.lower() == "catboost":
-        clf = CatBoostClassifier(iterations=100, learning_rate=0.1, depth=6, verbose=0, random_state=777)
-    elif classifier_name.lower() == "nb":
-        clf = GaussianNB()
-    elif classifier_name.lower() == "xgboost":
-        clf = XGBClassifier(n_estimators=100, learning_rate=0.1, max_depth=6, random_state=777)
-    else:
-        raise ValueError("Invalid classifier_name. Please choose 'xgboost', 'catboost','NB', 'RF' or 'svm'.")     
-
+    
     # Set up 5-fold cross-validation
     kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=777)
 
@@ -134,6 +124,20 @@ def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
         if SMOTE:
             X_train, y_train = perform_SMOTE(X_train, y_train)
      
+        if classifier_name.lower() == "rf":
+            clf = RandomForestClassifier(n_jobs=5, random_state=777)
+        elif classifier_name.lower() == "svm":
+            clf = svm.SVC(kernel='rbf', probability=True, random_state=777)
+        elif classifier_name.lower() == "catboost":
+            clf = CatBoostClassifier(iterations=100, learning_rate=0.1, depth=6, verbose=0, random_state=777)
+        elif classifier_name.lower() == "nb":
+            clf = GaussianNB()
+        elif classifier_name.lower() == "xgboost":
+            clf = XGBClassifier(n_estimators=100, learning_rate=0.1, max_depth=6, random_state=777)
+        else:
+            raise ValueError("Invalid classifier_name. Please choose 'xgboost', 'catboost','NB', 'RF' or 'svm'.")     
+
+        
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)
         y_prob = clf.predict_proba(X_test)[:, 1]
@@ -141,6 +145,7 @@ def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
         # Evaluate the model
         accuracy = accuracy_score(y_test, y_pred)
         roc_auc = roc_auc_score(y_test, y_prob)
+        print(roc_auc)
         mcc = metric.mcc_score(y_test,y_pred)
         f_score = f1_score(y_test,y_pred)
 
@@ -169,6 +174,8 @@ def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
               'y_pred_prob': y_prob_all}
     return result
 
+
+# -
 
 # --------------------------------------------------------------------------------------------------#
 # an update function of runAUC_FScompare- no fine tune
@@ -269,83 +276,499 @@ def runClassifier_random(data,y,Nselection,clf='RF',iteration=30,SMOTE=False):
 # ----------------------------SHAP---------------------------------------------------#
 
 
-def RF_model_SCV(X, y, plot=False,columnnames=None,SMOTE=False,k=5):
-     # Initialize the classifier
-    le = LabelEncoder()
-    y = le.fit_transform(y)  
-    print("Classes:", le.classes_)#[0,1]
-    clf = RandomForestClassifier(n_jobs=5, random_state=777)
+# ### Random Forest Classifier
 
+def RF_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
+    # Initialize the classifier
     # Set up 5-fold cross-validation
     kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=777)
 
     # Lists to store the results
     accuracies = []
-    roc_aucs = []
     mcc_s = []
     f_scores = []
-    y_true_all = []
     
-    x_true_all = np.empty((0, X.shape[1]))  # Ensure correct number of columns
-    shap_values_all = np.empty((0, X.shape[1]))   # Store SHAP values for each fold
+    # preparation for ROC curve
+    tprs = []
+    aucs = []
+    mean_fpr = np.linspace(0, 1, 100)
+     
+    # preparation for SHAP
+    enriched_all = pd.DataFrame(X.columns, columns = ['Taxa'])
+    shap_values_all = np.empty((0, X.shape[1], len(np.unique(y))))
+    test_sets_ix = []
+    idx = 0
+    
+    # preparation for response
     y_pred_all = []
     y_prob_all = []
+    y_true_all = []
     
-
+    fig, ax = plt.subplots(figsize=(6, 6))
     for train_index, test_index in kf.split(X, y):
         # Split the data
-        X_train, X_test = X[train_index], X[test_index]
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
         y_train, y_test = y[train_index], y[test_index]
 
         # Apply SMOTE if specified
         if SMOTE:
             X_train, y_train = perform_SMOTE(X_train, y_train)
+        
+        clf = RandomForestClassifier(n_jobs=5, random_state=777)
      
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)
-        y_prob = clf.predict_proba(X_test)[:, 1]
-        
+        y_prob = clf.predict_proba(X_test)
+        y_prob1 = y_prob[:, y_base]
         # Evaluate the model
         accuracy = accuracy_score(y_test, y_pred)
-        roc_auc = roc_auc_score(y_test, y_prob)
+        #roc_auc = roc_auc_score(y_test, y_prob)# the function result is different with the ROC curve, choose the one from the curve
         mcc = metric.mcc_score(y_test,y_pred)
         f_score = f1_score(y_test,y_pred)
-
-        explainer = shap.TreeExplainer(clf)
-        shap_values = explainer.shap_values(X_test)
-        #print(X_test.shape,shap_values.shape)
         
+        
+        # store the result
         accuracies.append(accuracy)
-        roc_aucs.append(roc_auc)
         mcc_s.append(mcc)
         f_scores.append(f_score)
-        #shap_values_list.append(shap_values[:,:,0])
-        #shap_values_list.append(np.abs(pd.DataFrame(shap_values[:,:,0]).values).mean(0))
-        y_true_all.extend(y_test)# Using extend to add multiple elements
-        x_true_all = np.vstack((x_true_all, X_test))
-        shap_values_all = np.vstack((shap_values_all,shap_values[:, :, 1]))# save the SHAP of [1] in the result
-        y_pred_all.extend(y_pred)
-        y_prob_all.extend([float(prob) for prob in y_prob])
-        #print(f'Fold Accuracy: {accuracy:.4f}, ROC AUC: {roc_auc:.4f}')
+        
+        # ROC curve
+        viz = RocCurveDisplay.from_estimator(
+            clf,
+            X_test,
+            y_test,
+            name=f"iteration {idx}",
+            alpha=0.3,
+            lw=1,ax=ax)
+        interp_tpr = np.interp(mean_fpr, viz.fpr, viz.tpr)
+        interp_tpr[0] = 0.0
+        tprs.append(interp_tpr)
+        aucs.append(viz.roc_auc)
 
-    result = {'mean_accuracy': np.mean(accuracies),
-              'std_accuracy':np.std(accuracies),
-              'mean_auc': np.mean(roc_aucs),
-              'std_auc':np.std(roc_aucs),
-              'mean_mcc':np.mean(mcc_s),
-              'mean_f':np.mean(f_scores),
-              'y_true': y_true_all,
-              'y_pred':y_pred_all,
-              'y_pred_prob': y_prob_all,
-              'x_true':x_true_all,
-              'SHAP':shap_values_all}
+        # SHAP values
+        explainer = shap.TreeExplainer(clf)
+        shap_values = explainer.shap_values(X_test)
+        shap_obj = explainer(X_test)
+        shap_values_all = np.concatenate((shap_values_all, shap_values), axis=0) 
+        test_sets_ix.append(test_index)
+        
+        high_index_df = pd.DataFrame(shap_obj.data, columns=shap_obj.feature_names, index=X_test.index)
+        high_index = high_index_df.idxmax()# finds the feature's index with the highest value for each sample.
+        shap_1 = pd.DataFrame(shap_values[:,:,y_base], columns=shap_obj.feature_names, index=X_test.index)
+    
+        enriched = list()
+        
+        for v, i in high_index.items():
+            sv = shap_1[v].loc[i]
+            if sv<0:
+                sv = "Other"
+            else:
+                sv = f"Level {y_base}"
+            enriched.append(
+                {
+                    'Taxa': v,
+                    'enriched': sv
+                }
+            )
+        enriched = pd.DataFrame(enriched)
+        enriched.rename(columns={'enriched': 'enriched{}'.format(idx+1)}, inplace=True)
+        enriched_all = enriched_all.merge(enriched, on='Taxa', how='outer')
+
+        idx += 1
+        
+       
+        y_true_all.extend(y_test)# Using extend to add multiple elements
+        y_pred_all.extend(y_pred)
+        #y_prob_all.extend([float(prob) for prob in y_prob])
+    
+    # sort x based on the test dataset index
+    test_sets_ix = np.concatenate(test_sets_ix)
+    x_true_df = pd.DataFrame(X.iloc[test_sets_ix,:], columns=X.columns)
+    
+    # continue ROC
+    ax.plot([0, 1], [0, 1], "k--", label="chance level (AUC = 0.5)")
+
+    mean_tpr = np.mean(tprs, axis=0)
+    mean_tpr[-1] = 1.0
+    mean_auc = auc(mean_fpr, mean_tpr)
+    std_auc = np.std(aucs)
+    ax.plot(
+        mean_fpr,
+        mean_tpr,
+        color="b",
+        label=r"Mean ROC (AUC = %0.2f $\pm$ %0.2f)" % (mean_auc, std_auc),
+        lw=2,
+        alpha=0.8,
+    )
+
+    std_tpr = np.std(tprs, axis=0)
+    tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
+    tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
+    ax.fill_between(
+        mean_fpr,
+        tprs_lower,
+        tprs_upper,
+        color="grey",
+        alpha=0.2,
+        label=r"$\pm$ 1 std. dev.",
+    )
+
+    ax.set(
+        xlim=[-0.05, 1.05],
+        ylim=[-0.05, 1.05],
+        xlabel="False Positive Rate",
+        ylabel="True Positive Rate",
+        title=f"Mean ROC curve",
+    )
+    ax.axis("square")
+    ax.legend(loc="lower right")
+    plt.show()
+     
+    result = {'y_information':{'y_true':y_true_all,
+                              'y_pred':y_pred_all
+                               #,'y_prob':
+                              },
+              'x_true': x_true_df,
+              'SHAP':shap_values_all,
+             'enrich': enriched_all}
+    print('Accuracy: %.3f (%.3f), F1: %.3f (%.3f),MCC: %.3f (%.3f),AUC: %.3f (%.3f)' % 
+          (np.mean(accuracies), np.std(accuracies), np.mean(f_scores), np.std(f_scores),
+           np.mean(mcc_s), np.std(mcc_s),mean_auc, std_auc))
     if plot:
-        x_true_df = pd.DataFrame(x_true_all, columns=columnnames)
-        shap.summary_plot(shap_values_all, x_true_df)
+        shap.summary_plot(shap_values_all[:,:,y_base], x_true_df)
     return result
 
 
+# ### XGBoost Model
 
+def XGBoost_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
+    # Initialize the classifier
+    # Set up 5-fold cross-validation
+    kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=777)
+
+    # Lists to store the results
+    accuracies = []
+    mcc_s = []
+    f_scores = []
+    
+    # preparation for ROC curve
+    tprs = []
+    aucs = []
+    mean_fpr = np.linspace(0, 1, 100)
+     
+    # preparation for SHAP
+    enriched_all = pd.DataFrame(X.columns, columns = ['Taxa'])
+    shap_values_all = np.empty((0, X.shape[1], len(np.unique(y))))
+    test_sets_ix = []
+    idx = 0
+    
+    # preparation for response
+    y_pred_all = []
+    y_prob_all = []
+    y_true_all = []
+    
+    fig, ax = plt.subplots(figsize=(6, 6))
+    for train_index, test_index in kf.split(X, y):
+        # Split the data
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        y_train, y_test = y[train_index], y[test_index]
+
+        # Apply SMOTE if specified
+        if SMOTE:
+            X_train, y_train = perform_SMOTE(X_train, y_train)
+        
+        clf = RandomForestClassifier(n_jobs=5, random_state=777)
+     
+        clf.fit(X_train, y_train)
+        y_pred = clf.predict(X_test)
+        y_prob = clf.predict_proba(X_test)
+        y_prob1 = y_prob[:, y_base]
+        # Evaluate the model
+        accuracy = accuracy_score(y_test, y_pred)
+        #roc_auc = roc_auc_score(y_test, y_prob)# the function result is different with the ROC curve, choose the one from the curve
+        mcc = metric.mcc_score(y_test,y_pred)
+        f_score = f1_score(y_test,y_pred)
+        
+        
+        # store the result
+        accuracies.append(accuracy)
+        mcc_s.append(mcc)
+        f_scores.append(f_score)
+        
+        # ROC curve
+        viz = RocCurveDisplay.from_estimator(
+            clf,
+            X_test,
+            y_test,
+            name=f"iteration {idx}",
+            alpha=0.3,
+            lw=1,ax=ax)
+        interp_tpr = np.interp(mean_fpr, viz.fpr, viz.tpr)
+        interp_tpr[0] = 0.0
+        tprs.append(interp_tpr)
+        aucs.append(viz.roc_auc)
+
+        # SHAP values
+        explainer = shap.TreeExplainer(clf)
+        shap_values = explainer.shap_values(X_test)
+        shap_obj = explainer(X_test)
+        shap_values_all = np.concatenate((shap_values_all, shap_values), axis=0) 
+        test_sets_ix.append(test_index)
+        
+        high_index_df = pd.DataFrame(shap_obj.data, columns=shap_obj.feature_names, index=X_test.index)
+        high_index = high_index_df.idxmax()# finds the feature's index with the highest value for each sample.
+        shap_1 = pd.DataFrame(shap_values[:,:,y_base], columns=shap_obj.feature_names, index=X_test.index)
+    
+        enriched = list()
+        
+        for v, i in high_index.items():
+            sv = shap_1[v].loc[i]
+            if sv<0:
+                sv = "Other"
+            else:
+                sv = f"Level {y_base}"
+            enriched.append(
+                {
+                    'Taxa': v,
+                    'enriched': sv
+                }
+            )
+        enriched = pd.DataFrame(enriched)
+        enriched.rename(columns={'enriched': 'enriched{}'.format(idx+1)}, inplace=True)
+        enriched_all = enriched_all.merge(enriched, on='Taxa', how='outer')
+
+        idx += 1
+        
+       
+        y_true_all.extend(y_test)# Using extend to add multiple elements
+        y_pred_all.extend(y_pred)
+        #y_prob_all.extend([float(prob) for prob in y_prob])
+    
+    # sort x based on the test dataset index
+    test_sets_ix = np.concatenate(test_sets_ix)
+    x_true_df = pd.DataFrame(X.iloc[test_sets_ix,:], columns=X.columns)
+    
+    # continue ROC
+    ax.plot([0, 1], [0, 1], "k--", label="chance level (AUC = 0.5)")
+
+    mean_tpr = np.mean(tprs, axis=0)
+    mean_tpr[-1] = 1.0
+    mean_auc = auc(mean_fpr, mean_tpr)
+    std_auc = np.std(aucs)
+    ax.plot(
+        mean_fpr,
+        mean_tpr,
+        color="b",
+        label=r"Mean ROC (AUC = %0.2f $\pm$ %0.2f)" % (mean_auc, std_auc),
+        lw=2,
+        alpha=0.8,
+    )
+
+    std_tpr = np.std(tprs, axis=0)
+    tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
+    tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
+    ax.fill_between(
+        mean_fpr,
+        tprs_lower,
+        tprs_upper,
+        color="grey",
+        alpha=0.2,
+        label=r"$\pm$ 1 std. dev.",
+    )
+
+    ax.set(
+        xlim=[-0.05, 1.05],
+        ylim=[-0.05, 1.05],
+        xlabel="False Positive Rate",
+        ylabel="True Positive Rate",
+        title=f"Mean ROC curve",
+    )
+    ax.axis("square")
+    ax.legend(loc="lower right")
+    plt.show()
+     
+    result = {'y_information':{'y_true':y_true_all,
+                              'y_pred':y_pred_all
+                               #,'y_prob':
+                              },
+              'x_true': x_true_df,
+              'SHAP':shap_values_all,
+             'enrich': enriched_all}
+    print('Accuracy: %.3f (%.3f), F1: %.3f (%.3f),MCC: %.3f (%.3f),AUC: %.3f (%.3f)' % 
+          (np.mean(accuracies), np.std(accuracies), np.mean(f_scores), np.std(f_scores),
+           np.mean(mcc_s), np.std(mcc_s),mean_auc, std_auc))
+    if plot:
+        shap.summary_plot(shap_values_all[:,:,y_base], x_true_df)
+    return result
+
+
+# ### Naive Bayes Classifier
+
+def NB_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
+    # Initialize the classifier
+    # Set up 5-fold cross-validation
+    kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=777)
+
+    # Lists to store the results
+    accuracies = []
+    mcc_s = []
+    f_scores = []
+    
+    # preparation for ROC curve
+    tprs = []
+    aucs = []
+    mean_fpr = np.linspace(0, 1, 100)
+     
+    # preparation for SHAP
+    enriched_all = pd.DataFrame(X.columns, columns = ['Taxa'])
+    shap_values_all = np.empty((0, X.shape[1], len(np.unique(y))))
+    test_sets_ix = []
+    idx = 0
+    
+    # preparation for response
+    y_pred_all = []
+    y_prob_all = []
+    y_true_all = []
+    
+    fig, ax = plt.subplots(figsize=(6, 6))
+    for train_index, test_index in kf.split(X, y):
+        # Split the data
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        y_train, y_test = y[train_index], y[test_index]
+
+        # Apply SMOTE if specified
+        if SMOTE:
+            X_train, y_train = perform_SMOTE(X_train, y_train)
+        
+        # Step 3: Scale Data (GaussianNB assumes normally distributed data)
+        scaler = StandardScaler()
+        X_train_scaled = scaler.fit_transform(X_train)
+        X_test_scaled = scaler.transform(X_test)
+
+        clf = GaussianNB()
+     
+        clf.fit(X_train_scaled, y_train)
+        y_pred = clf.predict(X_test_scaled)
+        y_prob = clf.predict_proba(X_test_scaled)
+        y_prob1 = y_prob[:, y_base]
+        # Evaluate the model
+        accuracy = accuracy_score(y_test, y_pred)
+        #roc_auc = roc_auc_score(y_test, y_prob)# the function result is different with the ROC curve, choose the one from the curve
+        mcc = metric.mcc_score(y_test,y_pred)
+        f_score = f1_score(y_test,y_pred)
+        
+        
+        # store the result
+        accuracies.append(accuracy)
+        mcc_s.append(mcc)
+        f_scores.append(f_score)
+        
+        # ROC curve
+        viz = RocCurveDisplay.from_estimator(
+            clf,
+            X_test_scaled,
+            y_test,
+            name=f"iteration {idx}",
+            alpha=0.3,
+            lw=1,ax=ax)
+        interp_tpr = np.interp(mean_fpr, viz.fpr, viz.tpr)
+        interp_tpr[0] = 0.0
+        tprs.append(interp_tpr)
+        aucs.append(viz.roc_auc)
+
+        # SHAP values
+        explainer = shap.Explainer(clf.predict,X_train_scaled)
+        shap_values = explainer.shap_values(X_test_scaled)
+        print(shap_values.shape)
+        #shap_obj = explainer(X_test)
+        shap_values_all = np.concatenate((shap_values_all, shap_values), axis=0) 
+        test_sets_ix.append(test_index)
+        
+        #high_index_df = pd.DataFrame(shap_obj.data, columns=shap_obj.feature_names, index=X_test.index)
+        high_index = X_test_scaled.idxmax()# finds the feature's index with the highest value for each sample.
+        shap_1 = pd.DataFrame(shap_values[:,:,y_base], columns=X_test_scaled.columns, index=X_test_scaled.index)
+    
+        enriched = list()
+        
+        for v, i in high_index.items():
+            sv = shap_1[v].loc[i]
+            if sv<0:
+                sv = "Other"
+            else:
+                sv = f"Level {y_base}"
+            enriched.append(
+                {
+                    'Taxa': v,
+                    'enriched': sv
+                }
+            )
+        enriched = pd.DataFrame(enriched)
+        enriched.rename(columns={'enriched': 'enriched{}'.format(idx+1)}, inplace=True)
+        enriched_all = enriched_all.merge(enriched, on='Taxa', how='outer')
+
+        idx += 1
+        
+       
+        y_true_all.extend(y_test)# Using extend to add multiple elements
+        y_pred_all.extend(y_pred)
+        #y_prob_all.extend([float(prob) for prob in y_prob])
+    
+    # sort x based on the test dataset index
+    test_sets_ix = np.concatenate(test_sets_ix)
+    x_true_df = pd.DataFrame(X.iloc[test_sets_ix,:], columns=X.columns)
+    
+    # continue ROC
+    ax.plot([0, 1], [0, 1], "k--", label="chance level (AUC = 0.5)")
+
+    mean_tpr = np.mean(tprs, axis=0)
+    mean_tpr[-1] = 1.0
+    mean_auc = auc(mean_fpr, mean_tpr)
+    std_auc = np.std(aucs)
+    ax.plot(
+        mean_fpr,
+        mean_tpr,
+        color="b",
+        label=r"Mean ROC (AUC = %0.2f $\pm$ %0.2f)" % (mean_auc, std_auc),
+        lw=2,
+        alpha=0.8,
+    )
+
+    std_tpr = np.std(tprs, axis=0)
+    tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
+    tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
+    ax.fill_between(
+        mean_fpr,
+        tprs_lower,
+        tprs_upper,
+        color="grey",
+        alpha=0.2,
+        label=r"$\pm$ 1 std. dev.",
+    )
+
+    ax.set(
+        xlim=[-0.05, 1.05],
+        ylim=[-0.05, 1.05],
+        xlabel="False Positive Rate",
+        ylabel="True Positive Rate",
+        title=f"Mean ROC curve",
+    )
+    ax.axis("square")
+    ax.legend(loc="lower right")
+    plt.show()
+     
+    result = {'y_information':{'y_true':y_true_all,
+                              'y_pred':y_pred_all
+                               #,'y_prob':
+                              },
+              'x_true': x_true_df,
+              'SHAP':shap_values_all,
+             'enrich': enriched_all}
+    print('Accuracy: %.3f (%.3f), F1: %.3f (%.3f),MCC: %.3f (%.3f),AUC: %.3f (%.3f)' % 
+          (np.mean(accuracies), np.std(accuracies), np.mean(f_scores), np.std(f_scores),
+           np.mean(mcc_s), np.std(mcc_s),mean_auc, std_auc))
+    if plot:
+        shap.summary_plot(shap_values_all[:,:,y_base], x_true_df)
+    return result
 
 
 # --------------------------------------------------------------------------------------------------#

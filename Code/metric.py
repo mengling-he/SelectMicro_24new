@@ -467,7 +467,7 @@ def plot_confusion_matrices2(y, y_pred, title, pos_y=1):
     plt.tight_layout()  # Adjust layout to make room for the metrics
     disp.ax_.set_title(title)
     # Removed plt.show()
-    
+
 def plotmacro_confusion_matrices(y, y_pred,title):
     acc = accuracy(y, y_pred)
     precision = macro_precision(y, y_pred)
@@ -601,7 +601,7 @@ def Neg_GINI_origin(X,y):# for a single variable y, calculate the NG for all OTU
             NG = sum([x**2 for x in portion_in_each_category])
             ng_List.append(NG)
     return np.array(ng_List)
-    
+
     
 
 
@@ -657,7 +657,7 @@ def  sharp_value(X,y,classifier_name):# need to be update
 
     # Plot the dependence plot for a specific feature
     # shap.dependence_plot("MedInc", shap_values, X_test)
-    
+
 
 
 
@@ -701,6 +701,6 @@ def fisher_discriminant_ratio(features, labels):
     F1 = np.trace(between_class_scatter) / np.trace(within_class_scatter)
 
     return F1
-    
+
 
 
