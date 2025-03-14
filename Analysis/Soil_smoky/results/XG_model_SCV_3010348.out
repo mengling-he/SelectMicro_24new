@@ -1,0 +1,87 @@
+2025-03-11 12:39:29.459466: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-03-11 12:39:29.463473: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-03-11 12:39:30.131766: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-03-11 12:39:30.141648: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1741711170.156439 4049598 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1741711170.160938 4049598 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-03-11 12:39:32.000536: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Best alpha: 0.1
+Best alpha: 0.05
+Best alpha: 0.1
+Best alpha: 0.05
+Best alpha: 0.1
+Best alpha: 0.05
+The shape of the full selected dataset is  (59, 1768)
+The shape of the FS selected dataset is  (59, 56)
+The shape of the Lasso_finetune selected dataset is  (59, 14)
+The shape of the FS_Lasso_finetune selected dataset is  (59, 15)
+The shape of the full selected dataset is  (59, 1768)
+The shape of the FS selected dataset is  (59, 29)
+The shape of the Lasso_finetune selected dataset is  (59, 11)
+The shape of the FS_Lasso_finetune selected dataset is  (59, 14)
+The shape of the full selected dataset is  (59, 1768)
+The shape of the FS selected dataset is  (59, 19)
+The shape of the Lasso_finetune selected dataset is  (59, 7)
+The shape of the FS_Lasso_finetune selected dataset is  (59, 12)
+Burn
+AllFeatures
+Plot saved as ../results/ROC_curve/XGBoostBurn_AllFeatures.png
+Accuracy: 0.829 (0.080), F1: 0.892 (0.046),MCC: nan (nan),AUC: 0.831 (0.122)
+Plot saved as ../results/SHAP_plots/XGBoostBurn_AllFeatures.png
+Burn
+SelectMicro
+Plot saved as ../results/ROC_curve/XGBoostBurn_SelectMicro.png
+Accuracy: 0.779 (0.069), F1: 0.857 (0.044),MCC: nan (nan),AUC: 0.851 (0.144)
+Plot saved as ../results/SHAP_plots/XGBoostBurn_SelectMicro.png
+Burn
+Lasso_finetune
+Plot saved as ../results/ROC_curve/XGBoostBurn_Lasso_finetune.png
+Accuracy: 0.794 (0.095), F1: 0.866 (0.067),MCC: 0.488 (0.233),AUC: 0.879 (0.091)
+Plot saved as ../results/SHAP_plots/XGBoostBurn_Lasso_finetune.png
+Burn
+FS_Lassofinetune
+Plot saved as ../results/ROC_curve/XGBoostBurn_FS_Lassofinetune.png
+Accuracy: 0.794 (0.095), F1: 0.866 (0.067),MCC: 0.488 (0.233),AUC: 0.879 (0.091)
+Plot saved as ../results/SHAP_plots/XGBoostBurn_FS_Lassofinetune.png
+urban
+AllFeatures
+Plot saved as ../results/ROC_curve/XGBoosturban_AllFeatures.png
+Accuracy: 0.521 (0.154), F1: 0.567 (0.203),MCC: 0.044 (0.316),AUC: 0.487 (0.151)
+Plot saved as ../results/SHAP_plots/XGBoosturban_AllFeatures.png
+urban
+SelectMicro
+Plot saved as ../results/ROC_curve/XGBoosturban_SelectMicro.png
+Accuracy: 0.541 (0.106), F1: 0.628 (0.135),MCC: 0.022 (0.267),AUC: 0.603 (0.103)
+Plot saved as ../results/SHAP_plots/XGBoosturban_SelectMicro.png
+urban
+Lasso_finetune
+Plot saved as ../results/ROC_curve/XGBoosturban_Lasso_finetune.png
+Accuracy: 0.659 (0.112), F1: 0.755 (0.080),MCC: 0.326 (0.250),AUC: 0.662 (0.091)
+Plot saved as ../results/SHAP_plots/XGBoosturban_Lasso_finetune.png
+urban
+FS_Lassofinetune
+Plot saved as ../results/ROC_curve/XGBoosturban_FS_Lassofinetune.png
+Accuracy: 0.662 (0.156), F1: 0.761 (0.109),MCC: 0.291 (0.384),AUC: 0.667 (0.155)
+Plot saved as ../results/SHAP_plots/XGBoosturban_FS_Lassofinetune.png
+duration
+AllFeatures
+Plot saved as ../results/ROC_curve/XGBoostduration_AllFeatures.png
+Accuracy: 0.608 (0.154), F1: 0.699 (0.130),MCC: 0.152 (0.323),AUC: 0.564 (0.150)
+Plot saved as ../results/SHAP_plots/XGBoostduration_AllFeatures.png
+duration
+SelectMicro
+Plot saved as ../results/ROC_curve/XGBoostduration_SelectMicro.png
+Accuracy: 0.727 (0.115), F1: 0.806 (0.073),MCC: 0.338 (0.355),AUC: 0.696 (0.271)
+Plot saved as ../results/SHAP_plots/XGBoostduration_SelectMicro.png
+duration
+Lasso_finetune
+Plot saved as ../results/ROC_curve/XGBoostduration_Lasso_finetune.png
+Accuracy: 0.712 (0.112), F1: 0.804 (0.070),MCC: nan (nan),AUC: 0.685 (0.186)
+Plot saved as ../results/SHAP_plots/XGBoostduration_Lasso_finetune.png
+duration
+FS_Lassofinetune
+Plot saved as ../results/ROC_curve/XGBoostduration_FS_Lassofinetune.png
+Accuracy: 0.727 (0.147), F1: 0.816 (0.100),MCC: 0.328 (0.398),AUC: 0.660 (0.185)
+Plot saved as ../results/SHAP_plots/XGBoostduration_FS_Lassofinetune.png

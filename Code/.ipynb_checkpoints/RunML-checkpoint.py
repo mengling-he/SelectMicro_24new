@@ -21,6 +21,7 @@ from tensorflow.keras import layers
 import shap
 import time
 import sys
+import os
 sys.path.append('./Code')
 import metric
 
@@ -101,7 +102,8 @@ def LassoFS_CV(X,y, param_grid=None):
 
 def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
      # Initialize the classifier
-     
+
+    
     
     # Set up 5-fold cross-validation
     kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=777)
@@ -115,6 +117,7 @@ def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
     y_pred_all = []
     y_prob_all = []
 
+    X = X.values
     for train_index, test_index in kf.split(X, y):
         # Split the data
         X_train, X_test = X[train_index], X[test_index]
@@ -295,7 +298,7 @@ def RF_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
      
     # preparation for SHAP
     enriched_all = pd.DataFrame(X.columns, columns = ['Taxa'])
-    shap_values_all = np.empty((0, X.shape[1], len(np.unique(y))))
+    shap_values_all = np.empty((0, X.shape[1], len(np.unique(y))))#In tree-based models like Random Forest, SHAP values are computed for each class separately, leading to a 3D array.
     test_sets_ix = []
     idx = 0
     
@@ -441,7 +444,7 @@ def RF_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
 
 # ### XGBoost Model
 
-def XGBoost_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
+def XGBoost_model_SCV(X, y, plot=False,save_path = None, SMOTE=False,k=5,y_base = 0):
     # Initialize the classifier
     # Set up 5-fold cross-validation
     kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=777)
@@ -458,7 +461,7 @@ def XGBoost_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
      
     # preparation for SHAP
     enriched_all = pd.DataFrame(X.columns, columns = ['Taxa'])
-    shap_values_all = np.empty((0, X.shape[1], len(np.unique(y))))
+    shap_values_all = np.empty((0, X.shape[1]))
     test_sets_ix = []
     idx = 0
     
@@ -477,7 +480,7 @@ def XGBoost_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
         if SMOTE:
             X_train, y_train = perform_SMOTE(X_train, y_train)
         
-        clf = RandomForestClassifier(n_jobs=5, random_state=777)
+        clf = XGBClassifier(n_estimators=100, learning_rate=0.1, max_depth=6, random_state=777)
      
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)
@@ -510,14 +513,14 @@ def XGBoost_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
 
         # SHAP values
         explainer = shap.TreeExplainer(clf)
-        shap_values = explainer.shap_values(X_test)
         shap_obj = explainer(X_test)
+        shap_values = shap_obj.values
         shap_values_all = np.concatenate((shap_values_all, shap_values), axis=0) 
         test_sets_ix.append(test_index)
         
         high_index_df = pd.DataFrame(shap_obj.data, columns=shap_obj.feature_names, index=X_test.index)
         high_index = high_index_df.idxmax()# finds the feature's index with the highest value for each sample.
-        shap_1 = pd.DataFrame(shap_values[:,:,y_base], columns=shap_obj.feature_names, index=X_test.index)
+        shap_1 = pd.DataFrame(shap_values, columns=shap_obj.feature_names, index=X_test.index)
     
         enriched = list()
         
@@ -585,7 +588,13 @@ def XGBoost_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
     )
     ax.axis("square")
     ax.legend(loc="lower right")
-    plt.show()
+    #plt.show()
+    # Save instead of showing
+    # Define the full path with ../data/ directory
+    full_ROC_path = os.path.join("..", "results","ROC_curve",f"XGBoost{save_path}.png")
+    plt.savefig(full_ROC_path, dpi=300, bbox_inches="tight")
+    plt.close()  # Close the figure to free memory
+    print(f"Plot saved as {full_ROC_path}")
      
     result = {'y_information':{'y_true':y_true_all,
                               'y_pred':y_pred_all
@@ -598,7 +607,11 @@ def XGBoost_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
           (np.mean(accuracies), np.std(accuracies), np.mean(f_scores), np.std(f_scores),
            np.mean(mcc_s), np.std(mcc_s),mean_auc, std_auc))
     if plot:
-        shap.summary_plot(shap_values_all[:,:,y_base], x_true_df)
+        shap.summary_plot(shap_values_all, x_true_df,show=False)
+        full_shap_path = os.path.join("..", "results","SHAP_plots",f"XGBoost{save_path}.png")
+        plt.savefig(full_shap_path, dpi=300, bbox_inches="tight")
+        plt.close()  # Close the figure to free memory
+        print(f"Plot saved as {full_shap_path}")
     return result
 
 
@@ -621,7 +634,7 @@ def NB_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
      
     # preparation for SHAP
     enriched_all = pd.DataFrame(X.columns, columns = ['Taxa'])
-    shap_values_all = np.empty((0, X.shape[1], len(np.unique(y))))
+    shap_values_all = np.empty((0, X.shape[1]))# KernelExplainer (used for Naïve Bayes) returns a single SHAP value per feature without per-class separation.
     test_sets_ix = []
     idx = 0
     
@@ -677,17 +690,19 @@ def NB_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
         aucs.append(viz.roc_auc)
 
         # SHAP values
+        
+        
+        
         explainer = shap.Explainer(clf.predict,X_train_scaled)
-        shap_values = explainer.shap_values(X_test_scaled)
-        print(shap_values.shape)
+        shap_obj = explainer(X_test,max_evals=4000)
+        shap_values = shap_obj.values
         #shap_obj = explainer(X_test)
         shap_values_all = np.concatenate((shap_values_all, shap_values), axis=0) 
         test_sets_ix.append(test_index)
         
-        #high_index_df = pd.DataFrame(shap_obj.data, columns=shap_obj.feature_names, index=X_test.index)
-        high_index = X_test_scaled.idxmax()# finds the feature's index with the highest value for each sample.
-        shap_1 = pd.DataFrame(shap_values[:,:,y_base], columns=X_test_scaled.columns, index=X_test_scaled.index)
-    
+        high_index_df = pd.DataFrame(shap_obj.data, columns=shap_obj.feature_names, index=X_test.index)
+        high_index = pd.DataFrame(shap_obj.data, columns=shap_obj.feature_names, index=X_test.index).idxmax()# finds the feature's index with the highest value for each sample. returns a seires
+        shap_1 = pd.DataFrame(shap_values, columns=shap_obj.feature_names, index=X_test.index)
         enriched = list()
         
         for v, i in high_index.items():
@@ -754,7 +769,10 @@ def NB_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
     )
     ax.axis("square")
     ax.legend(loc="lower right")
-    plt.show()
+    full_ROC_path = os.path.join("..", "results","ROC_curve",f"NB{save_path}.png")
+    plt.savefig(full_ROC_path, dpi=300, bbox_inches="tight")
+    plt.close()  # Close the figure to free memory
+    print(f"Plot saved as {full_ROC_path}")
      
     result = {'y_information':{'y_true':y_true_all,
                               'y_pred':y_pred_all
@@ -767,7 +785,11 @@ def NB_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
           (np.mean(accuracies), np.std(accuracies), np.mean(f_scores), np.std(f_scores),
            np.mean(mcc_s), np.std(mcc_s),mean_auc, std_auc))
     if plot:
-        shap.summary_plot(shap_values_all[:,:,y_base], x_true_df)
+        shap.summary_plot(shap_values_all, x_true_df,show=False)
+        full_shap_path = os.path.join("..", "results","SHAP_plots",f"NB{save_path}.png")
+        plt.savefig(full_shap_path, dpi=300, bbox_inches="tight")
+        plt.close()  # Close the figure to free memory
+        print(f"Plot saved as {full_shap_path}")
     return result
 
 
