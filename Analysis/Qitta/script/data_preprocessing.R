@@ -1,7 +1,10 @@
 #############################################################################################################
 #
-
 rm(list=ls())
+
+library(here)
+library(dplyr)
+
 
 # Load library
 library(phyloseq)
@@ -17,7 +20,19 @@ load("SelectMicro_24new/Analysis/Qitta/data/species/db2151.RData")
 species_abundance_table = list(data.frame(db11484$abundance_table),
                                data.frame(db1629$abundance_table),data.frame(db2151$abundance_table))
 species_abundance_table_combined <- bind_rows(species_abundance_table)
-print(combined_df)
+print(species_abundance_table_combined)
+
+metadata_species <- list(data.frame(db11484$metadata),
+                         data.frame(db1629$metadata),data.frame(db2151$metadata))
+
+colnames(metadata_species[[1]])
+for (i in c(1,2,3)){
+  print(table(metadata_species[[i]]$ibd))
+}
+
+metadata_species_combined <- bind_rows(metadata_species)
+nonmissing_rows <- which(!is.na(metadata_species_combined$ibd))
+
 
 
 tax_db11484 = data.frame(db11484$taxonomy)
@@ -60,3 +75,10 @@ tax_db_genus$Rank6[tax_db_genus$Rank6 == "g__"] <- paste0("g__", rownames(tax_db
 # rename each feature with species names
 genus_abundance_table_combined <- rename_tax_fun(genus_abundance_table_combined,tax_db_genus,'Rank6')
 colnames(genus_abundance_table_combined)
+
+write.csv(species_abundance_table_combined[nonmissing_rows,], here("SelectMicro_24new/Analysis/Qitta/data/features_species_withname.csv"),row.names = TRUE) 
+
+write.csv(genus_abundance_table_combined[nonmissing_rows,], here("SelectMicro_24new/Analysis/Qitta/data/features_genus_withname.csv"),row.names = TRUE) 
+
+write.csv(metadata_species_combined[nonmissing_rows,], here("SelectMicro_24new/Analysis/Qitta/data/metadata.csv"),row.names = TRUE) 
+

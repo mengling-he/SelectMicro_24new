@@ -31,3 +31,32 @@ rename_tax_fun <- function(df, mapping_df, tax) {
   
   return(df)
 }
+
+
+# calculate Relative abundance matrix (also in FS.py)
+relative_abundance <- function(data, cutOff = 0.01) {
+  # Check if the input data is a matrix or data.frame
+  if (!is.matrix(data) && !is.data.frame(data)) {
+    stop("Input 'data' must be a matrix or data frame.")
+  }
+  
+  # Convert data to a matrix if it's a data.frame
+  data <- as.matrix(data)
+  
+  # Calculate the total sum of each sample (row-wise sum)
+  total_per_sample <- rowSums(data, na.rm = TRUE)
+  
+  # Check if all rows have zero total abundance
+  if (all(total_per_sample == 0)) {
+    stop("All rows have zero total abundance.")
+  }
+  
+  # Normalize the data by dividing each value by the total sum for each row
+  data_new <- sweep(data, 1, total_per_sample, FUN = "/")
+  
+  # Set values below the cutoff to 0
+  data_new[data_new < cutOff] <- 0
+  
+  # Return the normalized matrix with NA replaced by 0
+  return(data_new)
+}

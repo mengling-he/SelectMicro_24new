@@ -61,7 +61,7 @@ metadata_1b_sp16$Donor <- ifelse(metadata_1b_sp16$Sample %in% c('con15_mean','co
                                         ifelse(metadata_1b_sp16$Sample %in%c('gr_15_sp2', 'gr_int_sp2'),'Donor2_sp',
                                                ifelse(metadata_1b_sp16$Sample %in% c('gr_15_sp3', 'gr_int_sp3'),'Donor3_sp','others'))))
 sample_data(mothur_merged1b_sp16) <- metadata_1b_sp16
-table(metadata_1b_sp16$Phase)
+table(metadata_1b_sp16$Phase,metadata_1b_sp16$Donor,metadata_1b_sp16$Depth)
 table(metadata_1b_sp16$Donor)
 # use Depth(core/interface) and 
 #write.csv(data.frame(metadata_1b_sp16) , here("SelectMicro_24new/Analysis/ARF/data/ARF_16S_SP_metadata.csv"),row.names = TRUE)
