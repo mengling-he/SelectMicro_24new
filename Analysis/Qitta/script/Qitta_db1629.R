@@ -51,6 +51,14 @@ missing_index_ibd <- which(is.na(metadata_genus$ibd))
 genus_abundance_table_filter <- genus_abundance_table[-missing_index_ibd,]
 metadata_genus_filter <- metadata_genus[-missing_index_ibd,]
 
+
+
+write.csv(genus_abundance_table_filter, here("SelectMicro_24new/Analysis/Qitta/data/features_genus_db1629.csv"),row.names = TRUE) 
+write.csv(metadata_genus_filter, here("SelectMicro_24new/Analysis/Qitta/data/meta_genus_db1629.csv"),row.names = TRUE) 
+
+
+
+
 # Step 1: normalize and filter out based on cutoff
 genus_abundance_norm <- relative_abundance(genus_abundance_table_filter)
 

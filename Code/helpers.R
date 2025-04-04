@@ -39,7 +39,7 @@ relative_abundance <- function(data, cutOff = 0.01) {
   if (!is.matrix(data) && !is.data.frame(data)) {
     stop("Input 'data' must be a matrix or data frame.")
   }
-  
+  columnnames <- colnames(data)
   # Convert data to a matrix if it's a data.frame
   data <- as.matrix(data)
   
@@ -56,7 +56,11 @@ relative_abundance <- function(data, cutOff = 0.01) {
   
   # Set values below the cutoff to 0
   data_new[data_new < cutOff] <- 0
+  data_new <- as.data.frame(data_new)
+  colnames(data_new) <- columnnames
   
   # Return the normalized matrix with NA replaced by 0
   return(data_new)
 }
+
+# 
