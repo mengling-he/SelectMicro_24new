@@ -19,6 +19,9 @@ count_data <- assay(zeller14)       # Retrieve count data
 annotation_inf <- rowData(zeller14)     # Get gene annotations
 metadata <- colData(zeller14)     # Get sample metadata
 
+
+
+
 dim(count_data)
 head(count_data)# each row is a feature (tax), each column is a sample
 head(metadata)# each row is a sample, each column is a feature

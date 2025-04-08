@@ -1,0 +1,55 @@
+SOURCE,NR,DATASET,TARGET VARIABLE,N_cases,N_controls,FILTERING,COMMENT,ACCESSION,REFERENCE,
+curatedMetagenomicData,1,QinJ_2012,"0 - control
+1 - T2D",170,174,,,PRJNA42234,"Qin, J., Li, Y., Cai, Z. et al. A metagenome-wide association study of gut microbiota in type 2 diabetes. Nature 490, 55–60 (2012)",
+,2,YuJ_2015,"0 - control
+1 - CRC",74,50,,,PRJEB10878,"Yu, Jun et al. Metagenomic analysis of faecal microbiome as a tool towards targeted non-invasive biomarkers for colorectal cancer. Gut vol. 66,1 (2017)",
+,3,YachidaS_2019,"0 - control
+1 - CRC",258,251,,,PRJDB4176,"Yachida, Shinichi et al. “Metagenomic and metabolomic analyses reveal distinct stage-specific phenotypes of the gut microbiota in colorectal cancer.” Nature medicine vol. 25,6 (2019): 968-976. doi:10.1038/s41591-019-0458-7",
+,4,VogtmannE_2016,"0 - control
+1 - CRC",52,52,,,ERR1293500,"Vogtmann, E. et al. Colorectal cancer and  the human gut microbiome:  reproducibility with whole-genome shotgun sequencing. PLOS One 11, e0155362 (2016).",
+,5,WirbelJ_2018,"0 - control
+1 - CRC",60,65,,,PRJEB27928,"Wirbel, J., Pyl, P.T., Kartal, E. et al. Meta-analysis of fecal metagenomes reveals global microbial signatures that are specific for colorectal cancer. Nat Med 25, 679–689 (2019). https://doi.org/10.1038/s41591-019-0406-6",
+,6,ZellerG_2014,"0 - control
+1 - CRC",53,61,"study_condition %in% c(""control"", ""CRC"")",,PRJEB6070,"Zeller, G. et al. Potential of fecal microbiota for early-stage detection of colorectal cancer. Mol. Syst. Biol. 10, 766 (2014).",
+,7,ThomasAM_2019c,"0 - control
+1 - CRC",40,40,,Only used in the Leave-One-Study-Out setting,DRA006684,"Thomas AM, Manghi P, Asnicar F, et al. Metagenomic analysis of colorectal cancer datasets identifies cross-cohort microbial diagnostic signatures and a link with choline degradation. Nat Med. 2019;25(4):667–78.",
+,8,ThomasAM_2018b,"0 - control
+1 - CRC",32,28,,Only used in the Leave-One-Study-Out setting,PRJEB27928,,
+,9,ThomasAM_2018a,"0 - control
+1 - CRC",29,24,"study_condition %in% c(""control"", ""CRC"")",Only used in the Leave-One-Study-Out setting,PRJNA447983,,
+,10,HanniganGD_2017,"0 - control
+1 - CRC",27,28,"study_condition %in% c(""control"", ""CRC"")",Only used in the Leave-One-Study-Out setting,PRJNA389927,"Hannigan, Geoffrey D et al. “Diagnostic Potential and Interactive Dynamics of the Colorectal Cancer Virome.” mBio vol. 9,6 e02248-18. 20 Nov. 2018, doi:10.1128/mBio.02248-18",
+,11,GuptaA_2019,"0 - control
+1 - CRC",30,30,,Only used in the Leave-One-Study-Out setting,PRJNA531273,"Gupta, Ankit et al. “Association of Flavonifractor plautii, a Flavonoid-Degrading Bacterium, with the Gut Microbiome of Colorectal Cancer Patients in India.” mSystems vol. 4,6 e00438-19. 12 Nov. 2019, doi:10.1128/mSystems.00438-19",
+,12,FengQ_2015,"0 - control
+1 - CRC",46,61,"study_condition %in% c(""control"", ""CRC"")",Only used in the Leave-One-Study-Out setting,PRJEB7774,"Feng, Qiang et al. “Gut microbiome development along the colorectal adenoma-carcinoma sequence.” Nature communications vol. 6 6528. 11 Mar. 2015, doi:10.1038/ncomms7528",
+,13,RubelMA_2020,"0 - control
+1 - STH (parasites)",89,86,,,PRJNA547591,"Rubel, M.A., Abbas, A., Taylor, L.J. et al. Lifestyle and the presence of helminths is associated with gut microbiome composition in Cameroonians. Genome Biol 21, 122 (2020). https://doi.org/10.1186/s13059-020-02020-4",
+,14,QinN_2014,"0 - control
+1 - cirrhosis   ",123,114,,,PRJEB6337,"Qin, N., Yang, F., Li, A. et al. Alterations of the human gut microbiome in liver cirrhosis. Nature 513, 59–64 (2014)",
+,15,NielsenHB_2014,"0 - control
+1 - IBD",81,236,days_from_first_collection == 0,,PRJEB1220,"Nielsen, H. B. et al. Identification and assembly of genomes and genetic elements in complex metagenomic samples without using reference genomes. Nat. Biotechnol. 32, 822–828 (2014).",
+,16,NagySzakalD_2017,"0 - control
+1 - myalgic encephalomyelitis/chronic fatigue syndrome",50,50,,,PRJNA379741,"Nagy-Szakal, D., Williams, B.L., Mishra, N. et al. Fecal metagenomic profiles in subgroups of patients with myalgic encephalomyelitis/chronic fatigue syndrome. Microbiome 5, 44 (2017). https://doi.org/10.1186/s40168-017-0261-y",
+,17,LiJ_2017,"0 - pre-hypertension
+1 - hypertension",99,56,"study_condition %in% c(""pre-hypertension"", ""hypertension"")",,PRJEB36820,"Li, J., Zhao, F., Wang, Y. et al. Gut microbiota dysbiosis contributes to the development of hypertension. Microbiome 5, 14 (2017)",
+,18,JieZ_2017,"0 - control
+1 - atherosclerotic cardiovascular disease",214,171,,,PRJEB21528,"Jie Z et al. The gut microbiome in atherosclerotic cardiovascular disease. Nat. Commun 8, 845 (2017)",
+,19,ZhuF_2020,"0 - control
+1 - schizophrenia",91,81,,,PRJEB29127,"Zhu, F., Ju, Y., Wang, W. et al. Metagenome-wide association of gut microbiome features for schizophrenia. Nat Commun 11, 1612 (2020)",
+,20,LifeLinesDeep_2016,"0 - control
+1 - BMI > 30",136,999,,,*,"Tigchelaar, Ettje F et al. “Cohort profile: LifeLines DEEP, a prospective, general population cohort study in the northern Netherlands: study design and baseline characteristics.” BMJ open vol. 5,8 e006772. 28 Aug. 2015, doi:10.1136/bmjopen-2014-006772",*Data sharing statement: Researchers can apply for data and biomaterial by submitting a proposal to the LifeLines Research Office (LLscience@umcg.nl). The LifeLines website provides information on the application process (http://www.lifelines.net).
+,21,AsnicarF_2021,"0 - control
+1 - BMI > 30",160,937,,,PRJEB39223,"Asnicar, Francesco et al. “Microbiome connections with host metabolism and habitual diet from 1,098 deeply phenotyped individuals.” Nature medicine vol. 27,2 (2021): 321-332. doi:10.1038/s41591-020-01183-8",
+,22,LiJ_2014,"0 - control
+1 - BMI > 30",59,189,,,,,
+,23,LeChatelierE_2013,"0 - control
+1 - BMI > 30",169,123,,,PRJEB4336,"Le Chatelier, E. et al. Richness of human gut microbiome correlates with metabolic markers. Nature 500, 541–546 (2013).",
+Estonian Microbiome Cohort,24,BMI30_2022,"0 - control
+1 - BMI > 30",543,1966,,,,"Aasmets, O., Krigul, K.L., Lüll, K. et al. Gut metagenome associations with extensive digital health data in a volunteer-based Estonian microbiome cohort. Nat Commun 13, 869 (2022). https://doi.org/10.1038/s41467-022-28464-9",
+,25,Depression_2022,"0 - control
+1 - Depression",640,1889,,,,,
+,26,AB90_2022,"0 - control
+1 - AB used within 90 days",264,2245,,,,,
+,27,T2D_2022,"0 - control
+1 - T2D",118,2391,,,,,
