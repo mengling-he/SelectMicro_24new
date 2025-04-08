@@ -85,7 +85,7 @@ def OTU_H_Score_arr(X,y): #X is the relative abundance matrix(np.array), each ro
     return np.array(score_List)
 
 
-# this is the function to use
+# this is the function to use for multiple lables
 def OTU_H_Score_fun(X,Y):#X is the relative abundance matrix(np.array), each row is a sample; y is the classification results
     # if there is only one response, then y is a 1D array
     # if there is multiple response variable, then y is a 2D array, each column is one variable
@@ -113,7 +113,7 @@ def indice_H_unisig(scorelist,y):# scorelist is the H statistics for featues, nu
     # selectedOTU_index, eps=FS.indice_H_sig(weights,y)
     unique_groups = len(np.unique(y))
     df = unique_groups-1
-    p_cutoff = 0.1
+    p_cutoff = 0.05
     h_cutoff = stats.chi2.ppf(1 - p_cutoff, df)
     indices_above_cutoff = [index for index, value in enumerate(scorelist) if value > h_cutoff]
     # Sort the indices based on the corresponding values in descending order
@@ -121,7 +121,7 @@ def indice_H_unisig(scorelist,y):# scorelist is the H statistics for featues, nu
 
     return selected_indices,len(selected_indices)
 
-def SelectOTU_fun(scorelist,y,p_cutoff=0.1,plot=True):# same with the function above, but add plot output
+def SelectOTU_fun(scorelist,y,p_cutoff=0.05,plot=True):# same with the function above, but add plot output
     unique_groups = len(np.unique(y))
     df = unique_groups-1
     p_cutoff = p_cutoff
@@ -151,28 +151,27 @@ def SelectOTU_fun(scorelist,y,p_cutoff=0.1,plot=True):# same with the function a
 
 
 ################# This is a combined function ######################################
-def SelectMicro_fun(df,y,threshold=0.01, p_cutoff=0.1,plot=True):
+def SelectMicro_fun(df,y,p_cutoff=0.05,plot=True):
     """
     combine calculating H and feature selection in one function
     return selected array (data), selected column names, selected indices and all the H statistics with the original indices, plot H if needed
-    input: dataframe (to get the column names), target variable
+    input: relative abundance dataframe (to get the column names), target variable
     """
     if y.ndim != 1:
         raise ValueError("Response variable must be 1D array")
     colnames = df.columns
     x = df.to_numpy()
-    x = relative_abundance(x,cutOff=threshold)
     scorelist = OTU_H_Score_arr(x,y)
 
-    selected_indices = SelectOTU_fun(scorelist,y,plot=plot)
+    selected_indices = SelectOTU_fun(scorelist,y,p_cutoff=p_cutoff,plot=plot)
 
     selected_data = x[:,selected_indices]
     selected_columnames = colnames[selected_indices]
     
-    result = {"selected_data": selected_data,
-              "selected_columnames": selected_columnames,
+    result = {"selected_df": pd.DataFrame(selected_data, columns=selected_columnames),
+              #"selected_columnames": selected_columnames,
               "selected_indices": selected_indices,
-              "relative_abundance_data": x,
+              #"relative_abundance_data": x,
               "H_score": scorelist}
     
     return result
@@ -185,7 +184,7 @@ def SelectMicro_fun(df,y,threshold=0.01, p_cutoff=0.1,plot=True):
 
 
 #################
-def indice_H_multisig(scorelist,Y,p_cutoff = 0.1):# scorelist is the H statistics for featues, num_groups is the number of classes in y
+def indice_H_multisig(scorelist,Y,p_cutoff = 0.05):# scorelist is the H statistics for featues, num_groups is the number of classes in y
     #return to the indices of significant features and the numer of featurs kept
     # selectedOTU_index, eps=FS.indice_H_sig(weights,y)
     Y = np.asarray(Y)
@@ -204,7 +203,7 @@ def indice_H_multisig(scorelist,Y,p_cutoff = 0.1):# scorelist is the H statistic
 
 
 ################# This is a combined function ######################################
-def SelectMicro_multi_fun(df,Y, p_cutoff=0.1,plot=True):
+def SelectMicro_multi_fun(df,Y, p_cutoff=0.05,plot=True):
     """
     combine calculating H and feature selection in one function
     return selected array (data), selected column names, selected indices and all the H statistics with the original indices, plot H if needed

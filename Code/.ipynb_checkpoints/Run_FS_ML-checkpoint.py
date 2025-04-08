@@ -21,7 +21,6 @@ from tensorflow.keras import layers
 import shap
 import time
 import sys
-import os
 sys.path.append('./Code')
 import metric
 
@@ -102,8 +101,7 @@ def LassoFS_CV(X,y, param_grid=None):
 
 def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
      # Initialize the classifier
-
-    
+     
     
     # Set up 5-fold cross-validation
     kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=777)
@@ -117,7 +115,6 @@ def ML_model_SCV(X, y, classifier_name, SMOTE=False,k=5):
     y_pred_all = []
     y_prob_all = []
 
-    X = X.values
     for train_index, test_index in kf.split(X, y):
         # Split the data
         X_train, X_test = X[train_index], X[test_index]
@@ -276,10 +273,11 @@ def runClassifier_random(data,y,Nselection,clf='RF',iteration=30,SMOTE=False):
 
 
 # --------------------------------------------------------------------------------------------------#
-# ----------------------------cross validation with ROC and SHAP---------------------------------------------------#
+# ----------------------------SHAP---------------------------------------------------#
 
 
 # ### Random Forest Classifier
+
 def RF_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
     # Initialize the classifier
     # Set up 5-fold cross-validation
@@ -442,7 +440,8 @@ def RF_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
 
 
 # ### XGBoost Model
-def XGBoost_model_SCV(X, y, plot=False,save_path = None, SMOTE=False,k=5,y_base = 0):
+
+def XGBoost_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
     # Initialize the classifier
     # Set up 5-fold cross-validation
     kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=777)
@@ -586,13 +585,7 @@ def XGBoost_model_SCV(X, y, plot=False,save_path = None, SMOTE=False,k=5,y_base 
     )
     ax.axis("square")
     ax.legend(loc="lower right")
-    #plt.show()
-    # Save instead of showing
-    # Define the full path with ../data/ directory
-    full_ROC_path = os.path.join("..", "results","ROC_curve",f"XGBoost{save_path}.png")
-    plt.savefig(full_ROC_path, dpi=300, bbox_inches="tight")
-    plt.close()  # Close the figure to free memory
-    print(f"Plot saved as {full_ROC_path}")
+    plt.show()
      
     result = {'y_information':{'y_true':y_true_all,
                               'y_pred':y_pred_all
@@ -605,17 +598,13 @@ def XGBoost_model_SCV(X, y, plot=False,save_path = None, SMOTE=False,k=5,y_base 
           (np.mean(accuracies), np.std(accuracies), np.mean(f_scores), np.std(f_scores),
            np.mean(mcc_s), np.std(mcc_s),mean_auc, std_auc))
     if plot:
-        shap.summary_plot(shap_values_all, x_true_df,show=False)
-        full_shap_path = os.path.join("..", "results","SHAP_plots",f"XGBoost{save_path}.png")
-        plt.savefig(full_shap_path, dpi=300, bbox_inches="tight")
-        plt.close()  # Close the figure to free memory
-        print(f"Plot saved as {full_shap_path}")
+        shap.summary_plot(shap_values_all, x_true_df)
     return result
 
 
 # ### Naive Bayes Classifier
 
-def NB_model_SCV(X, y, plot=False,save_path=None,SMOTE=False,k=5,y_base = 0):
+def NB_model_SCV(X, y, plot=False,SMOTE=False,k=5,y_base = 0):
     # Initialize the classifier
     # Set up 5-fold cross-validation
     kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=777)
@@ -767,10 +756,7 @@ def NB_model_SCV(X, y, plot=False,save_path=None,SMOTE=False,k=5,y_base = 0):
     )
     ax.axis("square")
     ax.legend(loc="lower right")
-    full_ROC_path = os.path.join("..", "results","ROC_curve",f"NB{save_path}.png")
-    plt.savefig(full_ROC_path, dpi=300, bbox_inches="tight")
-    plt.close()  # Close the figure to free memory
-    print(f"Plot saved as {full_ROC_path}")
+    plt.show()
      
     result = {'y_information':{'y_true':y_true_all,
                               'y_pred':y_pred_all
@@ -783,11 +769,7 @@ def NB_model_SCV(X, y, plot=False,save_path=None,SMOTE=False,k=5,y_base = 0):
           (np.mean(accuracies), np.std(accuracies), np.mean(f_scores), np.std(f_scores),
            np.mean(mcc_s), np.std(mcc_s),mean_auc, std_auc))
     if plot:
-        shap.summary_plot(shap_values_all, x_true_df,show=False)
-        full_shap_path = os.path.join("..", "results","SHAP_plots",f"NB{save_path}.png")
-        plt.savefig(full_shap_path, dpi=300, bbox_inches="tight")
-        plt.close()  # Close the figure to free memory
-        print(f"Plot saved as {full_shap_path}")
+        shap.summary_plot(shap_values_all, x_true_df)
     return result
 
 

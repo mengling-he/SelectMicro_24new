@@ -14,9 +14,19 @@ import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 from sklearn import metrics
 from sklearn.metrics import auc, roc_auc_score, roc_curve, accuracy_score, precision_score, recall_score, f1_score, matthews_corrcoef
 from sklearn.metrics import RocCurveDisplay, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.lines import Line2D
+import shap
+import os
+
+def AUC_multiclass(y_true,y_prob):
+	unique_class = set(y_true)
+	y_true_bin = label_binarize(y_true, classes=unique_class)
+	auc_scores = np.array([roc_auc_score(y_true_bin[:,i],[prob[i] for prob in y_prob]) for i in range(len(unique_class))])
+	return auc_scores
+
 
 def roc_auc_score_multiclass(actual_class, pred_class, average = "macro"):
     
@@ -37,6 +47,9 @@ def roc_auc_score_multiclass(actual_class, pred_class, average = "macro"):
         roc_auc_dict[per_class] = roc_auc
 
     return roc_auc_dict
+
+
+
 
 
 
@@ -108,8 +121,6 @@ def false_negative(y_true, y_pred):
             
     return fn
 # --------------------------------------------------------------------------------------------------#
-
-
 
 def macro_precision(y_true, y_pred):
 
@@ -303,7 +314,7 @@ def micro_f1(y_true, y_pred):
     return f1
 # --------------------------------------------------------------------------------------------------#
 
-def mcc_score(y_true, y_pred):
+def mcc_score(y_true, y_pred):# macro score
     # find the number of classes
     num_classes = len(np.unique(y_true))
 
@@ -412,8 +423,77 @@ def metric_sum(prediction_dictionary):
 
 
 
+# --------------------------------------------------------------------------------------------------#
+# ROC curve for different folds from cross validation
+def plot_multiclass_roc_cv(y_trues, y_probs, class_index=0, n_classes=3, class_label='Class 0',save_path=None):
+   
+    mean_fpr = np.linspace(0, 1, 100)
+    tprs = []
+    aucs = []
+
+    plt.figure(figsize=(8, 6))
+
+    for i in range(len(y_trues)):
+        y_true_bin = label_binarize(y_trues[i], classes=range(n_classes))# binary of y_true in each fold
+        y_score = np.array(y_probs[i])[:, class_index]
+
+        fpr, tpr, _ = roc_curve(y_true_bin[:, class_index], y_score)
+        roc_auc = auc(fpr, tpr)
+        aucs.append(roc_auc)
+
+        # Interpolate to mean FPR
+        tpr_interp = np.interp(mean_fpr, fpr, tpr)#interpolating TPR values at a common set of FPR points across all folds.
+        tpr_interp[0] = 0.0
+        tprs.append(tpr_interp)
+
+        plt.plot(fpr, tpr, alpha=0.4, label=f"Fold {i+1} AUC = {roc_auc:.3f}")
+
+    # Mean and Std of TPRs
+    mean_tpr = np.mean(tprs, axis=0)
+    std_tpr = np.std(tprs, axis=0)
+    mean_auc = auc(mean_fpr, mean_tpr)
+
+    plt.plot(mean_fpr, mean_tpr, color='b',
+             label=f"Mean ROC (AUC = {mean_auc:.2f})", lw=2)
+
+    plt.fill_between(mean_fpr,
+                     np.maximum(mean_tpr - std_tpr, 0),
+                     np.minimum(mean_tpr + std_tpr, 1),
+                     color='blue', alpha=0.2, label='± 1 std. dev.')
+
+    plt.plot([0, 1], [0, 1], 'k--', lw=1)
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title(f'ROC Curve - {class_label}')
+    plt.legend(loc="lower right")
+    plt.grid(True)
+    plt.tight_layout()
+    if save_path:
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        print(f"Saved ROC curve to: {save_path}")
+        plt.close()
+    else:
+        plt.show()
 
 
+# --------------------------------------------------------------------------------------------------#
+# SHAP plot for multiple class (class is 0,1,2...)
+def plot_SHAP_multiclass(shap_value,X_df,class_index=0,save_path=None):
+    shap.summary_plot(shap_value[:,:,class_index], X_df,show=False)
+    #shap.plots.bar(shap_value[:,:,class_index], X_df,show=False)
+    if save_path:
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        print(f"Saved SHAP to: {save_path}")
+        plt.close()
+    else:
+        plt.show()
+
+
+# --------------------------------------------------------------------------------------------------#
 def plot_confusion_matrices(y, y_pred,title,pos_y=1):
     acc = accuracy(y, y_pred)
     pos_y = list(np.unique(y))[0]
