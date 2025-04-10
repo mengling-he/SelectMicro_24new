@@ -1,0 +1,55 @@
+2025-04-09 17:16:21.299021: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-04-09 17:16:21.303181: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-09 17:16:21.451692: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-09 17:16:21.461472: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1744233381.475621 2441342 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1744233381.480009 2441342 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-04-09 17:16:21.609385: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+disease
+CRC        91
+healthy    66
+adenoma    42
+Name: count, dtype: int64
+/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/sklearn/linear_model/_coordinate_descent.py:695: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations, check the scale of the features or consider increasing regularisation. Duality gap: 4.490e-02, tolerance: 1.144e-02
+  model = cd_fast.enet_coordinate_descent(
+Best alpha: 0.1
+Best alpha: 0.01
+The shape of the original dataset is  (199, 1585)
+The shape of the SelectMicro dataset is  (199, 34)
+The shape of the Lasso_finetune selected dataset is  (199, 19)
+The shape of the FS_Lasso_finetune selected dataset is  (199, 20)
+5 fold cross validation using SVM model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[34 15 17]
+ [16 15 11]
+ [21 21 49]]
+Mean Accuracy: 0.492 (0.082),Mean F1: 0.497 (0.075),Mean MCC: 0.220 (0.115),  Mean AUC: 0.654 (0.069)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/AllFeatures_SVM_ROC_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/AllFeatures_SVM_ROC_class2.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[30 16 20]
+ [14 17 11]
+ [15 24 52]]
+Mean Accuracy: 0.497 (0.079),Mean F1: 0.501 (0.064),Mean MCC: 0.242 (0.111),  Mean AUC: 0.665 (0.098)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/SelectMicro_SVM_ROC_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/SelectMicro_SVM_ROC_class2.png
+Analysis for Lasso_finetune
+The combined confusion matrix
+[[29 21 16]
+ [13 16 13]
+ [12 26 53]]
+Mean Accuracy: 0.492 (0.076),Mean F1: 0.498 (0.078),Mean MCC: 0.217 (0.132),  Mean AUC: 0.665 (0.109)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/Lasso_finetune_SVM_ROC_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/Lasso_finetune_SVM_ROC_class2.png
+Analysis for FS_Lassofinetune
+The combined confusion matrix
+[[30 17 19]
+ [14 15 13]
+ [11 27 53]]
+Mean Accuracy: 0.492 (0.091),Mean F1: 0.499 (0.087),Mean MCC: 0.216 (0.143),  Mean AUC: 0.657 (0.093)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/FS_Lassofinetune_SVM_ROC_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/FS_Lassofinetune_SVM_ROC_class2.png

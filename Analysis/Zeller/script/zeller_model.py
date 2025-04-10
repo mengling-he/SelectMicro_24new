@@ -57,15 +57,16 @@ print(f'The shape of the FS_Lasso_finetune selected dataset is ',np.shape(X_FS_l
 
 # Model-----------------------------------------------------------
 dict_cm_list = []
-print("5 fold cross validation using Random forest model -----------------------------------------")
+#print("5 fold cross validation using Random forest model -----------------------------------------")
+print("5 fold cross validation using NB model -----------------------------------------")# no shap plots for SVM,NB
 save_dir = "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result"
 for datatype, subset in data_subset.items():
     print(f"Analysis for {datatype}")
-    dict_cm = RunModel.RF_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
+    dict_cm = RunModel.NB_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
     
-    metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=3, class_label='Class 1',save_path=os.path.join(save_dir, f"{datatype}_RF_ROC_class1.png"))
-    metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"{datatype}_RF_SHAP_class1.png"))
+    metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=3, class_label='Class 1',save_path=os.path.join(save_dir, f"{datatype}_NB_ROC_class1.png"))
+    #metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"{datatype}_XG_SHAP_class1.png"))
     
-    metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=2, n_classes=3, class_label='Class 2',save_path =os.path.join(save_dir, f"{datatype}_RF_ROC_class2.png"))
-    metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=2,save_path=os.path.join(save_dir, f"{datatype}_RF_SHAP_class2.png"))
+    metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=2, n_classes=3, class_label='Class 2',save_path =os.path.join(save_dir, f"{datatype}_NB_ROC_class2.png"))
+    #metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=2,save_path=os.path.join(save_dir, f"{datatype}_XG_SHAP_class2.png"))
 

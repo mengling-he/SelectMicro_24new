@@ -107,6 +107,59 @@ def OTU_H_Score_fun(X,Y):#X is the relative abundance matrix(np.array), each row
 
 
 
+
+
+# calculete dunn_tests
+def calculate_dunn_tests_pair(
+    X_df,y, p_adjust_method='bonferroni',p_threshold=0.05
+):
+    results_dunn = {}
+    y_series = pd.Series(y, name='Group')
+    summary_rows = []
+
+    for column in X_df.columns:
+        df_dunntest = X_df[[column]].copy()
+        df_dunntest['Group'] = y_series.values
+
+        dunn_results = sp.posthoc_dunn(
+            df_dunntest,
+            val_col=column,
+            group_col='Group',
+            p_adjust=p_adjust_method
+        )
+
+        #print(f"\n==== {column} ====")
+        groups = dunn_results.columns.tolist()
+        for g1, g2 in itertools.combinations(groups, 2):
+            p_val = dunn_results.loc[g2, g1] if g1 in dunn_results.columns and g2 in dunn_results.index else None
+            if pd.notna(p_val):
+                #print(f"{g1} vs {g2}: p = {p_val:.4f}")
+                if p_val < p_threshold:
+                    medians = df_dunntest.groupby('Group')[column].median()
+                    m1 = medians.loc[g1]
+                    m2 = medians.loc[g2]
+                    if m1 > m2:
+                        direction = f"↑ {g1}"
+                    elif m2 > m1:
+                        direction = f"↑ {g2}"
+                    else:
+                        direction = "=" # this is based on median so can be equal
+                    
+                    summary_rows.append({
+                        'Feature': column,
+                        'Group1': g1,
+                        'Group2': g2,
+                        'P-value': p_val,
+                        'EffectDirection': direction
+                    })
+
+        results_dunn[column] = dunn_results
+        
+    summary_df = pd.DataFrame(summary_rows)
+    return results_dunn, summary_df
+
+
+
 # 3. get the number of features to keep based on significance
 def indice_H_unisig(scorelist,y):# scorelist is the H statistics for featues, num_groups is the number of classes in y
     #return to the indices of significant features and the numer of featurs kept
@@ -175,6 +228,37 @@ def SelectMicro_fun(df,y,p_cutoff=0.05,plot=True):
               "H_score": scorelist}
     
     return result
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

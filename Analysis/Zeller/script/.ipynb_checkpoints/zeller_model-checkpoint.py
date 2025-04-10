@@ -14,9 +14,10 @@ import os
 
 
 # data preprocessing----------------------------------
-data = pd.read_csv('/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/data/features_table_update.csv',index_col=0)
-cols_name = data.columns
-data = pd.DataFrame(FS.relative_abundance(data), columns=cols_name)
+data0 = pd.read_csv('/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/data/features_table_update.csv',index_col=0)
+cols_name = data0.columns
+cols_name = np.array([x.split("|")[-1] for x in cols_name])
+data = pd.DataFrame(FS.relative_abundance(data0), columns=cols_name)
 meta_2 = pd.read_csv('/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/data/meta_data.csv',index_col=0)
 y = meta_2['disease']
 print(y.value_counts())
@@ -29,14 +30,13 @@ target_variable = np.array(target_variable)
 # feature select--------------------------------------
 
 # SelectMicro
-selectedresult=FS.SelectMicro_fun(data,y,p_cutoff = 0.05)
+selectedresult=FS.SelectMicro_fun(data,target_variable,p_cutoff = 0.05)
 
-data2 = pd.DataFrame(selectedresult['relative_abundance_data'],columns=cols_name)
 selectedOTU_index= selectedresult['selected_indices']
 X_FS = selectedresult['selected_df']
 
 # Lasso
-X_lasso_ft0,selectedOTU_index_Lasso  = RunML.LassoFS_CV(np.array(data2),target_variable)
+X_lasso_ft0,selectedOTU_index_Lasso  = RunML.LassoFS_CV(np.array(data),target_variable)
 X_lasso_ft = pd.DataFrame(X_lasso_ft0, columns=cols_name[selectedOTU_index_Lasso])
 
 # SelectMicro+Lasso
@@ -45,7 +45,7 @@ selectedOTU_index_FS_lasso = selectedOTU_index[xlabel_FS_lasso_ft0]
 X_FS_lasso_ft = pd.DataFrame(X_FS_lasso_ft0, columns=cols_name[selectedOTU_index_FS_lasso])
 
 # final data subset
-data_subset = {"AllFeatures":data2,
+data_subset = {"AllFeatures":data,
                "SelectMicro": X_FS,
                "Lasso_finetune":X_lasso_ft,
                "FS_Lassofinetune":X_FS_lasso_ft
@@ -57,14 +57,16 @@ print(f'The shape of the FS_Lasso_finetune selected dataset is ',np.shape(X_FS_l
 
 # Model-----------------------------------------------------------
 dict_cm_list = []
-print("5 fold cross validation using Random forest model -----------------------------------------")
+#print("5 fold cross validation using Random forest model -----------------------------------------")
+print("5 fold cross validation using NB model -----------------------------------------")# no shap plots for SVM,NB
 save_dir = "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result"
 for datatype, subset in data_subset.items():
     print(f"Analysis for {datatype}")
-    dict_cm = RunModel.RF_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
+    dict_cm = RunModel.NB_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
     
-    metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=3, class_label='Class 1',save_path=os.path.join(save_dir, f"{datatype}_RF_ROC_class1.png"))
-    metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"{datatype}_RF_SHAP_class1.png"))
+    metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=3, class_label='Class 1',save_path=os.path.join(save_dir, f"{datatype}_NB_ROC_class1.png"))
+    #metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"{datatype}_XG_SHAP_class1.png"))
     
-    metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=2, n_classes=3, class_label='Class 2',save_path =os.path.join(save_dir, f"{datatype}_RF_ROC_class2.png"))
-    metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=2,save_path=os.path.join(save_dir, f"{datatype}_RF_SHAP_class2.png"))
+    metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=2, n_classes=3, class_label='Class 2',save_path =os.path.join(save_dir, f"{datatype}_NB_ROC_class2.png"))
+    #metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=2,save_path=os.path.join(save_dir, f"{datatype}_XG_SHAP_class2.png"))
+

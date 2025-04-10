@@ -5,7 +5,7 @@
 #SBATCH -A ACF-UTK0011
 #SBATCH -p short
 #SBATCH -q short
-#SBATCH --output=/lustre/isaac24/scratch/mhe8/SelectMicro_24/Code/test_result/rf_qitta2_full%j.out   # Output file (%j will be replaced by the job ID)
+#SBATCH --output=/lustre/isaac24/scratch/mhe8/SelectMicro_24/Code/test_result/nb_qitta2_full%j.out   # Output file (%j will be replaced by the job ID)
 #SBATCH -t 01:00:00
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=mhe8@vols.utk.edu

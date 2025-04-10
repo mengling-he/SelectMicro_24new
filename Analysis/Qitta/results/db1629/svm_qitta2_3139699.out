@@ -1,0 +1,55 @@
+2025-04-09 17:04:49.890479: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-04-09 17:04:49.893419: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-09 17:04:49.896993: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-09 17:04:49.906165: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1744232689.920879  889982 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1744232689.925299  889982 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-04-09 17:04:49.941282: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+ibd
+UC        324
+CD        251
+nonIBD     62
+Name: count, dtype: int64
+/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/sklearn/linear_model/_coordinate_descent.py:695: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations, check the scale of the features or consider increasing regularisation. Duality gap: 2.047e-01, tolerance: 2.362e-02
+  model = cd_fast.enet_coordinate_descent(
+Best alpha: 0.05
+Best alpha: 0.05
+The shape of the original dataset is  (637, 220)
+The shape of the SelectMicro dataset is  (637, 92)
+The shape of the Lasso_finetune selected dataset is  (637, 14)
+The shape of the FS_Lasso_finetune selected dataset is  (637, 14)
+5 fold cross validation using XGBoost model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[ 10   1  51]
+ [  7  58 186]
+ [ 12  12 300]]
+Mean Accuracy: 0.578 (0.042),Mean F1: 0.491 (0.094),Mean MCC: nan (nan),  Mean AUC: 0.451 (0.208)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/svm_AllFeatures_ROC_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/svm_AllFeatures_ROC_class2.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[ 10   1  51]
+ [  7  52 192]
+ [ 12  13 299]]
+Mean Accuracy: 0.567 (0.036),Mean F1: 0.474 (0.088),Mean MCC: nan (nan),  Mean AUC: 0.452 (0.207)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/svm_SelectMicro_ROC_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/svm_SelectMicro_ROC_class2.png
+Analysis for Lasso_finetune
+The combined confusion matrix
+[[ 43  12   7]
+ [ 41 132  78]
+ [ 70  57 197]]
+Mean Accuracy: 0.584 (0.015),Mean F1: 0.598 (0.017),Mean MCC: 0.350 (0.031),  Mean AUC: 0.769 (0.040)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/svm_Lasso_finetune_ROC_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/svm_Lasso_finetune_ROC_class2.png
+Analysis for FS_Lassofinetune
+The combined confusion matrix
+[[ 42  13   7]
+ [ 41 131  79]
+ [ 70  63 191]]
+Mean Accuracy: 0.571 (0.013),Mean F1: 0.585 (0.016),Mean MCC: 0.331 (0.021),  Mean AUC: 0.766 (0.039)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/svm_FS_Lassofinetune_ROC_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/svm_FS_Lassofinetune_ROC_class2.png

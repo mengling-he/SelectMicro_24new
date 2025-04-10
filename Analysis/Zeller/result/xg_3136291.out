@@ -1,0 +1,63 @@
+2025-04-08 15:53:53.069316: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-04-08 15:53:53.071755: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-08 15:53:53.075294: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-08 15:53:53.084722: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1744142033.098771 1029794 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1744142033.103150 1029794 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-04-08 15:53:53.119006: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+disease
+CRC        91
+healthy    66
+adenoma    42
+Name: count, dtype: int64
+/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/sklearn/linear_model/_coordinate_descent.py:695: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations, check the scale of the features or consider increasing regularisation. Duality gap: 4.490e-02, tolerance: 1.144e-02
+  model = cd_fast.enet_coordinate_descent(
+Best alpha: 0.1
+Best alpha: 0.01
+The shape of the original dataset is  (199, 1585)
+The shape of the SelectMicro dataset is  (199, 34)
+The shape of the Lasso_finetune selected dataset is  (199, 19)
+The shape of the FS_Lasso_finetune selected dataset is  (199, 20)
+5 fold cross validation using XGBoost model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[31 13 22]
+ [17  8 17]
+ [19 15 57]]
+Mean Accuracy: 0.482 (0.075),Mean F1: 0.475 (0.068),Mean MCC: 0.160 (0.103),  Mean AUC: 0.623 (0.041)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/AllFeatures_XG_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/AllFeatures_XG_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/AllFeatures_XG_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/AllFeatures_XG_SHAP_class2.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[32 12 22]
+ [18 12 12]
+ [20 17 54]]
+Mean Accuracy: 0.492 (0.121),Mean F1: 0.491 (0.117),Mean MCC: 0.195 (0.178),  Mean AUC: 0.634 (0.077)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/SelectMicro_XG_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/SelectMicro_XG_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/SelectMicro_XG_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/SelectMicro_XG_SHAP_class2.png
+Analysis for Lasso_finetune
+The combined confusion matrix
+[[34 10 22]
+ [16 10 16]
+ [19  8 64]]
+Mean Accuracy: 0.543 (0.091),Mean F1: 0.529 (0.090),Mean MCC: 0.250 (0.136),  Mean AUC: 0.669 (0.081)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/Lasso_finetune_XG_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/Lasso_finetune_XG_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/Lasso_finetune_XG_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/Lasso_finetune_XG_SHAP_class2.png
+Analysis for FS_Lassofinetune
+The combined confusion matrix
+[[32 14 20]
+ [14 10 18]
+ [19 19 53]]
+Mean Accuracy: 0.477 (0.056),Mean F1: 0.474 (0.051),Mean MCC: 0.165 (0.081),  Mean AUC: 0.629 (0.048)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/FS_Lassofinetune_XG_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/FS_Lassofinetune_XG_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/FS_Lassofinetune_XG_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/FS_Lassofinetune_XG_SHAP_class2.png
