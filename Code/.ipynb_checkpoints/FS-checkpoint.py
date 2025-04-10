@@ -9,7 +9,8 @@ import loadData
 import pandas as pd
 from scipy import stats
 import seaborn as sns
-import math
+import scikit_posthocs as sp
+import itertools
 
 # new FS pipeline-------------
 

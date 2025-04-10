@@ -8,6 +8,7 @@ import RunModel
 
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import LabelEncoder
 import random
 import os
 
@@ -44,29 +45,73 @@ X_FS_lasso_ft0,xlabel_FS_lasso_ft0  = RunML.LassoFS_CV(np.array(X_FS),target_var
 selectedOTU_index_FS_lasso = selectedOTU_index[xlabel_FS_lasso_ft0]
 X_FS_lasso_ft = pd.DataFrame(X_FS_lasso_ft0, columns=cols_name[selectedOTU_index_FS_lasso])
 
+# subset of SelectMicro
+index_FS = np.array(range(len(selectedOTU_index)))
+subset_index = np.delete(index_FS,[2,3,5,6,8,15,16,17,10,12,14,33,19,21,23,27,29,32])
+X_FS_subset = X_FS.iloc[:,subset_index]
+
+# combining environmental: BMI has missing values
+env_inf = meta_2[['age','gender','country']].reset_index(drop=True)
+# Initialize LabelEncoder
+le_gender = LabelEncoder()
+env_inf['gender'] = le_gender.fit_transform(env_inf['gender'])
+le_country = LabelEncoder()
+env_inf['country'] = le_country.fit_transform(env_inf['country'])
+print("Class mapping for gender:")
+for i, cls in enumerate(le_gender.classes_):
+    print(f"{cls} → {i}")
+print("Class mapping for country:")
+for i, cls in enumerate(le_country.classes_):
+    print(f"{cls} → {i}")
+X_FS_env = pd.concat([X_FS, env_inf], axis=1)
+
+
+# subset+env
+X_FS_sub_env = pd.concat([X_FS_subset, env_inf], axis=1)
+
 # final data subset
-data_subset = {"AllFeatures":data,
-               "SelectMicro": X_FS,
-               "Lasso_finetune":X_lasso_ft,
-               "FS_Lassofinetune":X_FS_lasso_ft
+data_subset = {#"AllFeatures":data,
+                "SelectMicro": X_FS, "SelectMicro_env":X_FS_env,"SelectMicro_subset":X_FS_subset,"SelectMicro_subset_env":X_FS_sub_env
+               #"Lasso_finetune":X_lasso_ft,
+               #"FS_Lassofinetune":X_FS_lasso_ft
               }
-print(f'The shape of the original dataset is ',np.shape(data))
+#print(f'The shape of the original dataset is ',np.shape(data))
 print(f'The shape of the SelectMicro dataset is ',np.shape(X_FS))
-print(f'The shape of the Lasso_finetune selected dataset is ',np.shape(X_lasso_ft))
-print(f'The shape of the FS_Lasso_finetune selected dataset is ',np.shape(X_FS_lasso_ft))
+print(f'The shape of the FS_subset is',np.shape(X_FS_subset))
+print(f'the shape of the FS_env is',np.shape(X_FS_env))
+print(f'the shape of the FS_SUB_env is',np.shape(X_FS_sub_env))
+#print(f'The shape of the Lasso_finetune selected dataset is ',np.shape(X_lasso_ft))
+#print(f'The shape of the FS_Lasso_finetune selected dataset is ',np.shape(X_FS_lasso_ft))
 
 # Model-----------------------------------------------------------
 dict_cm_list = []
-#print("5 fold cross validation using Random forest model -----------------------------------------")
-print("5 fold cross validation using NB model -----------------------------------------")# no shap plots for SVM,NB
 save_dir = "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result"
+
+print("5 fold cross validation using Random forest model -----------------------------------------")
 for datatype, subset in data_subset.items():
     print(f"Analysis for {datatype}")
-    dict_cm = RunModel.NB_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
+    dict_cm = RunModel.RF_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
     
-    metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=3, class_label='Class 1',save_path=os.path.join(save_dir, f"{datatype}_NB_ROC_class1.png"))
-    #metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"{datatype}_XG_SHAP_class1.png"))
+    #metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=3, class_label='Class 1',save_path=os.path.join(save_dir, f"{datatype}_subset_RF_ROC_class1.png"))
+    #metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"{datatype}_subset_RF_SHAP_class1.png"))
     
-    metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=2, n_classes=3, class_label='Class 2',save_path =os.path.join(save_dir, f"{datatype}_NB_ROC_class2.png"))
-    #metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=2,save_path=os.path.join(save_dir, f"{datatype}_XG_SHAP_class2.png"))
+    #metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=2, n_classes=3, class_label='Class 2',save_path =os.path.join(save_dir, f"{datatype}_subset_RF_ROC_class2.png"))
+    #metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=2,save_path=os.path.join(save_dir, f"{datatype}_subset_RF_SHAP_class2.png"))
 
+
+"""
+print("5 fold cross validation using XG model -----------------------------------------")
+
+
+for datatype, subset in data_subset.items():
+    print(f"Analysis for {datatype}")
+    dict_cm = RunModel.XG_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
+    
+    metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=3, class_label='Class 1',save_path=os.path.join(save_dir, f"{datatype}_subset_XG_ROC_class1.png"))
+    metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"{datatype}_subset_XG_SHAP_class1.png"))
+    
+    metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=2, n_classes=3, class_label='Class 2',save_path =os.path.join(save_dir, f"{datatype}_subset_XG_ROC_class2.png"))
+    metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=2,save_path=os.path.join(save_dir, f"{datatype}_subset_XG_SHAP_class2.png"))
+
+# no shap plots for SVM,NB
+"""

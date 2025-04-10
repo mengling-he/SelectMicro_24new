@@ -59,6 +59,14 @@ def RF_model_SCV_multi(X, y, SMOTE=False,k=5):
         clf = RandomForestClassifier(n_jobs=5, random_state=777)
     
         clf.fit(X_train, y_train)
+        y_train_pred = clf.predict(X_train)
+        y_train_prob = clf.predict_proba(X_train)
+        accuracy_train = accuracy_score(y_train, y_train_pred)
+        mcc_train = metric.mcc_score(y_train,y_train_pred)
+        f_score_train = f1_score(y_train,y_train_pred, average='weighted')
+        roc_auc_train = roc_auc_score(y_train, y_train_prob, multi_class='ovr', average='macro')
+        
+        
         y_pred = clf.predict(X_test)
         y_prob = clf.predict_proba(X_test)## For multiclass, y_prob will have shape (n_samples, n_classes)
 
@@ -68,6 +76,15 @@ def RF_model_SCV_multi(X, y, SMOTE=False,k=5):
         mcc = metric.mcc_score(y_test,y_pred)
         f_score = f1_score(y_test,y_pred, average='weighted')
         roc_auc = roc_auc_score(y_test, y_prob, multi_class='ovr', average='macro')# calculate the AUC for each level and  average it
+
+        # Print results
+        print(f"==== Fold {idx+1} Metrics ====")
+        print(f"Train Accuracy: {accuracy_train:.4f} | Test Accuracy: {accuracy:.4f}")
+        print(f"Train MCC:      {mcc_train:.4f} | Test MCC:      {mcc:.4f}")
+        print(f"Train F1:       {f_score_train:.4f} | Test F1:       {f_score:.4f}")
+        print(f"Train AUC:      {roc_auc_train:.4f} | Test AUC:      {roc_auc:.4f}")
+
+        
         accuracies.append(accuracy)
         roc_aucs.append(roc_auc)
         mcc_s.append(mcc)

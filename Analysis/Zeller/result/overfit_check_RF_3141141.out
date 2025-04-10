@@ -1,0 +1,153 @@
+2025-04-10 16:07:59.937786: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-04-10 16:07:59.941916: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-10 16:08:00.091267: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-10 16:08:00.101003: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1744315680.114900 2813561 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1744315680.119257 2813561 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-04-10 16:08:00.240039: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+disease
+CRC        91
+healthy    66
+adenoma    42
+Name: count, dtype: int64
+/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/sklearn/linear_model/_coordinate_descent.py:695: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations, check the scale of the features or consider increasing regularisation. Duality gap: 4.490e-02, tolerance: 1.144e-02
+  model = cd_fast.enet_coordinate_descent(
+Best alpha: 0.1
+Best alpha: 0.01
+Class mapping for gender:
+female → 0
+male → 1
+Class mapping for country:
+DEU → 0
+FRA → 1
+The shape of the SelectMicro dataset is  (199, 34)
+The shape of the FS_subset is (199, 16)
+the shape of the FS_env is (199, 37)
+the shape of the FS_SUB_env is (199, 19)
+5 fold cross validation using Random forest model -----------------------------------------
+Analysis for SelectMicro
+==== Fold 1 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.7500
+Train MCC:      1.0000 | Test MCC:      0.5967
+Train F1:       1.0000 | Test F1:       0.7491
+Train AUC:      1.0000 | Test AUC:      0.8316
+==== Fold 2 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.5500
+Train MCC:      1.0000 | Test MCC:      0.3056
+Train F1:       1.0000 | Test F1:       0.5507
+Train AUC:      1.0000 | Test AUC:      0.7177
+==== Fold 3 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.5250
+Train MCC:      1.0000 | Test MCC:      0.2661
+Train F1:       1.0000 | Test F1:       0.5356
+Train AUC:      1.0000 | Test AUC:      0.6723
+==== Fold 4 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.5250
+Train MCC:      1.0000 | Test MCC:      0.2824
+Train F1:       1.0000 | Test F1:       0.5310
+Train AUC:      1.0000 | Test AUC:      0.6416
+==== Fold 5 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.4872
+Train MCC:      1.0000 | Test MCC:      0.1494
+Train F1:       1.0000 | Test F1:       0.4783
+Train AUC:      1.0000 | Test AUC:      0.5453
+The combined confusion matrix
+[[37 14 15]
+ [16 17  9]
+ [19 13 59]]
+Mean Accuracy: 0.567 (0.093),Mean F1: 0.569 (0.093),Mean MCC: 0.320 (0.148),  Mean AUC: 0.682 (0.094)
+Analysis for SelectMicro_env
+==== Fold 1 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.7000
+Train MCC:      1.0000 | Test MCC:      0.5058
+Train F1:       1.0000 | Test F1:       0.6930
+Train AUC:      1.0000 | Test AUC:      0.8511
+==== Fold 2 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.6250
+Train MCC:      1.0000 | Test MCC:      0.4272
+Train F1:       1.0000 | Test F1:       0.6321
+Train AUC:      1.0000 | Test AUC:      0.7528
+==== Fold 3 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.4500
+Train MCC:      1.0000 | Test MCC:      0.1676
+Train F1:       1.0000 | Test F1:       0.4592
+Train AUC:      1.0000 | Test AUC:      0.7264
+==== Fold 4 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.5000
+Train MCC:      1.0000 | Test MCC:      0.2393
+Train F1:       1.0000 | Test F1:       0.5086
+Train AUC:      1.0000 | Test AUC:      0.7331
+==== Fold 5 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.5385
+Train MCC:      1.0000 | Test MCC:      0.2419
+Train F1:       1.0000 | Test F1:       0.5311
+Train AUC:      1.0000 | Test AUC:      0.6504
+The combined confusion matrix
+[[32 17 17]
+ [16 19  7]
+ [21  9 61]]
+Mean Accuracy: 0.563 (0.089),Mean F1: 0.565 (0.085),Mean MCC: 0.316 (0.128),  Mean AUC: 0.743 (0.064)
+Analysis for SelectMicro_subset
+==== Fold 1 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.7250
+Train MCC:      1.0000 | Test MCC:      0.5648
+Train F1:       1.0000 | Test F1:       0.7232
+Train AUC:      1.0000 | Test AUC:      0.7853
+==== Fold 2 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.5250
+Train MCC:      1.0000 | Test MCC:      0.2397
+Train F1:       1.0000 | Test F1:       0.5198
+Train AUC:      1.0000 | Test AUC:      0.6790
+==== Fold 3 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.5250
+Train MCC:      1.0000 | Test MCC:      0.2386
+Train F1:       1.0000 | Test F1:       0.5206
+Train AUC:      1.0000 | Test AUC:      0.6451
+==== Fold 4 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.4500
+Train MCC:      1.0000 | Test MCC:      0.1706
+Train F1:       1.0000 | Test F1:       0.4560
+Train AUC:      1.0000 | Test AUC:      0.6405
+==== Fold 5 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.4359
+Train MCC:      1.0000 | Test MCC:      0.1035
+Train F1:       1.0000 | Test F1:       0.4475
+Train AUC:      1.0000 | Test AUC:      0.5513
+The combined confusion matrix
+[[34 14 18]
+ [12 15 15]
+ [16 18 57]]
+Mean Accuracy: 0.532 (0.103),Mean F1: 0.533 (0.100),Mean MCC: 0.263 (0.159),  Mean AUC: 0.660 (0.075)
+Analysis for SelectMicro_subset_env
+==== Fold 1 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.7250
+Train MCC:      1.0000 | Test MCC:      0.5481
+Train F1:       1.0000 | Test F1:       0.7182
+Train AUC:      1.0000 | Test AUC:      0.8346
+==== Fold 2 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.6750
+Train MCC:      1.0000 | Test MCC:      0.4859
+Train F1:       1.0000 | Test F1:       0.6771
+Train AUC:      1.0000 | Test AUC:      0.7857
+==== Fold 3 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.5000
+Train MCC:      1.0000 | Test MCC:      0.2172
+Train F1:       1.0000 | Test F1:       0.5000
+Train AUC:      1.0000 | Test AUC:      0.6984
+==== Fold 4 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.6250
+Train MCC:      1.0000 | Test MCC:      0.4059
+Train F1:       1.0000 | Test F1:       0.6259
+Train AUC:      1.0000 | Test AUC:      0.7338
+==== Fold 5 Metrics ====
+Train Accuracy: 1.0000 | Test Accuracy: 0.5641
+Train MCC:      1.0000 | Test MCC:      0.2957
+Train F1:       1.0000 | Test F1:       0.5585
+Train AUC:      1.0000 | Test AUC:      0.6754
+The combined confusion matrix
+[[35 13 18]
+ [14 20  8]
+ [16  7 68]]
+Mean Accuracy: 0.618 (0.079),Mean F1: 0.616 (0.079),Mean MCC: 0.391 (0.121),  Mean AUC: 0.746 (0.058)

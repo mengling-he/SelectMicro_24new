@@ -784,3 +784,42 @@ def fisher_discriminant_ratio(features, labels):
 
 
 
+
+
+def plot_heatmap(X_df,y_df):
+    # both of X_df y_df needs index and colnames
+    # add to check the index of both inputs are the same
+    if not X_df.index.equals(y_df.index):
+        raise ValueError("The indices of X_df and y_df do not match. Please ensure they contain the same samples in the same order.")
+
+    Category = y_df.columns[0]
+    sorted_cols = y_df[Category].sort_values().index
+    data_matrix_sorted = X_df.loc[sorted_cols]
+    group_sorted = y_df.loc[sorted_cols]
+
+    unique_categories = group_sorted[Category].unique()
+    palette = sns.color_palette("Set2", len(unique_categories))
+    category_colors = dict(zip(unique_categories, palette))
+    col_colors = group_sorted[Category].map(category_colors)
+
+    # Plot heatmap with annotation (transpose to match R behavior)
+    sns.set(style="white")
+    cg = sns.clustermap(
+        data_matrix_sorted.T,  # Transpose like in R: genes as rows, samples as columns
+        col_cluster=False,     
+        row_cluster=False,      
+        col_colors=col_colors,
+        cmap="vlag",           # or use "coolwarm", "RdBu_r", etc.
+        xticklabels=False,
+        yticklabels=True
+    )
+    for label in unique_categories:
+        cg.ax_col_dendrogram.bar(0, 0, color=category_colors[label],
+                                label=label, linewidth=0)
+    cg.ax_col_dendrogram.legend(loc="center left", ncol=3, title=Category)
+    
+    
+    plt.show()
+
+
+
