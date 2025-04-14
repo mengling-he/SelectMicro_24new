@@ -1,0 +1,49 @@
+2025-04-13 23:24:01.413634: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-04-13 23:24:01.416166: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-13 23:24:01.419828: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-13 23:24:01.428494: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1744601041.442543 1832700 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1744601041.446859 1832700 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-04-13 23:24:01.462723: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+ibd
+CD        251
+nonIBD     62
+Name: count, dtype: int64
+The combined confusion matrix
+[[ 42  20]
+ [ 11 240]]
+Mean Accuracy: 0.901 (0.021),Mean F1: 0.940 (0.012),Mean MCC: 0.677 (0.081),  Mean AUC: 0.924 (0.044)
+ROC curve for class 1
+y_trues [array([1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1]), array([0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1]), array([1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+       0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1]), array([1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]), array([0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1])]
+y_score [0.34 0.87 0.95 0.08 0.8  0.17 0.31 0.89 0.5  0.53 0.21 0.28 0.43 0.53
+ 0.44 0.88 0.96 0.75 0.86 0.68 0.97 0.9  0.76 0.99 0.97 0.95 0.97 0.98
+ 0.99 0.95 0.87 0.92 0.7  0.73 0.96 0.87 0.85 0.79 0.53 0.9  0.83 0.99
+ 0.92 0.87 0.94 0.91 0.78 0.87 0.93 0.96 0.96 1.   0.89 0.95 0.72 0.96
+ 0.87 0.56 0.89 0.32 0.39 0.83 0.91]
+Traceback (most recent call last):
+  File "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Code/RunModel.py", line 540, in <module>
+    metric.plot_multiclass_roc_cv(reusult['y_true'], reusult['y_pred_prob'], class_index=1, n_classes=2, class_label='Class 1',save_path="/lustre/isaac24/scratch/mhe8/SelectMicro_24/Code/test_result/ROC_1.png")
+  File "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Code/metric.py", line 441, in plot_multiclass_roc_cv
+    fpr, tpr, _ = roc_curve(y_trues, y_score)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/sklearn/utils/_param_validation.py", line 216, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/sklearn/metrics/_ranking.py", line 1150, in roc_curve
+    fps, tps, thresholds = _binary_clf_curve(
+                           ^^^^^^^^^^^^^^^^^^
+  File "/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/sklearn/metrics/_ranking.py", line 818, in _binary_clf_curve
+    raise ValueError("{0} format is not supported".format(y_type))
+ValueError: unknown format is not supported

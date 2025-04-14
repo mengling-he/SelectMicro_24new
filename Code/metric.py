@@ -425,7 +425,7 @@ def metric_sum(prediction_dictionary):
 
 # --------------------------------------------------------------------------------------------------#
 # ROC curve for different folds from cross validation
-def plot_multiclass_roc_cv(y_trues, y_probs, class_index=0, n_classes=3, class_label='Class 0',save_path=None):
+def plot_multiclass_roc_cv(y_trues, y_probs, class_index=1, n_classes=3, class_label='Class 1',save_path=None):
    
     mean_fpr = np.linspace(0, 1, 100)
     tprs = []
@@ -434,10 +434,13 @@ def plot_multiclass_roc_cv(y_trues, y_probs, class_index=0, n_classes=3, class_l
     plt.figure(figsize=(8, 6))
 
     for i in range(len(y_trues)):
-        y_true_bin = label_binarize(y_trues[i], classes=range(n_classes))# binary of y_true in each fold
-        y_score = np.array(y_probs[i])[:, class_index]
-
-        fpr, tpr, _ = roc_curve(y_true_bin[:, class_index], y_score)
+        if len(np.unique(y_trues[i])) == 2:
+            y_score = np.array(y_probs[i])[:, class_index]
+            fpr, tpr, _ = roc_curve(y_trues[i], y_score)
+        else:
+            y_true_bin = label_binarize(y_trues[i], classes=range(n_classes))# binary of y_true in each fold
+            y_score = np.array(y_probs[i])[:, class_index]
+            fpr, tpr, _ = roc_curve(y_true_bin[:, class_index], y_score)
         roc_auc = auc(fpr, tpr)
         aucs.append(roc_auc)
 
@@ -483,7 +486,7 @@ def plot_multiclass_roc_cv(y_trues, y_probs, class_index=0, n_classes=3, class_l
 # SHAP plot for multiple class (class is 0,1,2...)
 def plot_SHAP_multiclass(shap_value,X_df,class_index=0,save_path=None):
     shap.summary_plot(shap_value[:,:,class_index], X_df,show=False)
-    #shap.plots.bar(shap_value[:,:,class_index], X_df,show=False)
+    #shap.summary_plot(shap_value[:,:,class_index], X_df,plot_type="bar",show=False)
     if save_path:
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
@@ -807,7 +810,7 @@ def plot_heatmap(X_df,y_df):
     cg = sns.clustermap(
         data_matrix_sorted.T,  # Transpose like in R: genes as rows, samples as columns
         col_cluster=False,     
-        row_cluster=False,      
+        row_cluster=True,      
         col_colors=col_colors,
         cmap="vlag",           # or use "coolwarm", "RdBu_r", etc.
         xticklabels=False,

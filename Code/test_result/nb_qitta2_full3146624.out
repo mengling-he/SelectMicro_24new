@@ -1,0 +1,23 @@
+2025-04-13 23:26:01.638286: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-04-13 23:26:01.640967: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-13 23:26:01.644626: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-13 23:26:01.653450: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1744601161.667281 1833076 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1744601161.671587 1833076 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-04-13 23:26:01.687416: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/shap/plots/_beeswarm.py:950: UserWarning: Tight layout not applied. The left and right margins cannot be made large enough to accommodate all Axes decorations.
+  pl.tight_layout()
+ibd
+CD        251
+nonIBD     62
+Name: count, dtype: int64
+The combined confusion matrix
+[[ 42  20]
+ [ 11 240]]
+Mean Accuracy: 0.901 (0.021),Mean F1: 0.940 (0.012),Mean MCC: 0.677 (0.081),  Mean AUC: 0.924 (0.044)
+ROC curve for class 1
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Code/test_result/ROC_1.png
+SHAP plot for class 1
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Code/test_result/SHAP_1.png

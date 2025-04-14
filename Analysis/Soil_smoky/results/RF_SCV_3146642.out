@@ -1,0 +1,117 @@
+2025-04-14 00:42:12.975304: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-04-14 00:42:12.977793: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-14 00:42:12.981367: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-14 00:42:12.990838: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1744605733.004909  387728 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1744605733.009265  387728 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-04-14 00:42:13.025159: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Analysis of Burn label-------------------------------------------------------
+Best alpha: 0.1
+Best alpha: 0.05
+The shape of the original dataset is  (59, 1768)
+The shape of the SelectMicro dataset is  (59, 48)
+The shape of the Lasso_finetune selected dataset is  (59, 14)
+The shape of the FS_Lasso_finetune selected dataset is  (59, 15)
+5 fold cross validation using Random forest model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[ 4 13]
+ [ 0 42]]
+Mean Accuracy: 0.780 (0.065),Mean F1: 0.867 (0.036),Mean MCC: nan (nan),  Mean AUC: 0.923 (0.067)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_AllFeatures_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_AllFeatures_SHAP_class1.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[11  6]
+ [ 0 42]]
+Mean Accuracy: 0.897 (0.039),Mean F1: 0.933 (0.022),Mean MCC: 0.740 (0.113),  Mean AUC: 0.972 (0.028)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_SelectMicro_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_SelectMicro_SHAP_class1.png
+Analysis for Lasso_finetune
+The combined confusion matrix
+[[12  5]
+ [ 0 42]]
+Mean Accuracy: 0.914 (0.058),Mean F1: 0.944 (0.035),Mean MCC: 0.785 (0.155),  Mean AUC: 1.000 (0.000)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_Lasso_finetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_Lasso_finetune_SHAP_class1.png
+Analysis for FS_Lassofinetune
+The combined confusion matrix
+[[12  5]
+ [ 0 42]]
+Mean Accuracy: 0.914 (0.078),Mean F1: 0.946 (0.047),Mean MCC: 0.771 (0.216),  Mean AUC: 1.000 (0.000)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_FS_Lassofinetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_FS_Lassofinetune_SHAP_class1.png
+Analysis of Urban label-------------------------------------------------------
+Best alpha: 0.1
+Best alpha: 0.01
+The shape of the original dataset is  (59, 1768)
+The shape of the SelectMicro dataset is  (59, 18)
+The shape of the Lasso_finetune selected dataset is  (59, 11)
+The shape of the FS_Lasso_finetune selected dataset is  (59, 12)
+5 fold cross validation using Random forest model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[ 6 20]
+ [ 6 27]]
+Mean Accuracy: 0.556 (0.146),Mean F1: 0.666 (0.128),Mean MCC: 0.073 (0.374),  Mean AUC: 0.703 (0.142)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_AllFeatures_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_AllFeatures_SHAP_class1.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[11 15]
+ [ 4 29]]
+Mean Accuracy: 0.679 (0.120),Mean F1: 0.753 (0.083),Mean MCC: nan (nan),  Mean AUC: 0.715 (0.168)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_SelectMicro_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_SelectMicro_SHAP_class1.png
+Analysis for Lasso_finetune
+The combined confusion matrix
+[[12 14]
+ [ 3 30]]
+Mean Accuracy: 0.712 (0.084),Mean F1: 0.777 (0.059),Mean MCC: 0.432 (0.209),  Mean AUC: 0.762 (0.159)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_Lasso_finetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_Lasso_finetune_SHAP_class1.png
+Analysis for FS_Lassofinetune
+The combined confusion matrix
+[[13 13]
+ [ 2 31]]
+Mean Accuracy: 0.747 (0.071),Mean F1: 0.807 (0.044),Mean MCC: 0.509 (0.155),  Mean AUC: 0.805 (0.119)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_FS_Lassofinetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_FS_Lassofinetune_SHAP_class1.png
+Analysis of Duration label-------------------------------------------------------
+Best alpha: 0.1
+Best alpha: 0.05
+The shape of the original dataset is  (59, 1768)
+The shape of the SelectMicro dataset is  (59, 4)
+The shape of the Lasso_finetune selected dataset is  (59, 7)
+The shape of the FS_Lasso_finetune selected dataset is  (59, 4)
+5 fold cross validation using Random forest model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[ 2 20]
+ [ 4 33]]
+Mean Accuracy: 0.591 (0.108),Mean F1: 0.730 (0.077),Mean MCC: nan (nan),  Mean AUC: 0.458 (0.163)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_AllFeatures_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_AllFeatures_SHAP_class1.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[ 8 14]
+ [ 3 34]]
+Mean Accuracy: 0.711 (0.104),Mean F1: 0.800 (0.067),Mean MCC: 0.306 (0.331),  Mean AUC: 0.549 (0.230)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_SelectMicro_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_SelectMicro_SHAP_class1.png
+Analysis for Lasso_finetune
+The combined confusion matrix
+[[12 10]
+ [ 3 34]]
+Mean Accuracy: 0.780 (0.099),Mean F1: 0.841 (0.068),Mean MCC: 0.505 (0.246),  Mean AUC: 0.813 (0.121)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_Lasso_finetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_Lasso_finetune_SHAP_class1.png
+Analysis for FS_Lassofinetune
+The combined confusion matrix
+[[ 8 14]
+ [ 3 34]]
+Mean Accuracy: 0.711 (0.104),Mean F1: 0.800 (0.067),Mean MCC: 0.306 (0.331),  Mean AUC: 0.549 (0.230)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_FS_Lassofinetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Soil_smoky/results/RF_FS_Lassofinetune_SHAP_class1.png

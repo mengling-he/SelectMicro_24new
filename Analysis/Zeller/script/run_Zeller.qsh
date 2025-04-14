@@ -5,7 +5,7 @@
 #SBATCH -A ACF-UTK0011
 #SBATCH -p short
 #SBATCH -q short
-#SBATCH --output=/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result/overfit_check_RF_%j.out   # Output file (%j will be replaced by the job ID)
+#SBATCH --output=/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result_species/species_RF_XG%j.out   # Output file (%j will be replaced by the job ID)
 #SBATCH -t 01:00:00
 
 module load Python

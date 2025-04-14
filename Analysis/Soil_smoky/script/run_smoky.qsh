@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH -J smoky_NB
+#SBATCH -J smoky_RF
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=48
 #SBATCH -A ACF-UTK0011
 #SBATCH -p short
 #SBATCH -q short
-#SBATCH --output=../results/NB_model_SCV_%j.out   # Output file (%j will be replaced by the job ID)
+#SBATCH --output=../results/RF_SCV_%j.out   # Output file (%j will be replaced by the job ID)
 #SBATCH -t 02:00:00
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=mhe8@vols.utk.edu
@@ -13,4 +13,4 @@
 
 module load Python
 source /lustre/isaac24/scratch/mhe8/myenv/bin/activate
-python smoky_NB_model_SCV.py 
+python Smoky_update.py 

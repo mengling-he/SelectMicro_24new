@@ -1,0 +1,69 @@
+/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/script/Qitta_db1629.py:13: SyntaxWarning: invalid escape sequence '\['
+  """
+2025-04-13 23:28:21.170757: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-04-13 23:28:21.172959: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-13 23:28:21.176549: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-13 23:28:21.186008: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1744601301.200048 1833961 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1744601301.204445 1833961 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-04-13 23:28:21.220466: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Analysis of CD and healthy-----------------------------------------
+ibd
+CD        251
+nonIBD     62
+Name: count, dtype: int64
+/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/shap/plots/_beeswarm.py:950: UserWarning: Tight layout not applied. The left and right margins cannot be made large enough to accommodate all Axes decorations.
+  pl.tight_layout()
+/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/shap/plots/_beeswarm.py:950: UserWarning: Tight layout not applied. The left and right margins cannot be made large enough to accommodate all Axes decorations.
+  pl.tight_layout()
+/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/shap/plots/_beeswarm.py:950: UserWarning: Tight layout not applied. The left and right margins cannot be made large enough to accommodate all Axes decorations.
+  pl.tight_layout()
+/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/shap/plots/_beeswarm.py:950: UserWarning: Tight layout not applied. The left and right margins cannot be made large enough to accommodate all Axes decorations.
+  pl.tight_layout()
+Best alpha: 0.01
+Best alpha: 0.01
+The shape of the original dataset is  (313, 220)
+The shape of the SelectMicro dataset is  (313, 30)
+The shape of the Lasso_finetune selected dataset is  (313, 53)
+The shape of the FS_Lasso_finetune selected dataset is  (313, 26)
+5 fold cross validation using Random forest model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[ 42  20]
+ [ 11 240]]
+Mean Accuracy: 0.901 (0.021),Mean F1: 0.940 (0.012),Mean MCC: 0.677 (0.081),  Mean AUC: 0.924 (0.044)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629_update_withbinary/RF_AllFeatures_ROC_binary.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629_update_withbinary/RF_AllFeatures_SHAP_binary.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[ 45  17]
+ [ 11 240]]
+Mean Accuracy: 0.911 (0.022),Mean F1: 0.945 (0.013),Mean MCC: 0.714 (0.077),  Mean AUC: 0.938 (0.030)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629_update_withbinary/RF_SelectMicro_ROC_binary.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629_update_withbinary/RF_SelectMicro_SHAP_binary.png
+Analysis for Lasso_finetune
+The combined confusion matrix
+[[ 43  19]
+ [  9 242]]
+Mean Accuracy: 0.911 (0.016),Mean F1: 0.945 (0.009),Mean MCC: 0.708 (0.063),  Mean AUC: 0.945 (0.026)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629_update_withbinary/RF_Lasso_finetune_ROC_binary.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629_update_withbinary/RF_Lasso_finetune_SHAP_binary.png
+Analysis for FS_Lassofinetune
+The combined confusion matrix
+[[ 41  21]
+ [ 11 240]]
+Mean Accuracy: 0.898 (0.030),Mean F1: 0.938 (0.017),Mean MCC: 0.664 (0.113),  Mean AUC: 0.936 (0.031)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629_update_withbinary/RF_FS_Lassofinetune_ROC_binary.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629_update_withbinary/RF_FS_Lassofinetune_SHAP_binary.png
+5 fold cross validation using XGBoost model -----------------------------------------
+Analysis for AllFeatures
+Traceback (most recent call last):
+  File "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/script/Qitta_db1629.py", line 165, in <module>
+    dict_cm = RunModel.XG_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Code/RunModel.py", line 282, in XG_model_SCV_multi
+    shap_values_all = np.concatenate((shap_values_all, shap_values), axis=0) 
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: all the input arrays must have same number of dimensions, but the array at index 0 has 3 dimension(s) and the array at index 1 has 2 dimension(s)
