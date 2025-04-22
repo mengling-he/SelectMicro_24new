@@ -15,11 +15,24 @@ import os
 
 
 # data preprocessing----------------------------------
-data0 = pd.read_csv('/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/data/features_table_species.csv',index_col=0)
+data0 = pd.read_csv('/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/data/features_table.csv',index_col=0)
 cols_name = data0.columns
 cols_name = np.array([x.split("|")[-1] for x in cols_name])
 data = pd.DataFrame(FS.relative_abundance(data0), columns=cols_name)
-meta_2 = pd.read_csv('/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/data/meta_data.csv',index_col=0)
+
+meta_2 = pd.read_csv('/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/data/meta_data.csv',index_col=0).reset_index(drop=False)
+
+# check the index of meta data and count table
+data.index.equals(meta_2.index)
+
+
+# Create a boolean mask for rows where ibd == "UC"
+mask = meta_2["disease"].isin(["CRC", "healthy", "adenoma"])
+# Apply the mask to both dataframes
+meta_2 = meta_2[mask]
+data = data[mask]
+
+
 y = meta_2['disease']
 print(y.value_counts())
 
@@ -83,7 +96,7 @@ print(f'The shape of the FS_Lasso_finetune selected dataset is ',np.shape(X_FS_l
 
 # Model-----------------------------------------------------------
 dict_cm_list = []
-save_dir = "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Zeller/result_species"
+save_dir = "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results"
 
 print("5 fold cross validation using Random forest model -----------------------------------------")
 for datatype, subset in data_subset.items():

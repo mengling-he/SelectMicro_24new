@@ -25,7 +25,7 @@ for i,y in enumerate([burn_label,un_label,duration_label]):
     print(f'Analysis of {taxlabels[i]} label-------------------------------------------------------')
     le = LabelEncoder()
     target_variable = le.fit_transform(y)
-    selectedresult=FS.SelectMicro_fun(df,target_variable,p_cutoff = 0.05)
+    selectedresult=FS.SelectMicro_fun(df,target_variable,p_cutoff = 0.10)
     selectedOTU_index= selectedresult['selected_indices']
     X_FS = selectedresult['selected_df']
     
@@ -60,8 +60,8 @@ for i,y in enumerate([burn_label,un_label,duration_label]):
         #dict_cm = RunModel.SVM_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
         #dict_cm = RunModel.NB_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
         dict_cm_list.append(dict_cm)
-        metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=2, class_label='Class 1',save_path=os.path.join(save_dir, f"RF_{datatype}_ROC_class1.png"))
-        metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"RF_{datatype}_SHAP_class1.png"))
+        metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=2, class_label='Class 1',save_path=os.path.join(save_dir, f"RF_{taxlabels[i]}_{datatype}_ROC_class1.png"))
+        metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"RF_{taxlabels[i]}_{datatype}_SHAP_class1.png"))
         
         #metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=2, n_classes=3, class_label='Class 2',save_path =os.path.join(save_dir, f"NB_{datatype}_ROC_class2.png"))
         #metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=2,save_path=os.path.join(save_dir, f"XG_{datatype}_SHAP_class2.png"))

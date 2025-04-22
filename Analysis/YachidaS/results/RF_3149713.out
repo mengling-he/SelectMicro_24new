@@ -1,0 +1,149 @@
+2025-04-14 13:01:35.924613: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-04-14 13:01:35.927131: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-14 13:01:35.930623: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-14 13:01:35.940015: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1744650095.954051  546688 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1744650095.958416  546688 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-04-14 13:01:35.974161: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+disease
+CRC        258
+healthy    246
+adenoma     67
+Name: count, dtype: int64
+Best alpha: 0.05
+Best alpha: 0.01
+Class mapping for gender:
+female → 0
+male → 1
+Class mapping for country:
+JPN → 0
+The shape of the original dataset is  (571, 718)
+The shape of the SelectMicro dataset is  (571, 35)
+the shape of the FS_env is (571, 38)
+The shape of the Lasso_finetune selected dataset is  (571, 49)
+The shape of the Lasso_finetune_env selected dataset is  (571, 52)
+The shape of the FS_Lasso_finetune selected dataset is  (571, 26)
+5 fold cross validation using Random forest model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[136   2 108]
+ [ 33   1  33]
+ [103   2 153]]
+Mean Accuracy: 0.508 (0.017),Mean F1: 0.479 (0.017),Mean MCC: nan (nan),  Mean AUC: 0.572 (0.026)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/AllFeatures_RF_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/AllFeatures_RF_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/AllFeatures_RF_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/AllFeatures_RF_SHAP_class2.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[148  20  78]
+ [ 30  11  26]
+ [ 95  20 143]]
+Mean Accuracy: 0.529 (0.025),Mean F1: 0.523 (0.023),Mean MCC: 0.180 (0.048),  Mean AUC: 0.632 (0.042)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_RF_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_RF_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_RF_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_RF_SHAP_class2.png
+Analysis for SelectMicro_env
+The combined confusion matrix
+[[152  20  74]
+ [ 28   9  30]
+ [ 81  18 159]]
+Mean Accuracy: 0.560 (0.047),Mean F1: 0.551 (0.048),Mean MCC: 0.211 (0.098),  Mean AUC: 0.649 (0.028)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_env_RF_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_env_RF_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_env_RF_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_env_RF_SHAP_class2.png
+Analysis for Lasso_finetune
+The combined confusion matrix
+[[122  32  92]
+ [ 31  12  24]
+ [ 80  25 153]]
+Mean Accuracy: 0.503 (0.038),Mean F1: 0.502 (0.040),Mean MCC: 0.148 (0.048),  Mean AUC: 0.597 (0.019)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_RF_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_RF_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_RF_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_RF_SHAP_class2.png
+Analysis for Lasso_finetune_env
+The combined confusion matrix
+[[134  33  79]
+ [ 35   3  29]
+ [ 80  21 157]]
+Mean Accuracy: 0.515 (0.023),Mean F1: 0.510 (0.021),Mean MCC: 0.128 (0.035),  Mean AUC: 0.601 (0.029)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_env_RF_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_env_RF_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_env_RF_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_env_RF_SHAP_class2.png
+Analysis for FS_Lassofinetune
+The combined confusion matrix
+[[141  26  79]
+ [ 30  13  24]
+ [ 92  28 138]]
+Mean Accuracy: 0.511 (0.035),Mean F1: 0.512 (0.032),Mean MCC: 0.165 (0.051),  Mean AUC: 0.637 (0.039)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/FS_Lassofinetune_RF_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/FS_Lassofinetune_RF_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/FS_Lassofinetune_RF_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/FS_Lassofinetune_RF_SHAP_class2.png
+5 fold cross validation using XG model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[116  13 117]
+ [ 30   6  31]
+ [106  16 136]]
+Mean Accuracy: 0.452 (0.028),Mean F1: 0.437 (0.030),Mean MCC: 0.044 (0.069),  Mean AUC: 0.551 (0.039)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/AllFeatures_XG_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/AllFeatures_XG_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/AllFeatures_XG_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/AllFeatures_XG_SHAP_class2.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[147  21  78]
+ [ 26  14  27]
+ [ 97  17 144]]
+Mean Accuracy: 0.534 (0.055),Mean F1: 0.530 (0.053),Mean MCC: 0.198 (0.097),  Mean AUC: 0.636 (0.043)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_XG_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_XG_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_XG_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_XG_SHAP_class2.png
+Analysis for SelectMicro_env
+The combined confusion matrix
+[[147  21  78]
+ [ 24  11  32]
+ [ 84  18 156]]
+Mean Accuracy: 0.550 (0.039),Mean F1: 0.543 (0.035),Mean MCC: 0.208 (0.066),  Mean AUC: 0.656 (0.015)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_env_XG_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_env_XG_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_env_XG_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/SelectMicro_env_XG_SHAP_class2.png
+Analysis for Lasso_finetune
+The combined confusion matrix
+[[127  42  77]
+ [ 26  18  23]
+ [ 84  30 144]]
+Mean Accuracy: 0.506 (0.052),Mean F1: 0.511 (0.050),Mean MCC: 0.178 (0.075),  Mean AUC: 0.626 (0.052)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_XG_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_XG_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_XG_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_XG_SHAP_class2.png
+Analysis for Lasso_finetune_env
+The combined confusion matrix
+[[138  29  79]
+ [ 21  11  35]
+ [ 87  26 145]]
+Mean Accuracy: 0.515 (0.057),Mean F1: 0.514 (0.058),Mean MCC: 0.160 (0.102),  Mean AUC: 0.622 (0.040)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_env_XG_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_env_XG_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_env_XG_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/Lasso_finetune_env_XG_SHAP_class2.png
+Analysis for FS_Lassofinetune
+The combined confusion matrix
+[[140  24  82]
+ [ 28  12  27]
+ [ 90  24 144]]
+Mean Accuracy: 0.518 (0.047),Mean F1: 0.516 (0.043),Mean MCC: 0.170 (0.076),  Mean AUC: 0.633 (0.040)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/FS_Lassofinetune_XG_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/FS_Lassofinetune_XG_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/FS_Lassofinetune_XG_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/YachidaS/results/FS_Lassofinetune_XG_SHAP_class2.png

@@ -5,7 +5,7 @@
 #SBATCH -A ACF-UTK0011
 #SBATCH -p short
 #SBATCH -q short
-#SBATCH --output=../results/RF_SCV_%j.out   # Output file (%j will be replaced by the job ID)
+#SBATCH --output=../results/RF_SCV_01p%j.out   # Output file (%j will be replaced by the job ID)
 #SBATCH -t 02:00:00
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=mhe8@vols.utk.edu
