@@ -1,0 +1,61 @@
+2025-04-09 15:44:03.992056: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-04-09 15:44:03.996473: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-09 15:44:04.545468: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-09 15:44:04.555349: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1744227844.569697 2421744 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1744227844.574125 2421744 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-04-09 15:44:06.237331: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+ibd
+UC        324
+CD        251
+nonIBD     62
+Name: count, dtype: int64
+Best alpha: 0.05
+Best alpha: 0.05
+The shape of the original dataset is  (637, 220)
+The shape of the SelectMicro dataset is  (637, 45)
+The shape of the Lasso_finetune selected dataset is  (637, 15)
+The shape of the FS_Lasso_finetune selected dataset is  (637, 14)
+5 fold cross validation using XGBoost model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[ 36   4  22]
+ [  6 177  68]
+ [ 20  48 256]]
+Mean Accuracy: 0.736 (0.042),Mean F1: 0.735 (0.044),Mean MCC: 0.540 (0.081),  Mean AUC: 0.869 (0.023)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_AllFeatures_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_AllFeatures_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_AllFeatures_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_AllFeatures_SHAP_class2.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[ 35   8  19]
+ [  8 177  66]
+ [ 14  56 254]]
+Mean Accuracy: 0.732 (0.041),Mean F1: 0.729 (0.044),Mean MCC: 0.536 (0.069),  Mean AUC: 0.865 (0.023)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_SelectMicro_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_SelectMicro_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_SelectMicro_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_SelectMicro_SHAP_class2.png
+Analysis for Lasso_finetune
+The combined confusion matrix
+[[ 25  13  24]
+ [ 15 150  86]
+ [ 25  67 232]]
+Mean Accuracy: 0.639 (0.027),Mean F1: 0.638 (0.027),Mean MCC: 0.364 (0.052),  Mean AUC: 0.786 (0.029)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_Lasso_finetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_Lasso_finetune_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_Lasso_finetune_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_Lasso_finetune_SHAP_class2.png
+Analysis for FS_Lassofinetune
+The combined confusion matrix
+[[ 27  14  21]
+ [ 13 153  85]
+ [ 31  65 228]]
+Mean Accuracy: 0.640 (0.035),Mean F1: 0.640 (0.033),Mean MCC: 0.373 (0.061),  Mean AUC: 0.786 (0.035)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_FS_Lassofinetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_FS_Lassofinetune_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_FS_Lassofinetune_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/db1629/XG_FS_Lassofinetune_SHAP_class2.png

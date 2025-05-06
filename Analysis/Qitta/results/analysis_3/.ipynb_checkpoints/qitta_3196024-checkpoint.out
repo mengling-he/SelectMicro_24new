@@ -1,0 +1,197 @@
+2025-04-30 15:53:34.266034: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-04-30 15:53:34.270331: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-30 15:53:35.033644: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-30 15:53:35.044534: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1746042815.060184 2720567 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1746042815.065063 2720567 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-04-30 15:53:38.470520: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Analyis of db1629 in tax = genus-------------------------------------------------------------------------------------------
+ibd
+UC        324
+CD        251
+nonIBD     62
+Name: count, dtype: int64
+Best C: 0.05994842503189409
+Best C: 0.05994842503189409
+The shape of the original dataset is  (637, 293)
+The shape of the SelectMicro dataset is  (637, 52)
+The shape of the Lasso_finetune selected dataset is  (637, 48)
+The shape of the FS_Lasso_finetune selected dataset is  (637, 37)
+5 fold cross validation using Random forest model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[ 36   5  21]
+ [  8 171  72]
+ [ 13  42 269]]
+Mean Accuracy: 0.747 (0.066),Mean F1: 0.742 (0.075),Mean MCC: 0.561 (0.117),  Mean AUC: 0.882 (0.031)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_AllFeatures_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_AllFeatures_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_AllFeatures__ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_AllFeatures_SHAP_class2.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[ 36   6  20]
+ [  8 168  75]
+ [ 17  37 270]]
+Mean Accuracy: 0.744 (0.038),Mean F1: 0.740 (0.046),Mean MCC: 0.554 (0.070),  Mean AUC: 0.883 (0.024)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_SelectMicro_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_SelectMicro_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_SelectMicro__ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_SelectMicro_SHAP_class2.png
+Analysis for Lasso_finetune
+The combined confusion matrix
+[[ 38   6  18]
+ [  8 166  77]
+ [ 17  47 260]]
+Mean Accuracy: 0.728 (0.039),Mean F1: 0.725 (0.046),Mean MCC: 0.537 (0.074),  Mean AUC: 0.875 (0.029)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_Lasso_finetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_Lasso_finetune_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_Lasso_finetune__ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_Lasso_finetune_SHAP_class2.png
+Analysis for FS_Lassofinetune
+The combined confusion matrix
+[[ 41   6  15]
+ [  8 172  71]
+ [ 18  48 258]]
+Mean Accuracy: 0.739 (0.050),Mean F1: 0.737 (0.054),Mean MCC: 0.559 (0.096),  Mean AUC: 0.875 (0.025)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_FS_Lassofinetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_FS_Lassofinetune_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_FS_Lassofinetune__ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_RF_FS_Lassofinetune_SHAP_class2.png
+5 fold cross validation using XGBoost model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[ 34   3  25]
+ [  7 176  68]
+ [ 19  52 253]]
+Mean Accuracy: 0.727 (0.052),Mean F1: 0.725 (0.055),Mean MCC: 0.524 (0.101),  Mean AUC: 0.874 (0.024)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_AllFeatures_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_AllFeatures_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_AllFeatures_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_AllFeatures_SHAP_class2.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[ 33   4  25]
+ [  8 174  69]
+ [ 15  55 254]]
+Mean Accuracy: 0.724 (0.045),Mean F1: 0.720 (0.048),Mean MCC: 0.514 (0.103),  Mean AUC: 0.868 (0.027)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_SelectMicro_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_SelectMicro_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_SelectMicro_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_SelectMicro_SHAP_class2.png
+Analysis for Lasso_finetune
+The combined confusion matrix
+[[ 38   4  20]
+ [  7 177  67]
+ [ 23  61 240]]
+Mean Accuracy: 0.714 (0.048),Mean F1: 0.713 (0.049),Mean MCC: 0.516 (0.101),  Mean AUC: 0.872 (0.028)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_Lasso_finetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_Lasso_finetune_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_Lasso_finetune_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_Lasso_finetune_SHAP_class2.png
+Analysis for FS_Lassofinetune
+The combined confusion matrix
+[[ 36   4  22]
+ [  8 170  73]
+ [ 17  59 248]]
+Mean Accuracy: 0.713 (0.049),Mean F1: 0.710 (0.051),Mean MCC: 0.510 (0.106),  Mean AUC: 0.871 (0.028)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_FS_Lassofinetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_FS_Lassofinetune_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_FS_Lassofinetune_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_genus_XG_FS_Lassofinetune_SHAP_class2.png
+Analyis of db1629 in tax = species-------------------------------------------------------------------------------------------
+ibd
+UC        324
+CD        251
+nonIBD     62
+Name: count, dtype: int64
+Best C: 0.05994842503189409
+Best C: 0.05994842503189409
+The shape of the original dataset is  (637, 400)
+The shape of the SelectMicro dataset is  (637, 65)
+The shape of the Lasso_finetune selected dataset is  (637, 59)
+The shape of the FS_Lasso_finetune selected dataset is  (637, 44)
+5 fold cross validation using Random forest model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[ 33   6  23]
+ [  9 167  75]
+ [  8  34 282]]
+Mean Accuracy: 0.757 (0.040),Mean F1: 0.750 (0.046),Mean MCC: 0.574 (0.079),  Mean AUC: 0.887 (0.029)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_AllFeatures_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_AllFeatures_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_AllFeatures__ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_AllFeatures_SHAP_class2.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[ 39   6  17]
+ [  6 162  83]
+ [ 15  38 271]]
+Mean Accuracy: 0.741 (0.032),Mean F1: 0.737 (0.037),Mean MCC: 0.563 (0.065),  Mean AUC: 0.885 (0.023)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_SelectMicro_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_SelectMicro_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_SelectMicro__ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_SelectMicro_SHAP_class2.png
+Analysis for Lasso_finetune
+The combined confusion matrix
+[[ 41   3  18]
+ [  9 163  79]
+ [ 17  33 274]]
+Mean Accuracy: 0.750 (0.049),Mean F1: 0.747 (0.054),Mean MCC: 0.575 (0.094),  Mean AUC: 0.888 (0.032)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_Lasso_finetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_Lasso_finetune_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_Lasso_finetune__ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_Lasso_finetune_SHAP_class2.png
+Analysis for FS_Lassofinetune
+The combined confusion matrix
+[[ 39   5  18]
+ [  7 165  79]
+ [ 20  48 256]]
+Mean Accuracy: 0.722 (0.052),Mean F1: 0.720 (0.054),Mean MCC: 0.529 (0.097),  Mean AUC: 0.884 (0.028)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_FS_Lassofinetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_FS_Lassofinetune_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_FS_Lassofinetune__ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_RF_FS_Lassofinetune_SHAP_class2.png
+5 fold cross validation using XGBoost model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[ 34   3  25]
+ [  8 170  73]
+ [ 19  50 255]]
+Mean Accuracy: 0.721 (0.044),Mean F1: 0.719 (0.045),Mean MCC: 0.519 (0.071),  Mean AUC: 0.871 (0.023)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_AllFeatures_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_AllFeatures_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_AllFeatures_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_AllFeatures_SHAP_class2.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[ 36   5  21]
+ [  8 168  75]
+ [ 15  54 255]]
+Mean Accuracy: 0.721 (0.034),Mean F1: 0.718 (0.038),Mean MCC: 0.527 (0.062),  Mean AUC: 0.873 (0.021)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_SelectMicro_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_SelectMicro_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_SelectMicro_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_SelectMicro_SHAP_class2.png
+Analysis for Lasso_finetune
+The combined confusion matrix
+[[ 38   4  20]
+ [  6 168  77]
+ [ 18  55 251]]
+Mean Accuracy: 0.717 (0.038),Mean F1: 0.715 (0.040),Mean MCC: 0.526 (0.070),  Mean AUC: 0.872 (0.023)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_Lasso_finetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_Lasso_finetune_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_Lasso_finetune_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_Lasso_finetune_SHAP_class2.png
+Analysis for FS_Lassofinetune
+The combined confusion matrix
+[[ 37   4  21]
+ [  7 168  76]
+ [ 15  54 255]]
+Mean Accuracy: 0.722 (0.045),Mean F1: 0.719 (0.047),Mean MCC: 0.531 (0.089),  Mean AUC: 0.874 (0.020)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_FS_Lassofinetune_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_FS_Lassofinetune_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_FS_Lassofinetune_ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db1629_species_XG_FS_Lassofinetune_SHAP_class2.png

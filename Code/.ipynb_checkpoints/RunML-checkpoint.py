@@ -5,6 +5,8 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from sklearn import linear_model
+from sklearn.linear_model import LogisticRegression
+from sklearn.multiclass import OneVsRestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OrdinalEncoder, LabelEncoder, StandardScaler
 from sklearn import preprocessing, __all__, svm
@@ -95,6 +97,57 @@ def LassoFS_CV(X,y, param_grid=None):
     #print(f"Selected features: {selected_features}")
     X=X[:,selected_features]
     return X,selected_features
+
+
+def LassoFS_CV_classification(X, y, param_grid=None):
+    """
+    Performs L1-based feature selection using logistic regression with cross-validation.
+    Supports both binary and multiclass classification.
+
+    Parameters:
+    - X: np.ndarray, shape (n_samples, n_features)
+    - y: np.ndarray, shape (n_samples,)
+    - param_grid: dict, optional, hyperparameter grid for 'C' (inverse regularization strength)
+
+    Returns:
+    - X_selected: np.ndarray with selected features
+    - selected_features: np.ndarray of selected feature indices
+    """
+    if param_grid is None:
+        #param_grid = {'estimator__C': np.logspace(-3, 1, 5)}  # From strong to weak regularization
+        param_grid = {'estimator__C': np.logspace(-4, 1, 10)} 
+    # Standardize features
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
+    # Logistic regression with L1 penalty for feature selection
+    base_model = LogisticRegression(
+        penalty='l1',
+        solver='saga',              # Required for l1 + multiclass
+        max_iter=10000
+    )
+    ovr_model = OneVsRestClassifier(base_model)
+    # Grid search over regularization strength
+    clf = GridSearchCV(ovr_model, param_grid, cv=5, scoring='accuracy', n_jobs=-1)
+    clf.fit(X_scaled, y)
+
+    best_model = clf.best_estimator_
+    print(f"Best C: {clf.best_params_['estimator__C']}")
+
+    # Stack all coef arrays if multiclass, otherwise treat as 2D
+    try:
+        if hasattr(best_model, "estimators_"):  # multiclass OneVsRest
+            coef_matrix = np.vstack([est.coef_[0] for est in best_model.estimators_])
+        else:  # binary classification
+            coef_matrix = best_model.coef_
+    except AttributeError:
+        raise RuntimeError("Could not extract coefficients from the model.")
+
+    nonzero_mask = np.any(coef_matrix != 0, axis=0)
+    selected_features = np.where(nonzero_mask)[0]
+
+    X_selected = X[:, selected_features]
+    return X_selected, selected_features
 # --------------------------------------------------------------------------------------------------#
 
 

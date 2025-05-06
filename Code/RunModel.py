@@ -227,8 +227,10 @@ def XG_model_SCV_multi(X, y, SMOTE=False,k=5):
     f_scores = []
     mcc_s = []
     
-    shap_values_all = np.empty((0, X.shape[1], len(np.unique(y))))   # Store SHAP values for each fold !!!!!!!# error message for binary
-    
+    if len(np.unique(y)) == 2:
+    	shap_values_all = np.empty((0, X.shape[1]))
+    else:
+    	shap_values_all = np.empty((0, X.shape[1], len(np.unique(y))))
     # List to store the index of each fold
     test_sets_ix = []
 

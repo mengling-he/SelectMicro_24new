@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH -J qitta
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=48
+#SBATCH -A ACF-UTK0011
+#SBATCH -p short
+#SBATCH -q short
+#SBATCH --output=/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/multi_%j.out   # Output file (%j will be replaced by the job ID
+#SBATCH -t 01:00:00
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=mhe8@vols.utk.edu
+
+
+module load Python
+cd /lustre/isaac24/scratch/mhe8/
+source myenv/bin/activate
+python SelectMicro_24/Analysis/Qitta/script/Qitta_multi.py

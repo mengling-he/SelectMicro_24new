@@ -1,0 +1,84 @@
+2025-04-30 16:57:14.629849: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-04-30 16:57:14.632510: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-30 16:57:14.636104: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-30 16:57:14.644806: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1746046634.659173 3954082 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1746046634.663505 3954082 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-04-30 16:57:14.679590: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Analyis of db2151 in tax = genus-------------------------------------------------------------------------------------------
+ibd
+nonIBD    804
+UC         22
+CD         10
+Name: count, dtype: int64
+Best C: 9.999999999999999e-05
+Best C: 9.999999999999999e-05
+The shape of the original dataset is  (836, 346)
+The shape of the SelectMicro dataset is  (836, 31)
+The shape of the SelectMicro_strict dataset is  (836, 27)
+5 fold cross validation using Random forest model -----------------------------------------
+Analysis for AllFeatures
+The combined confusion matrix
+[[804   0   0]
+ [ 10   0   0]
+ [ 12   0  10]]
+Mean Accuracy: 0.974 (0.005),Mean F1: 0.965 (0.007),Mean MCC: nan (nan),  Mean AUC: 0.904 (0.052)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db2151_genus_RF_AllFeatures_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db2151_genus_RF_AllFeatures_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db2151_genus_RF_AllFeatures__ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db2151_genus_RF_AllFeatures_SHAP_class2.png
+Analysis for SelectMicro_strict
+The combined confusion matrix
+[[798   3   3]
+ [ 10   0   0]
+ [ 12   0  10]]
+Mean Accuracy: 0.967 (0.003),Mean F1: 0.960 (0.005),Mean MCC: nan (nan),  Mean AUC: 0.958 (0.016)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db2151_genus_RF_SelectMicro_strict_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db2151_genus_RF_SelectMicro_strict_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db2151_genus_RF_SelectMicro_strict__ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db2151_genus_RF_SelectMicro_strict_SHAP_class2.png
+Analysis for SelectMicro
+The combined confusion matrix
+[[801   1   2]
+ [ 10   0   0]
+ [ 13   0   9]]
+Mean Accuracy: 0.969 (0.004),Mean F1: 0.961 (0.005),Mean MCC: nan (nan),  Mean AUC: 0.951 (0.009)
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db2151_genus_RF_SelectMicro_ROC_class1.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db2151_genus_RF_SelectMicro_SHAP_class1.png
+Saved ROC curve to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db2151_genus_RF_SelectMicro__ROC_class2.png
+Saved SHAP to: /lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/analysis_3/plots/higher/db2151_genus_RF_SelectMicro_SHAP_class2.png
+Analysis for Lasso_finetune
+Traceback (most recent call last):
+  File "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/script/analysis_3/Qitta_3.py", line 83, in <module>
+    dict_cm = RunModel.RF_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Code/RunModel.py", line 137, in RF_model_SCV_multi
+    X_train, y_train = RunML.perform_SMOTE(X_train, y_train)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Code/RunML.py", line 41, in perform_SMOTE
+    X_sm, y_sm = sm.fit_resample(X, y)
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/imblearn/base.py", line 202, in fit_resample
+    return super().fit_resample(X, y, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/sklearn/base.py", line 1389, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/imblearn/base.py", line 99, in fit_resample
+    X, y, binarize_y = self._check_X_y(X, y)
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/imblearn/base.py", line 157, in _check_X_y
+    X, y = validate_data(self, X=X, y=y, reset=True, accept_sparse=accept_sparse)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/sklearn/utils/validation.py", line 2961, in validate_data
+    X, y = check_X_y(X, y, **check_params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/sklearn/utils/validation.py", line 1370, in check_X_y
+    X = check_array(
+        ^^^^^^^^^^^^
+  File "/lustre/isaac24/scratch/mhe8/myenv/lib/python3.12/site-packages/sklearn/utils/validation.py", line 931, in check_array
+    dtype_orig = np.result_type(*dtypes_orig)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: at least one array or dtype is required

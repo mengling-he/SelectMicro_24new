@@ -485,7 +485,10 @@ def plot_multiclass_roc_cv(y_trues, y_probs, class_index=1, n_classes=3, class_l
 # --------------------------------------------------------------------------------------------------#
 # SHAP plot for multiple class (class is 0,1,2...)
 def plot_SHAP_multiclass(shap_value,X_df,class_index=0,save_path=None):
-    shap.summary_plot(shap_value[:,:,class_index], X_df,show=False)
+    if shap_value.ndim ==2:
+        shap.summary_plot(shap_value, X_df,show=False)
+    else:
+        shap.summary_plot(shap_value[:,:,class_index], X_df,show=False)
     #shap.summary_plot(shap_value[:,:,class_index], X_df,plot_type="bar",show=False)
     if save_path:
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
