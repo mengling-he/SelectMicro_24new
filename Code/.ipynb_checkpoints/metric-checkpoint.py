@@ -485,7 +485,10 @@ def plot_multiclass_roc_cv(y_trues, y_probs, class_index=1, n_classes=3, class_l
 # --------------------------------------------------------------------------------------------------#
 # SHAP plot for multiple class (class is 0,1,2...)
 def plot_SHAP_multiclass(shap_value,X_df,class_index=0,save_path=None):
-    shap.summary_plot(shap_value[:,:,class_index], X_df,show=False)
+    if shap_value.ndim ==2:
+        shap.summary_plot(shap_value, X_df,show=False)
+    else:
+        shap.summary_plot(shap_value[:,:,class_index], X_df,show=False)
     #shap.summary_plot(shap_value[:,:,class_index], X_df,plot_type="bar",show=False)
     if save_path:
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
@@ -789,7 +792,7 @@ def fisher_discriminant_ratio(features, labels):
 
 
 
-def plot_heatmap(X_df,y_df):
+def plot_heatmap(X_df,y_df, tax_prefix='g__', column_cluster = False):
     # both of X_df y_df needs index and colnames
     # add to check the index of both inputs are the same
     if not X_df.index.equals(y_df.index):
@@ -805,17 +808,29 @@ def plot_heatmap(X_df,y_df):
     category_colors = dict(zip(unique_categories, palette))
     col_colors = group_sorted[Category].map(category_colors)
 
+    # 🔹 Strip prefix from column names (features)
+    def shorten_fn(name):
+        if tax_prefix in name:
+            return name.split(tax_prefix)[-1]
+        return name  # return original if prefix not found
+
+    data_matrix_sorted.columns = [shorten_fn(col) for col in data_matrix_sorted.columns]
+    
     # Plot heatmap with annotation (transpose to match R behavior)
     sns.set(style="white")
     cg = sns.clustermap(
         data_matrix_sorted.T,  # Transpose like in R: genes as rows, samples as columns
-        col_cluster=False,     
+        col_cluster=column_cluster,     
         row_cluster=True,      
         col_colors=col_colors,
         cmap="vlag",           # or use "coolwarm", "RdBu_r", etc.
         xticklabels=False,
         yticklabels=True
     )
+    # Make tick labels smaller
+    cg.ax_heatmap.set_yticklabels(cg.ax_heatmap.get_yticklabels(), fontsize=6)
+    #cg.ax_heatmap.set_xticklabels(cg.ax_heatmap.get_xticklabels(), fontsize=6)
+
     for label in unique_categories:
         cg.ax_col_dendrogram.bar(0, 0, color=category_colors[label],
                                 label=label, linewidth=0)

@@ -11,6 +11,7 @@ from scipy import stats
 import seaborn as sns
 import scikit_posthocs as sp
 import itertools
+import re
 
 # new FS pipeline-------------
 
@@ -611,7 +612,21 @@ def OTUviolin(X,label,featurenames,y_max=None,single=True,title = 'Violin Plot f
         plt.show()
 
 
+def extract_deepest_taxon_path(taxon_str):
+    levels = ['p__', 'c__', 'o__', 'f__', 'g__']
+    pattern = {level: re.search(f"{level}[^_;]*", taxon_str) for level in levels}
 
+    # Build a dict of found levels with values
+    found = {level: pattern[level].group() for level in levels if pattern[level]}
+
+    # Find the deepest non-empty level
+    for i, level in enumerate(reversed(levels)):
+        val = found.get(level, '')
+        if val and not val.endswith('__'):
+            # return everything from this level to the deepest
+            start_idx = levels.index(level)
+            return '_'.join(found[lvl] for lvl in levels[start_idx:])
+    return taxon_str  # fallback
 
 
 

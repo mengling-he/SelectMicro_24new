@@ -8,10 +8,11 @@ import RunModel
 import pandas as pd
 import numpy as np
 import random
+import pickle
 from sklearn.preprocessing import LabelEncoder
 import os
 
-
+save_dir = "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/combine_multi"
 """
 # data preprocessing----------------------------------
 data = pd.read_csv('SelectMicro_24/Analysis/Qitta/data/features_genus_db1629.csv',index_col=0)
@@ -34,12 +35,12 @@ target_variable = np.array(target_variable)
 
 
 #print("Analysis of control and IBD-----------------------------------------")
-total_features_species = pd.read_csv('SelectMicro_24/Analysis/Qitta/data/final_combine/features_species_withname.csv',index_col=0)
-total_features_genus = pd.read_csv('SelectMicro_24/Analysis/Qitta/data/final_combine/features_genus_withname.csv',index_col=0)
+total_features_species = pd.read_csv('SelectMicro_24/Analysis/Qitta/data/final_combine/features_species_withname_update.csv',index_col=0)
+total_features_genus = pd.read_csv('SelectMicro_24/Analysis/Qitta/data/final_combine/features_genus_withname_update.csv',index_col=0)
 data_list = [total_features_species,total_features_genus]
 tax_levels = ['species', 'genus']
 
-meta_2 = pd.read_csv('SelectMicro_24/Analysis/Qitta/data/final_combine/metadata.csv',index_col=0)
+meta_2 = pd.read_csv('SelectMicro_24/Analysis/Qitta/data/final_combine/metadata_update.csv',index_col=0)
 
 for i, element in enumerate(data_list):
     if not element.index.equals(meta_2.index):
@@ -65,7 +66,7 @@ for ii,res in enumerate(response_cat):
         le = LabelEncoder()
         target_variable= le.fit_transform(y)
         
-    print(f"Analysis of response_cat[ii]-----------------------------------------")   
+    print(f"Analysis of {res}-----------------------------------------")   
     print(pd.Series(target_variable).value_counts())
         
         
@@ -75,8 +76,8 @@ for ii,res in enumerate(response_cat):
     for index, tax_level in enumerate(tax_levels):
         print(f'Analyis in tax = {tax_level}------------------------------------------------------------------------------------------')
         data = data_list[index]
-        column_name = [f'Column{i+1}' for i in range(data.shape[1])]
-        cols_name = pd.Index(column_name)
+       # column_name = [f'Column{i+1}' for i in range(data.shape[1])]
+        cols_name = data.columns
         data = pd.DataFrame(FS.relative_abundance(data),columns = cols_name)
     
         # feature select--------------------------------------------------------------------------------------------------------------------------
@@ -113,7 +114,10 @@ for ii,res in enumerate(response_cat):
         print(f'The shape of the SelectMicro dataset is ',np.shape(X_FS))
         print(f'The shape of the Lasso_finetune selected dataset is ',np.shape(X_lasso_ft))
         print(f'The shape of the FS_Lasso_finetune selected dataset is ',np.shape(X_FS_lasso_ft))
-    
+    	
+        file_path_dataset = f"{save_dir}/{res}_{tax_level}_data_subset_dict.pkl"
+        with open(file_path_dataset, "wb") as f:
+    	    pickle.dump(data_subset, f)
     
     
     
@@ -130,47 +134,40 @@ for ii,res in enumerate(response_cat):
         
         # Model-----------------------------------------------------------
         print("5 fold cross validation using Random forest model -----------------------------------------")
-        dict_cm_list = []
-        save_dir = "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/plots_combine_multi"
         for datatype, subset in data_subset.items():
             print(f"Analysis for {datatype}")
             dict_cm = RunModel.RF_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
-            dict_cm_list.append(dict_cm)
-            metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=2, class_label='IBD',save_path=os.path.join(save_dir, f"{ii}_RF_{datatype}_ROC.png"))
-            metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"{ii}_RF_{datatype}_SHAP.png"))
+            if res=='Multi':
+                metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=3, class_label='Class 1',save_path=os.path.join(save_dir, f"{res}_RF_{datatype}_ROC_class1.png"))
+                metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"{res}_RF_{datatype}_SHAP_class1.png"))
+                metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=2, n_classes=3, class_label='Class 2',save_path =os.path.join(save_dir, f"{res}_RF_{datatype}_ROC_class2.png"))
+                metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=2,save_path=os.path.join(save_dir, f"{res}_RF_{datatype}_SHAP_class2.png"))
+            if res =='Binary':
+            
+            	metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=2, class_label='IBD',save_path=os.path.join(save_dir, f"{res}_RF_{datatype}_ROC.png"))
+            	metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"{res}_RF_{datatype}_SHAP.png"))
         
         print("5 fold cross validation using XGBoost model -----------------------------------------")
-        #print("5 fold cross validation using NB model -----------------------------------------")# no shap plots for SVM,NB
-        dict_cm_list = []
-        save_dir = "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/plots_combine_multi"
         for datatype, subset in data_subset.items():
             print(f"Analysis for {datatype}")
+            subset.columns = subset.columns.astype(str).str.replace(r"[\[\]<>]", "_", regex=True)
             dict_cm = RunModel.XG_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
-            #dict_cm = RunModel.SVM_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
-            #dict_cm = RunModel.NB_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
-            dict_cm_list.append(dict_cm)
-            metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=2, class_label='IBD',save_path=os.path.join(save_dir, f"{ii}_XG_{datatype}_ROC.png"))
-            metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"{ii}_XG_{datatype}_SHAP.png"))
+           # metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=2, class_label='IBD',save_path=os.path.join(save_dir, f"{ii}_XG_{datatype}_ROC.png"))
+           # metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"{ii}_XG_{datatype}_SHAP.png"))
     
     
         print("5 fold cross validation using NB model -----------------------------------------")
-        dict_cm_list = []
-        save_dir = "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/plots_combine_multi"
         for datatype, subset in data_subset.items():
             print(f"Analysis for {datatype}")
             dict_cm = RunModel.NB_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
-            dict_cm_list.append(dict_cm)
-            metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=2, class_label='IBD',save_path=os.path.join(save_dir, f"{ii}_NB_{datatype}_ROC.png"))
+           #metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=2, class_label='IBD',save_path=os.path.join(save_dir, f"{ii}_NB_{datatype}_ROC.png"))
             #metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"XG_{datatype}_SHAP_binary.png"))
     
         print("5 fold cross validation using SVM model -----------------------------------------")
-        dict_cm_list = []
-        save_dir = "/lustre/isaac24/scratch/mhe8/SelectMicro_24/Analysis/Qitta/results/plots_combine_multi"
         for datatype, subset in data_subset.items():
             print(f"Analysis for {datatype}")
             dict_cm = RunModel.SVM_model_SCV_multi(subset, target_variable,SMOTE=True,k=5)
-            dict_cm_list.append(dict_cm)
-            metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=2, class_label='IBD',save_path=os.path.join(save_dir, f"{ii}_SVM_{datatype}_ROC.png"))
+            #metric.plot_multiclass_roc_cv(dict_cm['y_true'], dict_cm['y_pred_prob'], class_index=1, n_classes=2, class_label='IBD',save_path=os.path.join(save_dir, f"{ii}_SVM_{datatype}_ROC.png"))
             #metric.plot_SHAP_multiclass(dict_cm['SHAP_full'],dict_cm['x_true'],class_index=1, save_path=os.path.join(save_dir, f"XG_{datatype}_SHAP_binary.png"))
 """
 # Model-----------------------------------------------------------
